@@ -1,0 +1,37 @@
+- name: Create users
+  hosts: all
+  user: ubuntu
+  roles:
+    - users
+
+- name: Common configuration
+  hosts: all
+  user: websimdev
+  roles:
+    - common
+
+- name: Set up rabbitmq
+  hosts: cumulus
+  user: websimdev
+  roles:
+    - rabbitmq
+
+- name: Setup Girder
+  hosts: girder
+  user: websimdev
+  roles:
+    - girder
+
+- name: Setup cumulus
+  hosts: cumulus
+  user: websimdev
+  roles:
+    - cumulus
+
+- name: Set up celery
+  hosts: cumulus
+  user: websimdev
+  roles:
+    - celery
+
+

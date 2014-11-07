@@ -1,0 +1,17 @@
+- name: Create websimdev user
+  user: name=websimdev shell=/bin/bash
+  tags: users
+  sudo: yes
+
+- name: Give websimdev passwordless sudo
+  lineinfile: "dest=/etc/sudoers state=present regexp='^websimdev' line='websimdev ALL=(ALL) NOPASSWD: ALL'"
+  sudo: yes
+
+
+- name: Add authorized keys for websimdev
+  sudo: yes
+  authorized_key: user=websimdev
+                  key="{{ lookup('file', item)}}"
+  with_fileglob:
+    - ../public_keys/*
+

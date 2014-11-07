@@ -1,0 +1,19 @@
+- name: Create application base directory
+  sudo: yes
+  file: dest=/opt/websim mode=755 owner=websimdev group=websimdev state=directory
+  tags:
+       - common
+
+- name: Install Python
+  apt: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - python-dev
+
+- name: Download pip setup
+  sudo: yes
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=.
+
+- name: Install pip
+  sudo: yes
+  command: python get-pip.py

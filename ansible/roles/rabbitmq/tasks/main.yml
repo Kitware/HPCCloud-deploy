@@ -1,0 +1,9 @@
+- name: Install rabbitmq
+  sudo: yes
+  apt: name=rabbitmq-server state=present
+  tags: rabbit
+
+- name: Enable rabbitmq-server to survive reboot
+  service: name=rabbitmq-server enabled=yes
+  sudo: yes
+  tags: rabbit

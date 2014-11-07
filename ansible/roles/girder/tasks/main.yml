@@ -1,0 +1,75 @@
+
+- name: Add nodejs ppa
+  apt_repository: repo='ppa:chris-lea/node.js' update_cache=no
+  sudo: yes
+
+- name: Add MongoDB repo key
+  command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+  sudo: yes
+
+- name: Add MongoDB repo
+  apt_repository: repo='deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' update_cache=yes
+  sudo: yes
+
+- name: Install package dependencies
+  apt: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - curl
+    - g++
+    - git
+    - libffi-dev
+    - make
+    - nodejs
+
+- name: Install MongoDb
+  apt: name=mongodb-org-server state=present
+  sudo: yes
+
+- name: Enable mongo full-text search
+  lineinfile: dest=/etc/mongod.conf regexp=^setParameter= line=setParameter=textSearchEnabled=true
+  sudo: yes
+  notify:
+    - restart mongod
+
+- name: Install grunt and globally
+  npm: name={{ item }} global=yes
+  with_items:
+    - grunt
+    - grunt-cli
+  sudo: yes
+
+- name: Get Girder from github
+  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder
+  sudo: yes
+
+- name: Change owner of cumulus directory
+  sudo: yes
+  file: dest=/opt/websim/girder mode=755 owner=websimdev group=websimdev state=directory recurse=true
+
+- name: Install specified python requirements.
+  pip: requirements=/opt/websim/girder/requirements.txt
+  sudo: yes
+
+- name: Install girder for development
+  command: python setup.py develop chdir=/opt/websim/girder
+  sudo: yes
+
+- name: Run npm install
+  npm: path=/opt/websim/girder
+
+- name: Run grunt init
+  command: grunt init chdir=/opt/websim/girder
+
+- name: Run grunt
+  command: grunt chdir=/opt/websim/girder
+
+- name: Install Girder as service
+  copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
+  sudo: yes
+
+- name: Start Girder as service
+  service: name=girder state=started enabled=yes
+  sudo: yes
+
+
