@@ -46,13 +46,10 @@ class GirderClient(object):
         params = {
             'id': group_id,
             'userId': user_id,
-            'quiet': True}
+            'quiet': True,
+            'force': True}
 
         url = '%s/group/%s/invitation' % (self._base_url, group_id)
-        r  = requests.post(url, params=params, headers=self._headers)
-        self._check_response(r)
-
-        # Accept invite
         r  = requests.post(url, params=params, headers=self._headers)
         self._check_response(r)
 
