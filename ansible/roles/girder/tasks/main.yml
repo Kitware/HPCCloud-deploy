@@ -72,4 +72,10 @@
   service: name=girder state=started enabled=yes
   sudo: yes
 
+- name: Download fixture script
+  sudo: yes
+  get_url: url=https://raw.githubusercontent.com/cjh1/cumulus-deploy/master/girder/setup.py dest=/tmp/setup.py
+
+- name: Create Girder fixtures
+  command: python /tmp/setup.py --url 'http://localhost:8080/api/v1' --password tLb69aTt
 
