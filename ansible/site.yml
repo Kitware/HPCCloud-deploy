@@ -34,4 +34,9 @@
   roles:
     - celery
 
+- name: Set up cmb-web
+  hosts: cmbweb
+  user: websimdev
+  roles:
+    - cmbweb
 

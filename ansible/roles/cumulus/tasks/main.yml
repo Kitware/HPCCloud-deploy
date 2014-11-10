@@ -9,7 +9,3 @@
 - name: Change owner of cumulus directory
   file: dest=/opt/websim/cumulus mode=755 owner=websimdev group=websimdev state=directory recurse=true
   sudo: yes
-
-- name: Create symlink for Girder plugin
-  file: src=/opt/websim/cumulus/girder/cumulus dest=/opt/websim/girder/plugins/cumulus owner=websimdev group=websimdev state=link
-  sudo: yes

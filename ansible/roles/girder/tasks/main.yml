@@ -32,7 +32,7 @@
   notify:
     - restart mongod
 
-- name: Install grunt and globally
+- name: Install grunt and grunt-cli globally
   npm: name={{ item }} global=yes
   with_items:
     - grunt
@@ -43,12 +43,16 @@
   git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder
   sudo: yes
 
-- name: Change owner of cumulus directory
+- name: Change owner of girder directory
   sudo: yes
   file: dest=/opt/websim/girder mode=755 owner=websimdev group=websimdev state=directory recurse=true
 
 - name: Install specified python requirements.
   pip: requirements=/opt/websim/girder/requirements.txt
+  sudo: yes
+
+- name: Compile bcrypt (see https://github.com/pyca/bcrypt/issues/15)
+  command: python -c "import bcrypt"
   sudo: yes
 
 - name: Install girder for development
@@ -68,6 +72,10 @@
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
   sudo: yes
 
+- name: Create symlink for Girder plugin
+  file: src=/opt/websim/cumulus/girder/cumulus dest=/opt/websim/girder/plugins/cumulus owner=websimdev group=websimdev state=link
+  sudo: yes
+
 - name: Start Girder as service
   service: name=girder state=started enabled=yes
   sudo: yes
@@ -77,5 +85,5 @@
   get_url: url=https://raw.githubusercontent.com/cjh1/cumulus-deploy/master/girder/setup.py dest=/tmp/setup.py
 
 - name: Create Girder fixtures
-  command: python /tmp/setup.py --url 'http://localhost:8080/api/v1' --password tLb69aTt
+  command: python /tmp/setup.py --url 'http://localhost:8080/api/v1' --password {{ websimdev_password }}
 

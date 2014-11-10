@@ -1,0 +1,80 @@
+- name: Get cmb-web from github
+  git: repo=https://github.com/cjh1/cmb-web.git version={{ cmbweb_version }} dest=/opt/websim/cmb-web
+  sudo: yes
+  tags: cmbweb
+
+- name: Install gulp
+  npm:  name=gulp global=yes
+  tags: cmbweb
+  sudo: yes
+
+- name: Install bower
+  npm:  name=bower global=yes
+  tags: cmbweb
+  sudo: yes
+
+- name: Change owner of cmb-web directory
+  file: dest=/opt/websim/cmb-web mode=755 owner=websimdev group=websimdev state=directory recurse=true
+  sudo: yes
+  tags: cmbweb
+
+- name: Run npm install
+  npm: path=/opt/websim/cmb-web
+  tags: cmbweb
+
+- name: Run bower
+  command: bower install chdir=/opt/websim/cmb-web
+  tags: cmbweb
+
+- name: Run gulp
+  command: gulp chdir=/opt/websim/cmb-web
+  tags: cmbweb
+
+- name: Install apache
+  apt: name=apache2 state=present
+  sudo: yes
+  tags: cmbweb
+
+- name: Enable mod_proxy
+  apache2_module: state=present name=proxy
+  tags: cmbweb
+  sudo: yes
+
+- name: Enable mod_proxy_http
+  apache2_module: state=present name=proxy_http
+  tags: cmbweb
+  sudo: yes
+  notify:
+    - restart apache2
+
+- name: Disable the default site
+  action: command a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default.conf
+  tags: cmbweb
+  sudo: yes
+  notify:
+    - restart apache2
+
+
+- name: Copy over config
+  copy: src=../files/cmb-web.conf dest=/etc/apache2/sites-available/cmb-web.conf mode=644 owner=root
+  tags: cmbweb
+  sudo: yes
+  notify:
+    - restart apache2
+
+- name: Enable cmd-web site
+  action: command a2ensite cmb-web  creates=/etc/apache2/sites-enabled/youcontrol.conf
+  tags: cmbweb
+  sudo: yes
+  notify:
+    - restart apache2
+
+- name: Update directory
+  replace:
+    dest: /etc/apache2/apache2.conf
+    regexp: '^<Directory /var/www/>$'
+    replace: '<Directory /opt/websim/cmb-web/dist/>'
+  tags: cmbweb
+  sudo: yes
+  notify:
+    - restart apache2
