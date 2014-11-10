@@ -16,17 +16,17 @@
   roles:
     - rabbitmq
 
-- name: Setup Girder
-  hosts: girder
-  user: websimdev
-  roles:
-    - girder
-
 - name: Setup cumulus
   hosts: cumulus
   user: websimdev
   roles:
     - cumulus
+
+- name: Setup Girder
+  hosts: girder
+  user: websimdev
+  roles:
+    - girder
 
 - name: Set up celery
   hosts: cumulus
