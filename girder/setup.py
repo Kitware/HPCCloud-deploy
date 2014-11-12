@@ -305,7 +305,10 @@ def setup(url, password):
     client.grant_edit_access(hydra_collection, mpas, 'mpas-ocean-members')
 
     # Create the assert store
-    client.create_assetstore('data', '/opt/websim/assetstore')
+    try:
+        client.create_assetstore('data', '/opt/websim/assetstore')
+    except requests.exceptions.HTTPError:
+        pass
 
 
 if __name__ ==  '__main__':
