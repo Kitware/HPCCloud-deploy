@@ -10,7 +10,8 @@ class GirderClient(object):
 
     def _check_response(self, response):
         if response.status_code != 200:
-            print >> sys.stderr, response.json()
+            if response.headers['Content-Type'] == 'application/json':
+                print >> sys.stderr, response.json()
             response.raise_for_status()
 
 
@@ -143,7 +144,16 @@ class GirderClient(object):
         r = requests.put(url, params={'access': json.dumps(access)}, headers=self._headers)
         self._check_response(r)
 
+    def create_assetstore(self, name, path):
+        url = '%s/assetstore' % self._base_url
+        params = {
+            'type': 0,
+            'name': name,
+            'root': path
+        }
 
+        r = requests.post(url, params=params, headers=self._headers)
+        self._check_response(r)
 
 def setup(url, password):
 
@@ -293,6 +303,9 @@ def setup(url, password):
 
     client.grant_edit_access(hydra_collection, hydra, 'hydra-ne-members')
     client.grant_edit_access(hydra_collection, mpas, 'mpas-ocean-members')
+
+    # Create the assert store
+    client.create_assetstore('data', '/opt/websim/assetstore')
 
 
 if __name__ ==  '__main__':
