@@ -1,5 +1,5 @@
 - name: Create celery user
-  user: name=celery shell=/bin/bash
+  user: name=celery shell=/bin/bash state=present
   sudo: yes
   tags: celery
 
