@@ -1,11 +1,24 @@
 - name: Get cumulus from github
   git: repo=https://github.com/cjh1/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus
   sudo: yes
+  tags: cumulus
 
 - name: Install specified python requirements.
   pip: requirements=/opt/websim/cumulus/requirements.txt
   sudo: yes
+  tags: cumulus
 
 - name: Change owner of cumulus directory
   file: dest=/opt/websim/cumulus mode=755 owner=websimdev group=websimdev state=directory recurse=true
+  sudo: yes
+  tags: cumulus
+
+- name: Create celery user (need to create so we can assign read permission to the cumulus config file)
+  user: name=celery shell=/bin/bash state=present
+  sudo: yes
+  tags: celery
+
+- name: Create config.json
+  action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
+  tags: cumulus
   sudo: yes

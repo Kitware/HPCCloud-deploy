@@ -155,17 +155,37 @@ class GirderClient(object):
         r = requests.post(url, params=params, headers=self._headers)
         self._check_response(r)
 
-def setup(url, password):
+def setup(url, websimdev_password, cumulus_password):
 
     client = GirderClient(url)
 
     try:
-        client.create_user('websimdev', password, 'websimdev@kitware.com', 'websimdev',
+        client.create_user('websimdev', websimdev_password, 'websimdev@kitware.com', 'websimdev',
                         'websimdev')
     except requests.exceptions.HTTPError:
         pass
 
-    client.authenticate('websimdev', password)
+    client.authenticate('websimdev', cumulus_password)
+
+    # Create cumulus user
+    try:
+        client.create_user('cumulus', websimdev_password, 'cumulus@kitware.com', 'cumulus',
+                        'cumulus')
+    except requests.exceptions.HTTPError:
+        pass
+
+    cumulus = client.get_user_id('cumulus')
+
+    # Create cumulus group
+    try:
+        client.create_group('cumulus')
+    except requests.exceptions.HTTPError:
+        pass
+
+    cumulus_group = client.get_group_id('cumulus')
+
+    # Add user to cumulus group
+    client.add_user_to_group(cumulus, cumulus_group)
 
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
@@ -315,9 +335,10 @@ if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
 
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
-    parser.add_argument('--password', help='The password to use for websimdev', required=True)
+    parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
+    parser.add_argument('--cumulus_password', help='The password to use for cumulus', required=True)
 
     config = parser.parse_args()
 
-    setup(config.url, config.password)
+    setup(config.url, config.websimdev_password, config.cumulus_password)
 
