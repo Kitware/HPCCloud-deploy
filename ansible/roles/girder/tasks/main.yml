@@ -61,11 +61,6 @@
   sudo: yes
   tags: girder
 
-- name: Upgrade version of requests
-  pip: name=requests version=2.4.3
-  sudo: yes
-  tags: girder
-
 - name: Compile bcrypt (see https://github.com/pyca/bcrypt/issues/15)
   command: python -c "import bcrypt"
   sudo: yes
@@ -73,6 +68,11 @@
 
 - name: Install girder for development
   command: python setup.py develop chdir=/opt/websim/girder
+  sudo: yes
+  tags: girder
+
+- name: Upgrade version of requests ( girder using 2.3.0, but we need 2.4.3 )
+  pip: name=requests version=2.4.3 state=present
   sudo: yes
   tags: girder
 
