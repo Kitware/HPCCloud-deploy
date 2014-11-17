@@ -8,15 +8,15 @@
   sudo: yes
   tags: cumulus
 
-- name: Change owner of cumulus directory
-  file: dest=/opt/websim/cumulus mode=755 owner=websimdev group=websimdev state=directory recurse=true
-  sudo: yes
-  tags: cumulus
-
 - name: Create celery user (need to create so we can assign read permission to the cumulus config file)
   user: name=celery shell=/bin/bash state=present
   sudo: yes
   tags: celery
+
+- name: Change owner of cumulus directory
+  file: dest=/opt/websim/cumulus mode=775 owner=websimdev group=celery state=directory recurse=true
+  sudo: yes
+  tags: cumulus
 
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
