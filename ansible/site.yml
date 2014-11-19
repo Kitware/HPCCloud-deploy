@@ -40,3 +40,9 @@
   roles:
     - cmbweb
 
+- name: Set up ParaView
+  hosts: paraview
+  user: websimdev
+  roles:
+    - osmesa
+    - paraview
