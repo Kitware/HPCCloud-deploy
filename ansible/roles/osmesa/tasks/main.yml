@@ -1,0 +1,41 @@
+- name: Add Xorg ppa
+  apt_repository: repo='ppa:xorg-edgers/ppa' update_cache=yes
+  tags: osmesa
+
+- name: Install Mesa build deps
+  command: apt-get -y build-dep mesa
+  sudo: yes
+  tags: osmesa
+
+- name: Install dependencies
+  apt: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - build-essential
+    - llvm-dev
+    - libdrm2
+  tags: osmesa
+
+- name: Create OSMesa directory
+  sudo: yes
+  file: dest=/opt/websim/osmesa mode=755 owner=websimdev group=websimdev state=directory
+  tags: osmesa
+
+- name: Get Mesa from repo
+  git: repo=git://anongit.freedesktop.org/git/mesa/mesa version=mesa-10.2.5 dest=/opt/websim/osmesa/src
+  tags: osmesa
+
+- name: Create script to build Mesa
+  action: template src=build.sh.j2 dest=/opt/websim/osmesa/src/build.sh mode=700 owner=websimdev
+  tags: osmesa
+
+- name: Build Mesa
+  shell: /opt/websim/osmesa/src/build.sh chdir=/opt/websim/osmesa/src
+  tags: osmesa
+
+- name: Install Mesa
+  command: make install chdir=/opt/websim/osmesa/src
+  sudo: yes
+  tags: osmesa
+
+
