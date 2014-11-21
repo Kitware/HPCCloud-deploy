@@ -192,6 +192,8 @@ def setup(url, websimdev_password, cumulus_password):
 
 
     client.enable_plugin('cumulus')
+    client.enable_plugin('pvwproxy')
+    client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:

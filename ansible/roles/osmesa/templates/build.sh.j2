@@ -1,0 +1,12 @@
+autoreconf -fi
+./configure \
+  --prefix=/opt/mesa/10.2.5/llvmpipe \
+  --disable-xvmc \
+  --disable-glx \
+  --disable-dri \
+  --enable-texture-float \
+  --disable-shared-glapi \
+  --enable-gallium-osmesa \
+  --enable-gallium-llvm=yes
+
+make -j{{ ansible_processor_cores }}
