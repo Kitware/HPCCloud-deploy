@@ -1,6 +1,7 @@
 - name: Add Xorg ppa
   apt_repository: repo='ppa:xorg-edgers/ppa' update_cache=yes
   tags: osmesa
+  sudo: yes
 
 - name: Install Mesa build deps
   command: apt-get -y build-dep mesa

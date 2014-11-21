@@ -33,23 +33,40 @@
 - name: Install apache
   apt: name=apache2 state=present
   sudo: yes
-  tags: cmbweb
+  tags: apache
 
 - name: Enable mod_proxy
   apache2_module: state=present name=proxy
-  tags: cmbweb
+  tags: apache
+  sudo: yes
+
+- name: Enable mod_rewrite
+  apache2_module: state=present name=rewrite
+  tags: apache
   sudo: yes
 
 - name: Enable mod_proxy_http
   apache2_module: state=present name=proxy_http
-  tags: cmbweb
+  tags: apache
   sudo: yes
   notify:
     - restart apache2
 
+- name: Enable mod_proxy_wstunnel
+  apache2_module: state=present name=proxy_wstunnel
+  tags: apache
+  sudo: yes
+  notify:
+    - restart apache2
+
+- name: Create proxy mapping file
+  sudo: yes
+  file: dest=/opt/websim/proxy.db mode=640 owner=websimdev group=www-data state=touch
+  tags: apache
+
 - name: Disable the default site
   action: command a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default.conf
-  tags: cmbweb
+  tags: apache
   sudo: yes
   notify:
     - restart apache2
@@ -57,14 +74,14 @@
 
 - name: Copy over config
   copy: src=../files/cmb-web.conf dest=/etc/apache2/sites-available/cmb-web.conf mode=644 owner=root
-  tags: cmbweb
+  tags: apache
   sudo: yes
   notify:
     - restart apache2
 
 - name: Enable cmd-web site
   action: command a2ensite cmb-web  creates=/etc/apache2/sites-enabled/youcontrol.conf
-  tags: cmbweb
+  tags: apache
   sudo: yes
   notify:
     - restart apache2
@@ -74,7 +91,7 @@
     dest: /etc/apache2/apache2.conf
     regexp: '^<Directory /var/www/>$'
     replace: '<Directory /opt/websim/cmb-web/dist/>'
-  tags: cmbweb
+  tags: apache
   sudo: yes
   notify:
     - restart apache2
