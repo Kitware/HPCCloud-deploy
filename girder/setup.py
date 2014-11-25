@@ -279,7 +279,13 @@ def setup(url, websimdev_password, cumulus_password):
 
     client.enable_plugin('cumulus')
     client.enable_plugin('pvwproxy')
-    client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
+
+    # The first time this will fail! Girder requres a restart after enabling
+    # plugins.
+    try:
+        client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
+    except requests.exceptions.HTTPError:
+        pass
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
@@ -435,7 +441,8 @@ def setup(url, websimdev_password, cumulus_password):
         item_id = client.create_item(core_folder, 'defaultProxies')
     else:
         item_id = item[0]['_id']
-        print 'proxy item: %s' % item_id
+
+    print 'proxy item: %s' % item_id
 
     client.upload_file(item_id, '/opt/websim/cumulus/config/defaultProxies.json')
 
