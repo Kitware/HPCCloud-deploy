@@ -104,16 +104,59 @@
   tags: testing
 
 - name: Start Girder as service
-  service: name=girder state=started enabled=yes
+  service: name=girder state=restarted enabled=yes
   sudo: yes
   tags: girder
 
 - name: Copy fixture script
   sudo: yes
   copy: src=../../../../girder/setup.py dest=/tmp/setup.py
-  tags: girder
+  tags:
+    - girder
+    - fixtures
+
+- name: Create temp config dir
+  file: dest=/tmp/starcluster-config mode=700 owner=websimdev group=websimdev state=directory
+  sudo: yes
+  tags:
+    - girder
+    - fixtures
+
+- name: Template starcluster configuration files
+  action: template src={{item}} dest=/tmp/starcluster-config/{{item|basename}} mode=600 owner=websimdev group=websimdev
+  sudo: yes
+  tags:
+    - girder
+    - fixtures
+  with_fileglob:
+    - "{{starcluster_config_glob}}"
+
+# This is a bit of a hack, we don't have API to query config or scripts so for
+# now clean out the collections each time.
+- name: Clean up starclusterconfigs
+  command: mongo girder --eval "db.starclusterconfigs.remove({name":" \"{{item|basename}}\" })"
+  with_fileglob:
+    - "{{starcluster_config_glob}}"
+  tags:
+    - girder
+    - fixtures
+
+- name: Clean up script
+  command: mongo girder --eval "db.scripts.remove({name":" \"{{item|basename}}\" })"
+  with_fileglob:
+    - "{{script_glob}}"
+  tags:
+    - girder
+    - fixtures
 
 - name: Create Girder fixtures
   command: python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --cumulus_password {{ cumulus_password }}
-  tags: girder
+  tags:
+    - girder
+    - fixtures
 
+- name: Clean up temp config directory
+  file: path=/tmp/starcluster-config/ state=absent
+  tags:
+    - girder
+    - fixtures

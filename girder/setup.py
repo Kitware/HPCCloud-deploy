@@ -2,6 +2,7 @@ import requests
 import sys
 import json
 import argparse
+import os
 
 class GirderClient(object):
     def __init__(self, base_url):
@@ -154,6 +155,91 @@ class GirderClient(object):
 
         r = requests.post(url, params=params, headers=self._headers)
         self._check_response(r)
+
+    def create_script(self, name, path):
+        url = '%s/scripts' % self._base_url
+        body = {
+            'name': name,
+        }
+
+        r = requests.post(url, json=body, headers=self._headers)
+        self._check_response(r)
+        script_id = r.json()['_id']
+
+        # Now import the script
+        url = '%s/scripts/%s/import' % (self._base_url, script_id)
+        with open(path, 'r') as fp:
+            r = requests.patch(url, data=fp.read(), headers=self._headers)
+            self._check_response(r)
+
+        return script_id
+
+    def create_starcluster_config(self, name, path):
+        url = '%s/starcluster-configs' % self._base_url
+        body = {
+            'name': name,
+            'config': {}
+        }
+
+        r = requests.post(url, json=body, headers=self._headers)
+        self._check_response(r)
+        config_id = r.json()['_id']
+
+        # Now import the config
+        url = '%s/starcluster-configs/%s/import' % (self._base_url, config_id)
+        with open(path, 'r') as fp:
+            r = requests.patch(url, data=fp.read(), headers=self._headers)
+            self._check_response(r)
+
+        return config_id
+
+    def create_item(self, folderId, name):
+        url = '%s/item' % self._base_url
+        params = {
+           'folderId': folderId,
+           'name': name
+        }
+        r = requests.post(url, params=params, headers=self._headers)
+        self._check_response(r)
+        item_id = r.json()['_id']
+
+        return item_id
+
+    def upload_file(self, itemId, path):
+        url = '%s/file' % self._base_url
+        with open(path, 'r') as fp:
+            data = fp.read()
+
+        params = {
+           'parentType': 'item',
+           'parentId': itemId ,
+           'name': os.path.basename(path),
+           'size': len(data)
+        }
+        r = requests.post(url, params=params, headers=self._headers)
+        self._check_response(r)
+        file_id = r.json()['_id']
+
+        params={
+            'uploadId': file_id,
+            'offset': 0,
+            'chunk': data
+        }
+
+        url = '%s/file/chunk' % self._base_url
+        r = requests.post(url, params=params, headers=self._headers)
+        self._check_response(r)
+
+    def get_item(self, text):
+         url = '%s/item' % self._base_url
+         params = {
+            'text': text
+         }
+
+         r = requests.get(url, params=params, headers=self._headers)
+         self._check_response(r)
+
+         return r.json()
 
 def setup(url, websimdev_password, cumulus_password):
 
@@ -331,6 +417,27 @@ def setup(url, websimdev_password, cumulus_password):
         client.create_assetstore('data', '/opt/websim/assetstore')
     except requests.exceptions.HTTPError:
         pass
+
+    # Create scripts
+    script_dir = '/opt/websim/cumulus/scripts'
+    for f in os.listdir(script_dir):
+        print '%s: %s' % (f, client.create_script(f, os.path.join(script_dir, f)))
+
+    # Create config
+    config_dir = '/tmp/starcluster-config'
+    for f in os.listdir(config_dir):
+        name = os.path.basename(f)
+        print '%s: %s' % (name, client.create_starcluster_config(f, os.path.join(config_dir, f)))
+
+    # Create proxy json file
+    item = client.get_item('defaultProxies')
+    if len(item) == 0:
+        item_id = client.create_item(core_folder, 'defaultProxies')
+    else:
+        item_id = item[0]['_id']
+        print 'proxy item: %s' % item_id
+
+    client.upload_file(item_id, '/opt/websim/cumulus/config/defaultProxies.json')
 
 
 if __name__ ==  '__main__':
