@@ -27,9 +27,12 @@
     - nodejs
 
 - name: Install MongoDb
-  apt: name=mongodb-org-server state=present
+  apt: name={{ item }} state=present
   sudo: yes
   tags: girder
+  with_items:
+    - mongodb-org-server
+    - mongodb-org-shell
 
 - name: Enable mongo full-text search
   lineinfile: dest=/etc/mongod.conf regexp=^setParameter= line=setParameter=textSearchEnabled=true
