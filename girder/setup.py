@@ -3,6 +3,7 @@ import sys
 import json
 import argparse
 import os
+import tempfile
 
 class GirderClient(object):
     def __init__(self, base_url):
@@ -205,15 +206,44 @@ class GirderClient(object):
 
         return item_id
 
-    def upload_file(self, itemId, path):
-        url = '%s/file' % self._base_url
+    def update_file(self, file_id, path):
         with open(path, 'r') as fp:
             data = fp.read()
+        url = '%s/file/%s/contents' % (self._base_url, file_id)
+        params = {
+           'id': file_id,
+           'size': len(data)
+        }
+        r = requests.put(url, params=params, headers=self._headers)
+        self._check_response(r)
+        upload_id = r.json()['_id']
+
+        params={
+            'uploadId': upload_id,
+            'offset': 0
+        }
+
+        files = {
+           "chunk": data
+        }
+
+        url = '%s/file/chunk' % self._base_url
+        r = requests.post(url, params=params, files=files, headers=self._headers)
+        self._check_response(r)
+
+
+    def create_file(self, itemId, path, name=None):
+        with open(path, 'r') as fp:
+            data = fp.read()
+        url = '%s/file' % self._base_url
+
+        if not name:
+            name = os.path.basename(path)
 
         params = {
            'parentType': 'item',
            'parentId': itemId ,
-           'name': os.path.basename(path),
+           'name': name,
            'size': len(data)
         }
         r = requests.post(url, params=params, headers=self._headers)
@@ -222,13 +252,18 @@ class GirderClient(object):
 
         params={
             'uploadId': file_id,
-            'offset': 0,
-            'chunk': data
+            'offset': 0
         }
 
         url = '%s/file/chunk' % self._base_url
-        r = requests.post(url, params=params, headers=self._headers)
+        files = {
+            "chunk": data
+        }
+        r = requests.post(url, params=params, files=files, headers=self._headers)
+
         self._check_response(r)
+
+        return file_id
 
     def get_item(self, text):
          url = '%s/item' % self._base_url
@@ -240,6 +275,15 @@ class GirderClient(object):
          self._check_response(r)
 
          return r.json()
+
+    def get_files(self, item_id):
+         url = '%s/item/%s/files' % (self._base_url, item_id)
+
+         r = requests.get(url, headers=self._headers)
+         self._check_response(r)
+
+         return r.json()
+
 
 def setup(url, websimdev_password, cumulus_password):
 
@@ -444,9 +488,40 @@ def setup(url, websimdev_password, cumulus_password):
 
     print 'proxy item: %s' % item_id
 
-    client.upload_file(item_id, '/opt/websim/cumulus/config/defaultProxies.json')
+    files = client.get_files(item_id)
 
+    proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
+    if len(files) == 0:
+        client.create_file(item_id, proxy_json)
+    else:
+        client.update_file(files[0]['_id'], proxy_json)
 
+    # Add sample mesh
+    try:
+        client.create_folder('foobar', user001_folder, 'folder')
+    except requests.exceptions.HTTPError:
+        pass
+
+    foobar_id = client.get_folder_id(user001_folder, 'foobar')
+
+    mesh_item = client.get_item('mesh')
+    if len(mesh_item) == 0:
+        mesh_item_id = client.create_item(foobar_id, 'mesh')
+    else:
+        mesh_item_id = mesh_item[0]['_id']
+
+    files = client.get_files(mesh_item_id)
+
+    with tempfile.NamedTemporaryFile() as mesh:
+        mesh.write(os.urandom(2048))
+        mesh.flush()
+        if len(files) == 0:
+            print 'name: %s' % mesh.name
+            client.create_file(mesh_item_id, mesh.name, name='test.mesh')
+        else:
+            client.update_file(files[0]['_id'], mesh.name)
+
+        print '%s: %s' % ('mesh', mesh_item_id)
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
 
