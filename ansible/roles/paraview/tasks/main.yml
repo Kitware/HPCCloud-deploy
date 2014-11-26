@@ -10,6 +10,8 @@
   with_items:
     - cmake
     - cmake-curses-gui
+    - libnetcdf-dev
+    - libhdf5-dev
   tags: paraview
 
 - name: Get ParaView from github
