@@ -293,7 +293,7 @@ class GirderClient(object):
 def setup(config):
 
     url = config.url
-    websimdev_password = config.websimdev_passwords
+    websimdev_password = config.websimdev_password
     cumulus_password = config.cumulus_password
     config_dir = config.config_dir
 
