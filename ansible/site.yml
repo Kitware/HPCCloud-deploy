@@ -52,4 +52,5 @@
   user: websimdev
   roles:
     - moab
+    - moabreader
 

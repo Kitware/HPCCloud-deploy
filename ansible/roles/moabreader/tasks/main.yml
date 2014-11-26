@@ -1,0 +1,30 @@
+- name: Create moabreader directory
+  sudo: yes
+  file: dest=/opt/websim/moabreader mode=755 owner=websimdev group=websimdev state=directory
+  tags: moabreader
+
+- name: Get moabreader from github
+  git: repo=https://github.com/robertmaynard/MoabReader.git version=master dest=/opt/websim/moabreader/src
+  tags: moabreader
+
+- name: Create moabreader build directory
+  sudo: yes
+  file: dest=/opt/websim/moabreader/build mode=755 owner=websimdev group=websimdev state=directory
+  tags: moabreader
+
+- name: Create moabreader install directory
+  sudo: yes
+  file: dest=/opt/websim/moabreader/install mode=755 owner=websimdev group=websimdev state=directory
+  tags: moabreader
+
+- name: Create script to build moabreader
+  action: template src=build.sh.j2 dest=/opt/websim/moabreader/build/build.sh mode=700 owner=websimdev
+  tags: moabreader
+
+- name: Build moabreader
+  shell: /opt/websim/moabreader/build/build.sh chdir=/opt/websim/moabreader/build
+  tags: moabreader
+
+- name: Install moabreader
+  command: make install chdir=/opt/websim/moabreader/build
+  tags: moabreader
