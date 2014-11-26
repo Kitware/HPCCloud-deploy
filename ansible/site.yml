@@ -46,3 +46,10 @@
   roles:
     - osmesa
     - paraview
+
+- name: Set up moab reader
+  hosts: paraview
+  user: websimdev
+  roles:
+    - moab
+

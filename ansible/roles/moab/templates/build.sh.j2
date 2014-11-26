@@ -1,0 +1,13 @@
+cd ../build
+cmake -D CMAKE_INSTALL_PREFIX:PATH=/opt/websim/moab/install \
+      -D BUILD_SHARED_LIBS:BOOL=OFF \
+      -D MOAB_USE_SZIP:BOOL=ON \
+      -D MOAB_USE_CGM:BOOL=OFF \
+      -D MOAB_USE_CGNS:BOOL=OFF \
+      -D MOAB_USE_MPI:BOOL=OFF \
+      -D MOAB_USE_HDF:BOOL=ON \
+      -D MOAB_USE_NETCDF:BOOL=ON \
+      -D MOAB_ENABLE_TESTING:BOOL=ON \
+      ../src
+
+make -j{{ ansible_processor_cores }}

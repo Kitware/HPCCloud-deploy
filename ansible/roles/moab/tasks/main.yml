@@ -1,0 +1,41 @@
+- name: Create moab directory
+  sudo: yes
+  file: dest=/opt/websim/moab mode=755 owner=websimdev group=websimdev state=directory
+  tags: moab
+
+- name: Install moab build prerequisities
+  sudo: yes
+  apt: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - cmake
+    - cmake-curses-gui
+    - libnetcdf-dev
+    - libhdf5-dev
+  tags: moab
+
+- name: Get moab from github
+  git: repo=https://github.com/judajake/moab.git version=624c4e95ad1e935a7937a1b10bf252632d4496d1 dest=/opt/websim/moab/src
+  tags: moab
+
+- name: Create moab build directory
+  sudo: yes
+  file: dest=/opt/websim/moab/build mode=755 owner=websimdev group=websimdev state=directory
+  tags: moab
+
+- name: Create moab install directory
+  sudo: yes
+  file: dest=/opt/websim/moab/install mode=755 owner=websimdev group=websimdev state=directory
+  tags: moab
+
+- name: Create script to build moab
+  action: template src=build.sh.j2 dest=/opt/websim/moab/build/build.sh mode=700 owner=websimdev
+  tags: moab
+
+- name: Build moab
+  shell: /opt/websim/moab/build/build.sh chdir=/opt/websim/moab/build
+  tags: moab
+
+- name: Install moab
+  command: make install chdir=/opt/websim/moab/build
+  tags: moab
