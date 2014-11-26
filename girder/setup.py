@@ -284,8 +284,18 @@ class GirderClient(object):
 
          return r.json()
 
+    def set_folder_metadata(self, item_id, meta):
+         url = '%s/folder/%s/metadata' % (self._base_url, item_id)
 
-def setup(url, websimdev_password, cumulus_password):
+         r = requests.put(url, json=meta, headers=self._headers)
+         self._check_response(r)
+
+def setup(config):
+
+    url = config.url
+    websimdev_password = config.websimdev_passwords
+    cumulus_password = config.cumulus_password
+    config_dir = config.config_dir
 
     client = GirderClient(url)
 
@@ -468,16 +478,36 @@ def setup(url, websimdev_password, cumulus_password):
     except requests.exceptions.HTTPError:
         pass
 
+    # Create a collection to hold configuration
+    try:
+        client.create_collection('configuration')
+    except requests.exceptions.HTTPError:
+        pass
+
+    config_collection = client.get_collection_id('configuration')
+
+    try:
+        client.create_folder('cumulus', config_collection)
+    except requests.exceptions.HTTPError:
+        pass
+
+    cumulus_folder = client.get_folder_id(config_collection, 'cumulus')
+
+
+    config = {}
+
     # Create scripts
     script_dir = '/opt/websim/cumulus/scripts'
     for f in os.listdir(script_dir):
-        print '%s: %s' % (f, client.create_script(f, os.path.join(script_dir, f)))
+        id =  client.create_script(f, os.path.join(script_dir, f))
+        f = f.replace('.', '-')
+        config[f] = id
 
     # Create config
-    config_dir = '/tmp/starcluster-config'
     for f in os.listdir(config_dir):
-        name = os.path.basename(f)
-        print '%s: %s' % (name, client.create_starcluster_config(f, os.path.join(config_dir, f)))
+        id = client.create_starcluster_config(f, os.path.join(config_dir, f))
+        f = f.replace('.', '-')
+        config[f] =  id
 
     # Create proxy json file
     item = client.get_item('defaultProxies')
@@ -486,8 +516,6 @@ def setup(url, websimdev_password, cumulus_password):
     else:
         item_id = item[0]['_id']
 
-    print 'proxy item: %s' % item_id
-
     files = client.get_files(item_id)
 
     proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
@@ -495,6 +523,11 @@ def setup(url, websimdev_password, cumulus_password):
         client.create_file(item_id, proxy_json)
     else:
         client.update_file(files[0]['_id'], proxy_json)
+
+    config['defaultProxies'] = item_id
+
+    # Upload config data
+    client.set_folder_metadata(cumulus_folder, config)
 
     # Add sample mesh
     try:
@@ -528,8 +561,9 @@ if __name__ ==  '__main__':
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
     parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
     parser.add_argument('--cumulus_password', help='The password to use for cumulus', required=True)
+    parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
 
     config = parser.parse_args()
 
-    setup(config.url, config.websimdev_password, config.cumulus_password)
+    setup(config)
 
