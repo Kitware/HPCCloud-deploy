@@ -1,5 +1,6 @@
 cd ../build
 cmake -D CMAKE_INSTALL_PREFIX:PATH=/opt/websim/moab/install \
+      -D CMAKE_BUILD_TYPE:STRING=Release \
       -D BUILD_SHARED_LIBS:BOOL=OFF \
       -D MOAB_USE_SZIP:BOOL=ON \
       -D MOAB_USE_CGM:BOOL=OFF \
