@@ -24,7 +24,3 @@
 - name: Build moabreader
   shell: /opt/websim/moabreader/build/build.sh chdir=/opt/websim/moabreader/build
   tags: moabreader
-
-- name: Install moabreader
-  command: make install chdir=/opt/websim/moabreader/build
-  tags: moabreader
