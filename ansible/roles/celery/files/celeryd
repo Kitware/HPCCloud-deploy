@@ -1,3 +1,7 @@
+# For ParaView
+export PYTHONPATH=/opt/websim/paraview/install/lib/paraview-4.2/site-packages:/opt/websim/paraview/install/lib/paraview-4.2/site-packages/vtk
+export LD_LIBRARY_PATH=/opt/websim/paraview/install/lib/paraview-4.2
+
 # Names of nodes to start
 #   most will only start one node:
 CELERYD_NODES="worker"
