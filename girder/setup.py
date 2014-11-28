@@ -330,9 +330,9 @@ def setup(config):
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
 
-
     client.enable_plugin('cumulus')
     client.enable_plugin('pvwproxy')
+    client.enable_plugin('mesh')
 
     # The first time this will fail! Girder requres a restart after enabling
     # plugins.
