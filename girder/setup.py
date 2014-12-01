@@ -68,10 +68,9 @@ class GirderClient(object):
         self._check_response(r)
         return r.json()[0]['_id']
 
-    def enable_plugin(self, name):
+    def enable_plugins(self, names):
         url = '%s/system/plugins' % self._base_url
-        names = '["%s"]' % name
-        r = requests.put(url, params={'plugins': names}, headers=self._headers)
+        r = requests.put(url, params={'plugins': json.dumps(names)}, headers=self._headers)
         self._check_response(r)
 
     def authenticate(self, user, password):
@@ -330,9 +329,7 @@ def setup(config):
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
 
-    client.enable_plugin('cumulus')
-    client.enable_plugin('pvwproxy')
-    client.enable_plugin('mesh')
+    client.enable_plugins(['cumulus', 'pvwproxy', 'mesh'])
 
     # The first time this will fail! Girder requres a restart after enabling
     # plugins.

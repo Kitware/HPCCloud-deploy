@@ -33,28 +33,38 @@
 - name: Install apache
   apt: name=apache2 state=present
   sudo: yes
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
 
 - name: Enable mod_proxy
   apache2_module: state=present name=proxy
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
   sudo: yes
 
 - name: Enable mod_rewrite
   apache2_module: state=present name=rewrite
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
   sudo: yes
 
 - name: Enable mod_proxy_http
   apache2_module: state=present name=proxy_http
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
   sudo: yes
   notify:
     - restart apache2
 
 - name: Enable mod_proxy_wstunnel
   apache2_module: state=present name=proxy_wstunnel
-  tags: apache
+  tags:
+  - apache
+  - cmbweb
   sudo: yes
   notify:
     - restart apache2
@@ -62,11 +72,15 @@
 - name: Create proxy mapping file
   sudo: yes
   file: dest=/opt/websim/proxy.db mode=640 owner=websimdev group=www-data state=touch
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
 
 - name: Disable the default site
   action: command a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default.conf
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
   sudo: yes
   notify:
     - restart apache2
@@ -91,7 +105,9 @@
     dest: /etc/apache2/apache2.conf
     regexp: '^<Directory /var/www/>$'
     replace: '<Directory /opt/websim/cmb-web/dist/>'
-  tags: apache
+  tags:
+    - apache
+    - cmbweb
   sudo: yes
   notify:
     - restart apache2
