@@ -1,0 +1,13 @@
+websimdev_password: 
+cumulus_password: 
+girder_version: master
+cumulus_version: master
+cmbweb_version: master
+aws_access_key_id: 
+aws_secret_access_key: 
+private_key: cjh.pem
+private_key_name: cjh
+keys_directory: /opt/websim/keys
+private_key_path: /home/cjh/work/source/cumulus/cjh.pem
+starcluster_config_glob: /home/cjh/work/source/cumulus/config/*.conf
+script_glob: /home/cjh/work/source/cumulus/scripts/*.sh
