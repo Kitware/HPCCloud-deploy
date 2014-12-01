@@ -1,0 +1,11 @@
+
+- name: Copy launcher config
+  sudo: yes
+  copy: src=../files/launcher.json  dest=/etc/default/pvwlauncher mode=644 owner=root
+  tags: pvwlauncher
+
+- name: Install launcher as service
+  copy: src=../files/pvwlauncher.conf dest=/etc/init/pvwlauncher.conf mode=644 owner=root
+  sudo: yes
+  tags: pvwlauncher
+
