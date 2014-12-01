@@ -1,7 +1,7 @@
 
-- name: Copy launcher config
+- name: Template launcher config
   sudo: yes
-  copy: src=../files/launcher.json  dest=/etc/default/pvwlauncher mode=644 owner=root
+  action: template src=launcher.json.j2 dest=/etc/default/pvwlauncher mode=644 owner=root
   tags: pvwlauncher
 
 - name: Install launcher as service
