@@ -5,11 +5,11 @@
         "port" : 9000,
         "endpoint": "paraview",
         "proxy_file" : "/opt/websim/proxy.txt",
-        "sessionURL" : "wss://${host}/local_proxy?sessionId=${id}",
+        "sessionURL" : "ws://{{ groups['cmbweb'][0] }}/pvwlocal?sessionId=${id}",
         "timeout" : 5,
         "log_dir" : "/tmp",
         "upload_dir" : "/.../data",
-        "fields" : ["girder", "token", "port", "mesh"]
+        "fields" : ["token", "mesh"]
       },
 
       "sessionData" : { "updir": "/Home" },
