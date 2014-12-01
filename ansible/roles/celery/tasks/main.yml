@@ -6,11 +6,14 @@
 - name: Download celeryd script
   sudo: yes
   get_url: url=https://raw.githubusercontent.com/celery/celery/3.1/extra/generic-init.d/celeryd dest=/etc/init.d/celeryd mode=755 owner=root
+  tags: celery
 
 - name: Add celeryd configuration file
   sudo: yes
   copy: src=../files/celeryd dest=/etc/default/celeryd mode=644 owner=root group=root
+  tags: celery
 
 - name: Start celery service
   sudo: yes
   service: name=celeryd state=restarted enabled=yes
+  tags: celery

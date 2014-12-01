@@ -104,7 +104,12 @@
 - name: Create symlink for pvproxy Girder plugin
   file: src=/opt/websim/cumulus/girder/pvwproxy dest=/opt/websim/girder/plugins/pvwproxy owner=websimdev group=websimdev state=link
   sudo: yes
-  tags: testing
+  tags: girder
+
+- name: Create symlink for pvproxy Girder plugin
+  file: src=/opt/websim/cumulus/girder/mesh dest=/opt/websim/girder/plugins/mesh owner=websimdev group=websimdev state=link
+  sudo: yes
+  tags: girder
 
 - name: Start Girder as service
   service: name=girder state=restarted enabled=yes
