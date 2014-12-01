@@ -20,18 +20,19 @@
       "properties" : {
         "build_dir" : "/home/cjh/work/build/ParaView",
         "python_exec" : "/opt/websim/paraview/install/bin/pvpython",
-        "source_dir": "/home/cjh/work/source/ParaView"
-        "girder": "http://{{ groups['girder'][0] }}:8080/api/v1"
+        "source_dir": "/home/cjh/work/source/ParaView",
+        "girder": "http://{{ groups['girder'][0] }}:8080/api/v1",
         "meshViewer" : "/opt/websim/cmb-web/scripts/hydra-ne/pv_mesh_viewer.py"
       },
 
 
       "apps" : {
-        "mesh-viewer":
+        "mesh-viewer": {
           "cmd" : [
             "${python_exec}", "${meshViewer}", "--port", "${port}", "-f", "--token", "${token}", "--url", "${girder}", "--mesh", "${mesh}"
               ],
           "ready_line" : "Starting factory"
         }
+     }
 }
 
