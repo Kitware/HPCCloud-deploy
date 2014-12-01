@@ -336,7 +336,8 @@ def setup(config):
     try:
         client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
     except requests.exceptions.HTTPError:
-        pass
+        # The plugins are not yet enabled (we need a girder restart) so return
+        return
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
