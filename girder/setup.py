@@ -124,7 +124,7 @@ class GirderClient(object):
             'groups': [
                 {   'id': group_id,
                     'name': group,
-                    'level': 1
+                    'level': 2
                 }
             ]
         }
@@ -137,7 +137,7 @@ class GirderClient(object):
         users = []
 
         for i in user_ids:
-            users.append({ 'id': i, 'level': 1})
+            users.append({ 'id': i, 'level': 2 })
 
         access = {'users': users}
 
