@@ -76,6 +76,12 @@
     - apache
     - cmbweb
 
+- name: Create local proxy mapping file
+  sudo: yes
+  file: dest=/opt/websim/proxy.txt mode=640 owner=websimdev group=www-data state=touch
+  tags:
+    - apache
+
 - name: Disable the default site
   action: command a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default.conf
   tags:
