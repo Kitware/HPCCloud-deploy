@@ -4,6 +4,7 @@ import json
 import argparse
 import os
 import tempfile
+import time
 
 class GirderClient(object):
     def __init__(self, base_url):
@@ -265,29 +266,46 @@ class GirderClient(object):
         return file_id
 
     def get_item(self, text):
-         url = '%s/item' % self._base_url
-         params = {
-            'text': text
-         }
+        url = '%s/item' % self._base_url
+        params = {
+           'text': text
+        }
 
-         r = requests.get(url, params=params, headers=self._headers)
-         self._check_response(r)
+        r = requests.get(url, params=params, headers=self._headers)
+        self._check_response(r)
 
-         return r.json()
+        return r.json()
 
     def get_files(self, item_id):
-         url = '%s/item/%s/files' % (self._base_url, item_id)
+        url = '%s/item/%s/files' % (self._base_url, item_id)
 
-         r = requests.get(url, headers=self._headers)
-         self._check_response(r)
+        r = requests.get(url, headers=self._headers)
+        self._check_response(r)
 
-         return r.json()
+        return r.json()
 
     def set_folder_metadata(self, item_id, meta):
-         url = '%s/folder/%s/metadata' % (self._base_url, item_id)
+        url = '%s/folder/%s/metadata' % (self._base_url, item_id)
 
-         r = requests.put(url, json=meta, headers=self._headers)
-         self._check_response(r)
+        r = requests.put(url, json=meta, headers=self._headers)
+        self._check_response(r)
+
+    def restart_girder(self):
+        url = '%s/system/restart' % self._base_url
+        r = requests.put(url, headers=self._headers)
+        self._check_response(r)
+
+        up = False
+        down = False
+
+        while not up:
+            try:
+                r = requests.get(url)
+                if down:
+                    up = True
+            except requests.exceptions.ConnectionError:
+                down = True
+            time.sleep(1)
 
 def setup(config):
 
@@ -331,13 +349,10 @@ def setup(config):
 
     client.enable_plugins(['cumulus', 'pvwproxy', 'mesh'])
 
-    # The first time this will fail! Girder requres a restart after enabling
-    # plugins.
-    try:
-        client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
-    except requests.exceptions.HTTPError:
-        # The plugins are not yet enabled (we need a girder restart) so return
-        return
+    # Now restart the server to enable the plugins
+    client.restart_girder()
+
+    client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
@@ -491,7 +506,6 @@ def setup(config):
 
     cumulus_folder = client.get_folder_id(config_collection, 'cumulus')
 
-
     config = {}
 
     # Create scripts
@@ -553,6 +567,7 @@ def setup(config):
             client.update_file(files[0]['_id'], mesh.name)
 
         print '%s: %s' % ('mesh', mesh_item_id)
+
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
 
