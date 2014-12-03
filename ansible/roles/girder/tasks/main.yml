@@ -163,20 +163,6 @@
     - girder
     - fixtures
 
-- name: Start Girder as service
-  service: name=girder state=restarted
-  sudo: yes
-  tags:
-    - girder
-    - fixtures
-
-# Need to run this task again because of #452 in Girder
-- name: Create Girder fixtures ( again after plugins are enabled )
-  command: python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --cumulus_password {{ cumulus_password }} --config_dir={{ create_tmp_config_dir.stdout }}
-  tags:
-    - girder
-    - fixtures
-
 - name: Clean up temp config directory
   file: path={{ create_tmp_config_dir.stdout }} state=absent
   tags:
