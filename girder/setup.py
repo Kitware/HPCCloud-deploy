@@ -120,12 +120,12 @@ class GirderClient(object):
         return r.json()[0]['_id']
 
 
-    def grant_edit_access(self, collection_id, group_id, group):
+    def grant_access(self, collection_id, group_id, group, level):
         access = {
             'groups': [
                 {   'id': group_id,
                     'name': group,
-                    'level': 1
+                    'level': level
                 }
             ]
         }
@@ -138,7 +138,7 @@ class GirderClient(object):
         users = []
 
         for i in user_ids:
-            users.append({ 'id': i, 'level': 1})
+            users.append({ 'id': i, 'level': 2 })
 
         access = {'users': users}
 
@@ -481,9 +481,9 @@ def setup(config):
     client.grant_folder_user_edit_access(elino_folder, [user_003])
 
     # Set up collection perms
-
-    client.grant_edit_access(hydra_collection, hydra, 'hydra-ne-members')
-    client.grant_edit_access(hydra_collection, mpas, 'mpas-ocean-members')
+    owner = 2
+    client.grant_access(hydra_collection, hydra, 'hydra-ne-members', owner)
+    client.grant_access(hydra_collection, mpas, 'mpas-ocean-members', owner)
 
     # Create the assert store
     try:
