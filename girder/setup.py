@@ -5,6 +5,8 @@ import argparse
 import os
 import tempfile
 import time
+import re
+from StringIO import StringIO
 
 class GirderClient(object):
     def __init__(self, base_url):
@@ -206,9 +208,8 @@ class GirderClient(object):
 
         return item_id
 
-    def update_file(self, file_id, path):
-        with open(path, 'r') as fp:
-            data = fp.read()
+    def update_file(self, file_id, fp):
+        data = fp.read()
         url = '%s/file/%s/contents' % (self._base_url, file_id)
         params = {
            'id': file_id,
@@ -232,9 +233,8 @@ class GirderClient(object):
         self._check_response(r)
 
 
-    def create_file(self, itemId, path, name=None):
-        with open(path, 'r') as fp:
-            data = fp.read()
+    def create_file(self, itemId, fp, name=None):
+        data = fp.read()
         url = '%s/file' % self._base_url
 
         if not name:
@@ -446,14 +446,33 @@ def setup(config):
 
     try:
         client.create_folder('user001', hydra_collection)
+    except requests.exceptions.HTTPError:
+        pass
+
+    try:
         client.create_folder('user002', hydra_collection)
+    except requests.exceptions.HTTPError:
+        pass
+
+    try:
+        client.create_folder('Task', hydra_collection)
+    except requests.exceptions.HTTPError:
+        pass
+
+    try:
         client.create_folder('Core simulation team', hydra_collection)
+    except requests.exceptions.HTTPError:
+        pass
+
+    try:
         client.create_folder('Multi-scale simulation team', hydra_collection)
     except requests.exceptions.HTTPError:
         pass
 
+
     user001_folder = client.get_folder_id(hydra_collection, 'user001')
     user002_folder = client.get_folder_id(hydra_collection, 'user002')
+    task_folder = client.get_folder_id(hydra_collection, 'Task')
     core_folder = client.get_folder_id(hydra_collection, 'Core simulation team')
     multi_folder = client.get_folder_id(hydra_collection, 'Multi-scale simulation team')
 
@@ -531,10 +550,11 @@ def setup(config):
     files = client.get_files(item_id)
 
     proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
-    if len(files) == 0:
-        client.create_file(item_id, proxy_json)
-    else:
-        client.update_file(files[0]['_id'], proxy_json)
+    with open(proxy_json, 'r') as fp:
+        if len(files) == 0:
+            client.create_file(item_id, fp)
+        else:
+            client.update_file(files[0]['_id'], fp)
 
     config['defaultProxies'] = item_id
 
@@ -557,16 +577,47 @@ def setup(config):
 
     files = client.get_files(mesh_item_id)
 
-    with tempfile.NamedTemporaryFile() as mesh:
-        mesh.write(os.urandom(2048))
-        mesh.flush()
-        if len(files) == 0:
-            print 'name: %s' % mesh.name
-            client.create_file(mesh_item_id, mesh.name, name='test.mesh')
-        else:
-            client.update_file(files[0]['_id'], mesh.name)
+    fp = StringIO(os.urandom(2048))
+    if len(files) == 0:
+        client.create_file(mesh_item_id, fp, name='test.mesh')
+    else:
+        client.update_file(files[0]['_id'], fp)
 
-        print '%s: %s' % ('mesh', mesh_item_id)
+    # Upload the task specs
+    spec_item = client.get_item("Specifications")
+
+    if len(spec_item) == 0:
+        spec_item_id = client.create_item(task_folder, "Specifications")
+    else:
+        spec_item_id = spec_item[0]['_id']
+
+    task_files = client.get_files(spec_item_id)
+
+    tasks_dir = '/opt/websim/cumulus/tasks'
+    for f in os.listdir(tasks_dir):
+        path = os.path.join(tasks_dir, f)
+        name = f.replace('.json', '')
+
+        # Template any defaults
+        with open(path, 'r') as fp:
+            spec = fp.read()
+
+        # For now use regex replace rather than jinja2 because we can't do
+        # partial rendering with objects
+
+        def template(spec, key, value):
+            return re.sub(r'\{\{\s*%s\s*\}\}' % key, value, spec)
+
+        spec = template(spec, 'defaults.config.id', config['starcluster-default-conf'])
+        spec = template(spec, 'defaults.pvw.script.id', config['pvw-sh'])
+
+        fp = StringIO(spec)
+
+        try:
+            existing_file  = next(x for x in task_files if x['name'] == name)
+            client.update_file(existing_file['_id'], fp)
+        except StopIteration:
+            client.create_file(spec_item_id, fp, name=name)
 
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
