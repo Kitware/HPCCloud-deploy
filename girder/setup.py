@@ -611,6 +611,7 @@ def setup(config):
         spec = template(spec, 'defaults.config.id', config['starcluster-default-conf'])
         spec = template(spec, 'defaults.pvw.script.id', config['pvw-sh'])
         spec = template(spec, 'defaults.pvserver.script.id', config['pvserver-sh'])
+        spec = template(spec, 'defaults.pvw.proxyItem', config['defaultProxies'])
 
         fp = StringIO(spec)
 
