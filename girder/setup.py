@@ -7,6 +7,7 @@ import tempfile
 import time
 import re
 from StringIO import StringIO
+from cumulus.task.spec import validate
 
 class GirderClient(object):
     def __init__(self, base_url):
@@ -596,11 +597,15 @@ def setup(config):
     tasks_dir = '/opt/websim/cumulus/tasks'
     for f in os.listdir(tasks_dir):
         path = os.path.join(tasks_dir, f)
+
         name = f.replace('.json', '')
 
         # Template any defaults
         with open(path, 'r') as fp:
             spec = fp.read()
+
+        # First validate against our schema
+        validate(json.loads(spec))
 
         # For now use regex replace rather than jinja2 because we can't do
         # partial rendering with objects

@@ -163,7 +163,7 @@
     - fixtures
 
 - name: Create Girder fixtures
-  command: python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --cumulus_password {{ cumulus_password }} --config_dir={{ create_tmp_config_dir.stdout }}
+  shell: PYTHONPATH=/opt/websim/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --cumulus_password {{ cumulus_password }} --config_dir={{ create_tmp_config_dir.stdout }}
   tags:
     - girder
     - fixtures
