@@ -456,7 +456,7 @@ def setup(config):
         pass
 
     try:
-        client.create_folder('Task', hydra_collection)
+        client.create_folder('tasks', hydra_collection)
     except requests.exceptions.HTTPError:
         pass
 
@@ -473,7 +473,7 @@ def setup(config):
 
     user001_folder = client.get_folder_id(hydra_collection, 'user001')
     user002_folder = client.get_folder_id(hydra_collection, 'user002')
-    task_folder = client.get_folder_id(hydra_collection, 'Task')
+    tasks_folder = client.get_folder_id(hydra_collection, 'tasks')
     core_folder = client.get_folder_id(hydra_collection, 'Core simulation team')
     multi_folder = client.get_folder_id(hydra_collection, 'Multi-scale simulation team')
 
@@ -588,7 +588,7 @@ def setup(config):
     spec_item = client.get_item("Specifications")
 
     if len(spec_item) == 0:
-        spec_item_id = client.create_item(task_folder, "Specifications")
+        spec_item_id = client.create_item(tasks_folder, "Specifications")
     else:
         spec_item_id = spec_item[0]['_id']
 
