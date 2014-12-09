@@ -4,7 +4,7 @@ export LD_LIBRARY_PATH=/opt/websim/paraview/install/lib/paraview-4.2
 
 # Names of nodes to start
 #   most will only start one node:
-CELERYD_NODES="worker"
+CELERYD_NODES="monitor command"
 
 # Absolute or relative path to the 'celery' command:
 CELERY_BIN="/usr/local/bin/celery"
@@ -19,7 +19,7 @@ CELERY_APP="cumulus.starcluster.tasks"
 CELERYD_CHDIR="/opt/websim/cumulus"
 
 # Extra command-line arguments to the worker
-CELERYD_OPTS="--concurrency=8"
+CELERYD_OPTS="-Q:monitor monitor --config:monitor=cumulus.starcluster.tasks.monitorconfig --config:command=cumulus.starcluster.tasks.commandconfig --concurrency:monitor=2 --concurrency:command=6"
 
 # %N will be replaced with the first part of the nodename.
 CELERYD_LOG_FILE="/var/log/celery/%N.log"
