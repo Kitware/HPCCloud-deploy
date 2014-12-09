@@ -137,11 +137,11 @@ class GirderClient(object):
         r = requests.put(url, params={'access': json.dumps(access)}, headers=self._headers)
         self._check_response(r)
 
-    def grant_folder_user_edit_access(self, folder_id, user_ids):
+    def grant_folder_user_access(self, folder_id, user_ids, level=2):
         users = []
 
         for i in user_ids:
-            users.append({ 'id': i, 'level': 2 })
+            users.append({ 'id': i, 'level': level })
 
         access = {'users': users}
 
@@ -477,10 +477,11 @@ def setup(config):
     core_folder = client.get_folder_id(hydra_collection, 'Core simulation team')
     multi_folder = client.get_folder_id(hydra_collection, 'Multi-scale simulation team')
 
-    client.grant_folder_user_edit_access(user001_folder, [user_001])
-    client.grant_folder_user_edit_access(user002_folder, [user_002])
-    client.grant_folder_user_edit_access(core_folder, [user_001, user_002])
-    client.grant_folder_user_edit_access(multi_folder, [user_001])
+    client.grant_folder_user_access(user001_folder, [user_001])
+    client.grant_folder_user_access(user002_folder, [user_002])
+    client.grant_folder_user_access(core_folder, [user_001, user_002])
+    client.grant_folder_user_access(tasks_folder, [user_001, user_002], level=0)
+    client.grant_folder_user_access(multi_folder, [user_001])
 
     try:
         client.create_folder('user001', mpas_collection)
@@ -495,10 +496,10 @@ def setup(config):
     ocenanic_folder = client.get_folder_id(mpas_collection, 'Oceanic climate')
     elino_folder = client.get_folder_id(mpas_collection, 'El Nino')
 
-    client.grant_folder_user_edit_access(user001_folder, [user_001])
-    client.grant_folder_user_edit_access(user003_folder, [user_003])
-    client.grant_folder_user_edit_access(ocenanic_folder, [user_001, user_003])
-    client.grant_folder_user_edit_access(elino_folder, [user_003])
+    client.grant_folder_user_access(user001_folder, [user_001])
+    client.grant_folder_user_access(user003_folder, [user_003])
+    client.grant_folder_user_access(ocenanic_folder, [user_001, user_003])
+    client.grant_folder_user_access(elino_folder, [user_003])
 
     # Set up collection perms
     owner = 2
