@@ -18,6 +18,10 @@
   sudo: yes
   tags: cumulus
 
+- name: Tell git to ignore permission changes
+  command: git config core.filemode false chdir=/opt/websim/cumulus
+  tags: cumulus
+
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
   tags: cumulus

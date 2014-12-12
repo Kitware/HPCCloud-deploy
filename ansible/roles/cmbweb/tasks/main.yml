@@ -18,6 +18,10 @@
   sudo: yes
   tags: cmbweb
 
+- name: Tell git to ignore permission changes
+  command: git config core.filemode false chdir=/opt/websim/cmb-web
+  tags: cmbweb
+
 - name: Run npm install
   npm: path=/opt/websim/cmb-web
   tags: cmbweb
