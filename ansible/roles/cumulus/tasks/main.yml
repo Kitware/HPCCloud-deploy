@@ -24,7 +24,9 @@
 
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
-  tags: cumulus
+  tags:
+    - cumulus,
+    - update_ips
   sudo: yes
 
 - name: Create keys directory
