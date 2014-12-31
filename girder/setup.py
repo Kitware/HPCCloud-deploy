@@ -554,7 +554,7 @@ def setup(config):
     proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
     with open(proxy_json, 'r') as fp:
         if len(files) == 0:
-            client.create_file(item_id, fp)
+            client.create_file(item_id, fp, 'defaultProxies.json')
         else:
             client.update_file(files[0]['_id'], fp)
 
@@ -581,7 +581,7 @@ def setup(config):
 
     fp = StringIO(os.urandom(2048))
     if len(files) == 0:
-        client.create_file(mesh_item_id, fp, name='test.mesh')
+        client.create_file(mesh_item_id, fp, 'test.mesh')
     else:
         client.update_file(files[0]['_id'], fp)
 
@@ -625,7 +625,7 @@ def setup(config):
             existing_file  = next(x for x in task_files if x['name'] == name)
             client.update_file(existing_file['_id'], fp)
         except StopIteration:
-            client.create_file(spec_item_id, fp, name=name)
+            client.create_file(spec_item_id, fp, name)
 
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
