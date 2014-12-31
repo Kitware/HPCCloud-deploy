@@ -1,8 +1,16 @@
 import boto.ec2
 import sys
+import argparse
 
-region = sys.argv[1]
-conn = boto.ec2.connect_to_region(region)
+parser = argparse.ArgumentParser()
+parser.add_argument('aws_access_key_id')
+parser.add_argument('aws_secret_access_key')
+parser.add_argument('region')
+config = parser.parse_args()
+
+conn = boto.ec2.connect_to_region(config.region,
+                                  aws_access_key_id=config.aws_access_key_id,
+                                  aws_secret_access_key=config.aws_secret_access_key)
 images = conn.get_all_images(owners=['self'])
 
 values = []
