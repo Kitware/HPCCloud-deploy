@@ -22,14 +22,8 @@
   command: git config core.filemode false chdir=/opt/websim/cumulus
   tags: cumulus
 
-
-- name: Copy AMI script
-  sudo: yes
-  copy: src=amis.py dest=/tmp/amis.py
-  tags: cumulus
-
 - name: Get AMIs from EC2
-  shell: AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }} AWS_ACCESS_KEY_ID={{ aws_access_key_id }}  python /tmp/amis.py 'us-west-2'
+  local_action: command python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
   register: get_amis
   tags: cumulus
 
