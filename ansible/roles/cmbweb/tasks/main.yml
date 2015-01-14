@@ -1,5 +1,5 @@
 - name: Get cmb-web from github
-  git: repo=https://github.com/cjh1/cmb-web.git version={{ cmbweb_version }} dest=/opt/websim/cmb-web
+  git: repo=https://github.com/jourdain/cmb-web.git version={{ cmbweb_version }} dest=/opt/websim/cmb-web
   sudo: yes
   tags: cmbweb
 
@@ -104,7 +104,7 @@
     - restart apache2
 
 - name: Enable cmd-web site
-  action: command a2ensite cmb-web  creates=/etc/apache2/sites-enabled/youcontrol.conf
+  action: command a2ensite cmb-web  creates=/etc/apache2/sites-enabled/cmb-web.conf
   tags: apache
   sudo: yes
   notify:
