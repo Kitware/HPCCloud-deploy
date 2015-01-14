@@ -90,9 +90,13 @@ class GirderClient(object):
         r = requests.put(url, params, headers=self._headers)
         self._check_response(r)
 
-    def create_collection(self, name):
+    def create_collection(self, name, description=None):
         url = '%s/collection' % self._base_url
         params = {'name': name}
+
+        if description:
+            params['description'] = description
+
         r = requests.post(url, params, headers=self._headers)
         self._check_response(r)
 
@@ -433,12 +437,12 @@ def setup(config):
     #             - El Nino (can-edit: user003)
 
     try:
-        client.create_collection('hydra-ne')
+        client.create_collection('hydra-ne', description='Nuclear Energy simulation')
     except requests.exceptions.HTTPError:
         pass
 
     try:
-        client.create_collection('mpas-ocean')
+        client.create_collection('mpas-ocean', description='Climate Simulation')
     except requests.exceptions.HTTPError:
         pass
 
