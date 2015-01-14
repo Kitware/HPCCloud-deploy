@@ -508,7 +508,7 @@ def setup(config):
     # Set up collection perms
     owner = 2
     client.grant_access(hydra_collection, hydra, 'hydra-ne-members', owner)
-    client.grant_access(hydra_collection, mpas, 'mpas-ocean-members', owner)
+    client.grant_access(mpas_collection, mpas, 'mpas-ocean-members', owner)
 
     # Create the assert store
     try:
