@@ -182,6 +182,17 @@ class GirderClient(object):
 
         return script_id
 
+    def update_script_access(self, script_id, user_permissions, group_permissions):
+        permissions = {
+            'users': user_permissions,
+            'groups': group_permissions
+        }
+
+        url = '%s/scripts/%s/access' % (self._base_url, script_id)
+
+        r = requests.put(url, json=permissions, headers=self._headers)
+        self._check_response(r)
+
     def create_starcluster_config(self, name, path):
         url = '%s/starcluster-configs' % self._base_url
         body = {
@@ -535,8 +546,23 @@ def setup(config):
 
     # Create scripts
     script_dir = '/opt/websim/cumulus/scripts'
+    user_permissions = [{
+        'id': cumulus,
+        'level': 2
+    }]
+    group_permissions = [{
+            'id': mpas,
+            'level': 0
+
+        },
+        {
+            'id': hydra,
+            'level': 0
+        }
+    ]
     for f in os.listdir(script_dir):
         id =  client.create_script(f, os.path.join(script_dir, f))
+        client.update_script_access(id, user_permissions, group_permissions)
         f = f.replace('.', '-')
         config[f] = id
 
