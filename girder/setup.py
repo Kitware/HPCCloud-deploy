@@ -329,6 +329,7 @@ def setup(config):
     websimdev_password = config.websimdev_password
     cumulus_password = config.cumulus_password
     config_dir = config.config_dir
+    script_dir = config.scripts_dir
 
     client = GirderClient(url)
 
@@ -338,11 +339,11 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    client.authenticate('websimdev', cumulus_password)
+    client.authenticate('websimdev', websimdev_password)
 
     # Create cumulus user
     try:
-        client.create_user('cumulus', websimdev_password, 'cumulus@kitware.com', 'cumulus',
+        client.create_user('cumulus', cumulus_password, 'cumulus@kitware.com', 'cumulus',
                         'cumulus')
     except requests.exceptions.HTTPError:
         pass
@@ -363,12 +364,22 @@ def setup(config):
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
 
-    client.enable_plugins(['cumulus', 'pvwproxy', 'mesh', 'task'])
+    plugins = ['cumulus', 'task']
+
+    if config.test:
+        plugins.append('cumulus_mock_plugin')
+        plugins.append('task_mock_plugin')
+    else:
+        plugins.append('pvwproxy')
+        plugins.append('mesh')
+
+    client.enable_plugins(plugins)
 
     # Now restart the server to enable the plugins
     client.restart_girder()
 
-    client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
+    if not config.test:
+        client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
@@ -523,7 +534,7 @@ def setup(config):
 
     # Create the assert store
     try:
-        client.create_assetstore('data', '/opt/websim/assetstore')
+        client.create_assetstore('data', config.assetstore_dir)
     except requests.exceptions.HTTPError:
         pass
 
@@ -542,10 +553,9 @@ def setup(config):
 
     cumulus_folder = client.get_folder_id(config_collection, 'cumulus')
 
-    config = {}
+    meta_config = {}
 
     # Create scripts
-    script_dir = '/opt/websim/cumulus/scripts'
     user_permissions = [{
         'id': cumulus,
         'level': 2
@@ -564,34 +574,35 @@ def setup(config):
         id =  client.create_script(f, os.path.join(script_dir, f))
         client.update_script_access(id, user_permissions, group_permissions)
         f = f.replace('.', '-')
-        config[f] = id
+        meta_config[f] = id
 
     # Create config
     for f in os.listdir(config_dir):
         id = client.create_starcluster_config(f, os.path.join(config_dir, f))
         f = f.replace('.', '-')
-        config[f] =  id
+        meta_config[f] =  id
 
-    # Create proxy json file
-    item = client.get_item('defaultProxies')
-    if len(item) == 0:
-        item_id = client.create_item(core_folder, 'defaultProxies')
-    else:
-        item_id = item[0]['_id']
-
-    files = client.get_files(item_id)
-
-    proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
-    with open(proxy_json, 'r') as fp:
-        if len(files) == 0:
-            client.create_file(item_id, fp, 'defaultProxies.json')
+    if not config.test:
+        # Create proxy json file
+        item = client.get_item('defaultProxies')
+        if len(item) == 0:
+            item_id = client.create_item(core_folder, 'defaultProxies')
         else:
-            client.update_file(files[0]['_id'], fp)
+            item_id = item[0]['_id']
 
-    config['defaultProxies'] = item_id
+        files = client.get_files(item_id)
+
+        proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
+        with open(proxy_json, 'r') as fp:
+            if len(files) == 0:
+                client.create_file(item_id, fp, 'defaultProxies.json')
+            else:
+                client.update_file(files[0]['_id'], fp)
+
+        meta_config['defaultProxies'] = item_id
 
     # Upload config data
-    client.set_folder_metadata(cumulus_folder, config)
+    client.set_folder_metadata(cumulus_folder, meta_config)
 
     # Add sample mesh
     try:
@@ -625,7 +636,7 @@ def setup(config):
 
     task_files = client.get_files(spec_item_id)
 
-    tasks_dir = '/opt/websim/cumulus/tasks'
+    tasks_dir = config.tasks_dir
     for f in os.listdir(tasks_dir):
         path = os.path.join(tasks_dir, f)
 
@@ -644,11 +655,12 @@ def setup(config):
         def template(spec, key, value):
             return re.sub(r'\{\{\s*%s\s*\}\}' % key, value, spec)
 
-        spec = template(spec, 'defaults.config.id', config['starcluster-default-conf'])
-        spec = template(spec, 'defaults.pvw.script.id', config['pvw-sh'])
-        spec = template(spec, 'defaults.hydra.script.id', config['hydra-sh'])
-        spec = template(spec, 'defaults.pvserver.script.id', config['pvserver-sh'])
-        spec = template(spec, 'defaults.pvw.proxyItem', config['defaultProxies'])
+        spec = template(spec, 'defaults.config.id', meta_config['starcluster-default-conf'])
+        spec = template(spec, 'defaults.pvw.script.id', meta_config['pvw-sh'])
+        spec = template(spec, 'defaults.hydra.script.id', meta_config['hydra-sh'])
+        spec = template(spec, 'defaults.pvserver.script.id', meta_config['pvserver-sh'])
+        if not config.test:
+            spec = template(spec, 'defaults.pvw.proxyItem', meta_config['defaultProxies'])
 
         fp = StringIO(spec)
 
@@ -665,6 +677,10 @@ if __name__ ==  '__main__':
     parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
     parser.add_argument('--cumulus_password', help='The password to use for cumulus', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
+    parser.add_argument('--test', help='Setup test environment',  action='store_true')
+    parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default='/opt/websim/cumulus/scripts')
+    parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default='/opt/websim/cumulus/tasks')
+    parser.add_argument('--assetstore_dir', help='Directory to use for asset store', default='/opt/websim/assetstore')
 
     config = parser.parse_args()
 
