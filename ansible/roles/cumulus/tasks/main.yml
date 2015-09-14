@@ -1,5 +1,5 @@
 - name: Get cumulus from github
-  git: repo=https://github.com/cjh1/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus
+  git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus force=yes
   sudo: yes
   tags: cumulus
 
