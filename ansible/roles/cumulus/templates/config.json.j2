@@ -7,6 +7,10 @@
     "moabReader": {
         "pluginPath": "/opt/websim/moabreader/build/libvtkCmbMoabReaderPlugin.so"
     },
+        "ssh": {
+        "keyStore": "{{ keys_directory }}"
+    },
+
     "amis": {
         {{ get_amis.stdout }}
     }

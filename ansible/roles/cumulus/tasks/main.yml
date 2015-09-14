@@ -1,5 +1,5 @@
 - name: Get cumulus from github
-  git: repo=https://github.com/cjh1/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus
+  git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus force=yes
   sudo: yes
   tags: cumulus
 
@@ -36,6 +36,11 @@
     - cumulus
     - update_ips
 
+- name: Create keys directory
+  file: dest={{ keys_directory }} mode=700 owner=celery group=celery state=directory
+  sudo: yes
+  tags: cumulus
+
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
   tags:
@@ -43,12 +48,3 @@
     - update_ips
   sudo: yes
 
-- name: Create keys directory
-  file: dest={{ keys_directory }} mode=700 owner=celery group=celery state=directory
-  sudo: yes
-  tags: cumulus
-
-- name: Copy over private key
-  sudo: yes
-  copy: src={{ private_key_path }} dest={{ keys_directory }}/{{ private_key }} mode=400 owner=celery group=celery
-  tags: cumulus

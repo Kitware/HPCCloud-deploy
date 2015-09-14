@@ -50,7 +50,7 @@
   tags: girder
 
 - name: Get Girder from github
-  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder
+  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder force=yes
   sudo: yes
   tags: girder
 
@@ -135,8 +135,8 @@
     - girder
     - fixtures
 
-- name: Template starcluster configuration files
-  action: template src={{item}} dest={{create_tmp_config_dir.stdout}}/{{item|basename}} mode=600 owner=websimdev group=websimdev
+- name: Copy starcluster configuration files
+  copy: template src={{item}} dest={{create_tmp_config_dir.stdout}}/{{item|basename}} mode=600 owner=websimdev group=websimdev
   sudo: yes
   tags:
     - girder
