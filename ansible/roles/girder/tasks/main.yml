@@ -135,8 +135,8 @@
     - girder
     - fixtures
 
-- name: Template starcluster configuration files
-  action: template src={{item}} dest={{create_tmp_config_dir.stdout}}/{{item|basename}} mode=600 owner=websimdev group=websimdev
+- name: Copy starcluster configuration files
+  copy: template src={{item}} dest={{create_tmp_config_dir.stdout}}/{{item|basename}} mode=600 owner=websimdev group=websimdev
   sudo: yes
   tags:
     - girder
