@@ -11,7 +11,7 @@ CELERY_BIN="/usr/local/bin/celery"
 
 # App instance to use
 # comment out this line if you don't use an app
-CELERY_APP="cumulus.starcluster.tasks"
+CELERY_APP="cumulus"
 # or fully qualified:
 #CELERY_APP="proj.tasks:app"
 
@@ -19,7 +19,7 @@ CELERY_APP="cumulus.starcluster.tasks"
 CELERYD_CHDIR="/opt/websim/cumulus"
 
 # Extra command-line arguments to the worker
-CELERYD_OPTS="-Q:monitor monitor --config:monitor=cumulus.starcluster.tasks.monitorconfig --config:command=cumulus.starcluster.tasks.commandconfig --concurrency:monitor=2 --concurrency:command=6"
+CELERYD_OPTS="-Q:monitor monitor --config:monitor=cumulus.celery.monitorconfig --config:command=cumulus.celery.commandconfig --concurrency:monitor=2 --concurrency:command=6"
 
 # %N will be replaced with the first part of the nodename.
 CELERYD_LOG_FILE="/var/log/celery/%N.log"
