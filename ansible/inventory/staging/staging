@@ -4,7 +4,7 @@
 tag_env_staging
 [girder:children]
 tag_env_staging
-[cmbweb:children]
+[hpccloud:children]
 tag_env_staging
 [paraview:children]
 tag_env_staging

@@ -1,65 +1,80 @@
-- name: Get cmb-web from github
-  git: repo=https://github.com/jourdain/cmb-web.git version={{ cmbweb_version }} dest=/opt/websim/cmb-web
+- name: Get hpccloud from github
+  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/websim/hpccloud force=yes
   sudo: yes
-  tags: cmbweb
+  tags: hpccloud
+
+- name: Make sure we have the right version of npm
+  npm: name=npm version=2.1.5 global=yes
+  tags: hpccloud
+  sudo: yes
+
+- name: Install n to upgrade node
+  npm: name=n global=yes
+  tags: hpccloud
+  sudo: yes
+
+- name: Install right version of node
+  command: n 0.12.0
+  tags: hpccloud
+  sudo: yes
 
 - name: Install gulp
   npm:  name=gulp global=yes
-  tags: cmbweb
+  tags: hpccloud
   sudo: yes
 
 - name: Install bower
   npm:  name=bower global=yes
-  tags: cmbweb
+  tags: hpccloud
   sudo: yes
 
-- name: Change owner of cmb-web directory
-  file: dest=/opt/websim/cmb-web mode=755 owner=websimdev group=websimdev state=directory recurse=true
+- name: Change owner of hpccloud directory
+  file: dest=/opt/websim/hpccloud mode=755 owner=websimdev group=websimdev state=directory recurse=true
   sudo: yes
-  tags: cmbweb
+  tags: hpccloud
 
 - name: Tell git to ignore permission changes
-  command: git config core.filemode false chdir=/opt/websim/cmb-web
-  tags: cmbweb
+  command: git config core.filemode false chdir=/opt/websim/hpccloud
+  tags: hpccloud
 
 - name: Run npm install
-  npm: path=/opt/websim/cmb-web
-  tags: cmbweb
+  npm: path=/opt/websim/hpccloud
+  tags: hpccloud
 
 - name: Run bower
-  command: bower install chdir=/opt/websim/cmb-web
-  tags: cmbweb
+  command: bower install chdir=/opt/websim/hpccloud
+  tags: hpccloud
 
 - name: Run gulp
-  command: gulp chdir=/opt/websim/cmb-web
-  tags: cmbweb
+  command: gulp chdir=/opt/websim/hpccloud
+  tags: hpccloud
 
 - name: Install apache
   apt: name=apache2 state=present
   sudo: yes
   tags:
     - apache
-    - cmbweb
+    - hpccloud
 
 - name: Enable mod_proxy
   apache2_module: state=present name=proxy
   tags:
     - apache
-    - cmbweb
+    - hpccloud
   sudo: yes
 
 - name: Enable mod_rewrite
   apache2_module: state=present name=rewrite
   tags:
     - apache
-    - cmbweb
+    - hpccloud
   sudo: yes
 
 - name: Enable mod_proxy_http
   apache2_module: state=present name=proxy_http
   tags:
     - apache
-    - cmbweb
+    - hpccloud
   sudo: yes
   notify:
     - restart apache2
@@ -68,7 +83,7 @@
   apache2_module: state=present name=proxy_wstunnel
   tags:
   - apache
-  - cmbweb
+  - hpccloud
   sudo: yes
   notify:
     - restart apache2
@@ -78,7 +93,7 @@
   file: dest=/opt/websim/proxy.db mode=640 owner=websimdev group=www-data state=touch
   tags:
     - apache
-    - cmbweb
+    - hpccloud
 
 - name: Create local proxy mapping file
   sudo: yes
@@ -90,21 +105,21 @@
   action: command a2dissite 000-default removes=/etc/apache2/sites-enabled/000-default.conf
   tags:
     - apache
-    - cmbweb
+    - hpccloud
   sudo: yes
   notify:
     - restart apache2
 
 
 - name: Copy over config
-  copy: src=../files/cmb-web.conf dest=/etc/apache2/sites-available/cmb-web.conf mode=644 owner=root
+  copy: src=../files/hpccloud.conf dest=/etc/apache2/sites-available/hpccloud.conf mode=644 owner=root
   tags: apache
   sudo: yes
   notify:
     - restart apache2
 
 - name: Enable cmd-web site
-  action: command a2ensite cmb-web  creates=/etc/apache2/sites-enabled/cmb-web.conf
+  action: command a2ensite hpccloud  creates=/etc/apache2/sites-enabled/hpccloud.conf
   tags: apache
   sudo: yes
   notify:
@@ -114,10 +129,10 @@
   replace:
     dest: /etc/apache2/apache2.conf
     regexp: '^<Directory /var/www/>$'
-    replace: '<Directory /opt/websim/cmb-web/dist/>'
+    replace: '<Directory /opt/websim/hpccloud/dist/>'
   tags:
     - apache
-    - cmbweb
+    - hpccloud
   sudo: yes
   notify:
     - restart apache2

@@ -106,11 +106,6 @@
   sudo: yes
   tags: girder
 
-- name: Create symlink for mesh Girder plugin
-  file: src=/opt/websim/cumulus/girder/mesh dest=/opt/websim/girder/plugins/mesh owner=websimdev group=websimdev state=link
-  sudo: yes
-  tags: girder
-
 - name: Create symlink for task Girder plugin
   file: src=/opt/websim/cumulus/girder/task dest=/opt/websim/girder/plugins/task owner=websimdev group=websimdev state=link
   sudo: yes
