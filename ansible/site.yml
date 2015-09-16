@@ -48,14 +48,14 @@
   roles:
     - celery
 
-- name: Set up cmb-web
-  hosts: cmbweb
+- name: Set up hpccloud
+  hosts: hpccloud
   user: websimdev
   roles:
-    - cmbweb
+    - hpccloud
 
 - name: Set up ParaViewWeb launcher
-  hosts: cmbweb
+  hosts: hpccloud
   user: websimdev
   roles:
     - pvwlauncher

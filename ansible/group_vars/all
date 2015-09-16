@@ -2,7 +2,7 @@ websimdev_password:
 cumulus_password: 
 girder_version: master
 cumulus_version: master
-cmbweb_version: master
+hpccloud_version: master
 aws_access_key_id: 
 aws_secret_access_key: 
 private_key: cjh.pem

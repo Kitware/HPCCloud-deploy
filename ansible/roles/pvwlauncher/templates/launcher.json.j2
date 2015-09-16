@@ -5,7 +5,7 @@
         "port" : 9000,
         "endpoint": "paraview",
         "proxy_file" : "/opt/websim/proxy.txt",
-        "sessionURL" : "ws://{{ groups['cmbweb'][0] }}/pvwlocal?sessionId=${id}",
+        "sessionURL" : "ws://{{ groups['hpccloud'][0] }}/pvwlocal?sessionId=${id}",
         "timeout" : 5,
         "log_dir" : "/tmp",
         "upload_dir" : "/.../data",
@@ -19,8 +19,8 @@
       "properties" : {
         "python_exec" : "/opt/websim/paraview/install/bin/pvpython",
         "girder": "http://{{ groups['girder'][0] }}:8080/api/v1",
-        "meshViewer" : "/opt/websim/cmb-web/scripts/hydra-ne/pv_mesh_viewer2.py",
-	"resultViewer" : "/opt/websim/cmb-web/scripts/hydra-ne/pv_result_viewer.py"
+        "meshViewer" : "/opt/websim/hpccloud/scripts/hydra-ne/pv_mesh_viewer2.py",
+	"resultViewer" : "/opt/websim/hpccloud/scripts/hydra-ne/pv_result_viewer.py"
       },
 
 
