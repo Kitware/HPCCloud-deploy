@@ -1,7 +1,22 @@
 - name: Get hpccloud from github
-  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/websim/hpccloud
+  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/websim/hpccloud force=yes
   sudo: yes
   tags: hpccloud
+
+- name: Make sure we have the right version of npm
+  npm: name=npm version=2.1.5 global=yes
+  tags: hpccloud
+  sudo: yes
+
+- name: Install n to upgrade node
+  npm: name=n global=yes
+  tags: hpccloud
+  sudo: yes
+
+- name: Install right version of node
+  command: n 0.12.0
+  tags: hpccloud
+  sudo: yes
 
 - name: Install gulp
   npm:  name=gulp global=yes
