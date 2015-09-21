@@ -423,11 +423,11 @@ def setup(config):
     user_003 = client.get_user_id('user003')
 
     try:
-        client.create_group('hydra-ne-members')
+        client.create_group('hydra-th-members')
     except requests.exceptions.HTTPError:
         pass
 
-    hydra = client.get_group_id('hydra-ne-members')
+    hydra = client.get_group_id('hydra-th-members')
 
     client.add_user_to_group(user_001, hydra)
     client.add_user_to_group(user_002, hydra)
@@ -435,7 +435,7 @@ def setup(config):
     # Here is an example hierarchy that can be used:
     #
     #   (Collections)
-    #     - hydra-ne (can-edit: hydra-ne-members)
+    #     - hydra-th (can-edit: hydra-th-members)
     #         + (Folders)
     #             - user001 (can-edit: user001)
     #             - user002 (can-edit: user002)
@@ -443,11 +443,11 @@ def setup(config):
     #             - Multi-scale simulation team (can-edit: user001)
 
     try:
-        client.create_collection('hydra-ne', description='Nuclear Energy simulation')
+        client.create_collection('hydra-th', description='Nuclear Energy simulation')
     except requests.exceptions.HTTPError:
         pass
 
-    hydra_collection = client.get_collection_id('hydra-ne')
+    hydra_collection = client.get_collection_id('hydra-th')
 
     try:
         client.create_folder('user001', hydra_collection)
@@ -491,7 +491,7 @@ def setup(config):
 
     # Set up collection perms
     owner = 2
-    client.grant_access(hydra_collection, hydra, 'hydra-ne-members', owner)
+    client.grant_access(hydra_collection, hydra, 'hydra-th-members', owner)
 
     # Create the assert store
     try:
