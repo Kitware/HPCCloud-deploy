@@ -116,11 +116,12 @@ class GirderClient(object):
         r = requests.post(url, params, headers=self._headers)
         self._check_response(r)
 
-    def get_folder_id(self, parent_id, name):
+    def get_folder_id(self, name, parent_id, parent_type='collection'):
         url = '%s/folder' % self._base_url
         params = {
-            'text': name,
-            'parentId': parent_id
+            'name': name,
+            'parentId': parent_id,
+            'parentType': parent_type
             }
         r = requests.get(url, params=params, headers=self._headers)
         self._check_response(r)
@@ -474,11 +475,11 @@ def setup(config):
         pass
 
 
-    user001_folder = client.get_folder_id(hydra_collection, 'user001')
-    user002_folder = client.get_folder_id(hydra_collection, 'user002')
-    tasks_folder = client.get_folder_id(hydra_collection, 'tasks')
-    core_folder = client.get_folder_id(hydra_collection, 'Core simulation team')
-    multi_folder = client.get_folder_id(hydra_collection, 'Multi-scale simulation team')
+    user001_folder = client.get_folder_id('user001', hydra_collection)
+    user002_folder = client.get_folder_id('user002', hydra_collection)
+    tasks_folder = client.get_folder_id('tasks', hydra_collection)
+    core_folder = client.get_folder_id('Core simulation team', hydra_collection)
+    multi_folder = client.get_folder_id('Multi-scale simulation team', hydra_collection)
 
     client.grant_folder_user_access(user001_folder, [user_001])
     client.grant_folder_user_access(user002_folder, [user_002])
@@ -498,20 +499,7 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    # Create a collection to hold configuration
-    try:
-        client.create_collection('configuration')
-    except requests.exceptions.HTTPError:
-        pass
-
-    config_collection = client.get_collection_id('configuration')
-
-    try:
-        client.create_folder('cumulus', config_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    cumulus_folder = client.get_folder_id(config_collection, 'cumulus')
+    cumulus_folder = client.get_folder_id('Private', cumulus, 'user')
 
     meta_config = {}
 
@@ -565,7 +553,7 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    foobar_id = client.get_folder_id(user001_folder, 'foobar')
+    foobar_id = client.get_folder_id('foobar', user001_folder, 'folder')
 
     mesh_item = client.get_item('mesh')
     if len(mesh_item) == 0:
