@@ -116,11 +116,12 @@ class GirderClient(object):
         r = requests.post(url, params, headers=self._headers)
         self._check_response(r)
 
-    def get_folder_id(self, parent_id, name):
+    def get_folder_id(self, name, parent_id, parent_type='collection'):
         url = '%s/folder' % self._base_url
         params = {
-            'text': name,
-            'parentId': parent_id
+            'name': name,
+            'parentId': parent_id,
+            'parentType': parent_type
             }
         r = requests.get(url, params=params, headers=self._headers)
         self._check_response(r)
@@ -421,55 +422,32 @@ def setup(config):
     user_002 = client.get_user_id('user002')
     user_003 = client.get_user_id('user003')
 
-    #   (Groups)
-    #     - hydra-ne-members: user001, user002
-    #     - mpas-ocean-members: user001, user003
-
     try:
-        client.create_group('hydra-ne-members')
-    except requests.exceptions.HTTPError:
-        pass
-    try:
-        client.create_group('mpas-ocean-members')
+        client.create_group('hydra-th-members')
     except requests.exceptions.HTTPError:
         pass
 
-    hydra = client.get_group_id('hydra-ne-members')
-    mpas = client.get_group_id('mpas-ocean-members')
+    hydra = client.get_group_id('hydra-th-members')
 
     client.add_user_to_group(user_001, hydra)
     client.add_user_to_group(user_002, hydra)
-    client.add_user_to_group(user_001, mpas)
-    client.add_user_to_group(user_003, mpas)
 
     # Here is an example hierarchy that can be used:
     #
     #   (Collections)
-    #     - hydra-ne (can-edit: hydra-ne-members)
+    #     - hydra-th (can-edit: hydra-th-members)
     #         + (Folders)
     #             - user001 (can-edit: user001)
     #             - user002 (can-edit: user002)
     #             - Core simulation team (can-edit: user001, user002)
     #             - Multi-scale simulation team (can-edit: user001)
-    #     - mpas-ocean (can-edit: mpas-ocean-members)
-    #         + (Folders)
-    #             - user001 (can-edit: user001)
-    #             - user003 (can-edit: user003)
-    #             - Oceanic climate (can-edit: user001, user003)
-    #             - El Nino (can-edit: user003)
 
     try:
-        client.create_collection('hydra-ne', description='Nuclear Energy simulation')
+        client.create_collection('hydra-th', description='Nuclear Energy simulation')
     except requests.exceptions.HTTPError:
         pass
 
-    try:
-        client.create_collection('mpas-ocean', description='Climate Simulation')
-    except requests.exceptions.HTTPError:
-        pass
-
-    hydra_collection = client.get_collection_id('hydra-ne')
-    mpas_collection = client.get_collection_id('mpas-ocean')
+    hydra_collection = client.get_collection_id('hydra-th')
 
     try:
         client.create_folder('user001', hydra_collection)
@@ -497,11 +475,11 @@ def setup(config):
         pass
 
 
-    user001_folder = client.get_folder_id(hydra_collection, 'user001')
-    user002_folder = client.get_folder_id(hydra_collection, 'user002')
-    tasks_folder = client.get_folder_id(hydra_collection, 'tasks')
-    core_folder = client.get_folder_id(hydra_collection, 'Core simulation team')
-    multi_folder = client.get_folder_id(hydra_collection, 'Multi-scale simulation team')
+    user001_folder = client.get_folder_id('user001', hydra_collection)
+    user002_folder = client.get_folder_id('user002', hydra_collection)
+    tasks_folder = client.get_folder_id('tasks', hydra_collection)
+    core_folder = client.get_folder_id('Core simulation team', hydra_collection)
+    multi_folder = client.get_folder_id('Multi-scale simulation team', hydra_collection)
 
     client.grant_folder_user_access(user001_folder, [user_001])
     client.grant_folder_user_access(user002_folder, [user_002])
@@ -509,28 +487,11 @@ def setup(config):
     client.grant_folder_user_access(tasks_folder, [user_001, user_002], level=0)
     client.grant_folder_user_access(multi_folder, [user_001])
 
-    try:
-        client.create_folder('user001', mpas_collection)
-        client.create_folder('user003', mpas_collection)
-        client.create_folder('Oceanic climate', mpas_collection)
-        client.create_folder('El Nino', mpas_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    user001_folder = client.get_folder_id(mpas_collection, 'user001')
-    user003_folder = client.get_folder_id(mpas_collection, 'user003')
-    ocenanic_folder = client.get_folder_id(mpas_collection, 'Oceanic climate')
-    elino_folder = client.get_folder_id(mpas_collection, 'El Nino')
-
     client.grant_folder_user_access(user001_folder, [user_001])
-    client.grant_folder_user_access(user003_folder, [user_003])
-    client.grant_folder_user_access(ocenanic_folder, [user_001, user_003])
-    client.grant_folder_user_access(elino_folder, [user_003])
 
     # Set up collection perms
     owner = 2
-    client.grant_access(hydra_collection, hydra, 'hydra-ne-members', owner)
-    client.grant_access(mpas_collection, mpas, 'mpas-ocean-members', owner)
+    client.grant_access(hydra_collection, hydra, 'hydra-th-members', owner)
 
     # Create the assert store
     try:
@@ -538,20 +499,7 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    # Create a collection to hold configuration
-    try:
-        client.create_collection('configuration')
-    except requests.exceptions.HTTPError:
-        pass
-
-    config_collection = client.get_collection_id('configuration')
-
-    try:
-        client.create_folder('cumulus', config_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    cumulus_folder = client.get_folder_id(config_collection, 'cumulus')
+    cumulus_folder = client.get_folder_id('Private', cumulus, 'user')
 
     meta_config = {}
 
@@ -561,11 +509,6 @@ def setup(config):
         'level': 2
     }]
     group_permissions = [{
-            'id': mpas,
-            'level': 0
-
-        },
-        {
             'id': hydra,
             'level': 0
         }
@@ -610,7 +553,7 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    foobar_id = client.get_folder_id(user001_folder, 'foobar')
+    foobar_id = client.get_folder_id('foobar', user001_folder, 'folder')
 
     mesh_item = client.get_item('mesh')
     if len(mesh_item) == 0:
