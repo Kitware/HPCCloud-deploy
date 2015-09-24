@@ -3,8 +3,13 @@
   tags: users
   sudo: yes
 
+- name: Get ubuntu user authorized_keys
+  command: cat /home/ubuntu/.ssh/authorized_keys
+  register: ubuntu_public_key
+
 - name: Copy ubuntu user authorized_keys
-  command: cp /home/ubuntu/.ssh/authorized_keys /home/websimdev/.ssh/
+  authorized_key: user=websimdev
+                  key="{{ ubuntu_public_key.stdout }}"
   sudo: yes
 
 
