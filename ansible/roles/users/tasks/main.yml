@@ -3,6 +3,16 @@
   tags: users
   sudo: yes
 
+- name: Get ubuntu user authorized_keys
+  command: cat /home/ubuntu/.ssh/authorized_keys
+  register: ubuntu_public_key
+
+- name: Copy ubuntu user authorized_keys
+  authorized_key: user=websimdev
+                  key="{{ ubuntu_public_key.stdout }}"
+  sudo: yes
+
+
 - name: Give websimdev passwordless sudo
   lineinfile: "dest=/etc/sudoers state=present regexp='^websimdev' line='websimdev ALL=(ALL) NOPASSWD: ALL'"
   tags: users
@@ -15,4 +25,3 @@
   with_fileglob:
     - ../public_keys/*
   tags: users
-
