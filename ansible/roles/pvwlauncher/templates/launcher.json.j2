@@ -6,7 +6,7 @@
         "endpoint": "paraview",
         "proxy_file" : "/opt/websim/proxy.txt",
         "sessionURL" : "ws://{{ groups['hpccloud'][0] }}/pvwlocal?sessionId=${id}",
-        "timeout" : 5,
+        "timeout" : 10,
         "log_dir" : "/tmp",
         "upload_dir" : "/.../data",
         "fields" : ["token", "mesh"]
