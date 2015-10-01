@@ -365,22 +365,12 @@ def setup(config):
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
 
-    plugins = ['cumulus', 'task']
-
-    if config.test:
-        plugins.append('cumulus_mock_plugin')
-        plugins.append('task_mock_plugin')
-    else:
-        plugins.append('pvwproxy')
-        plugins.append('mesh')
-
-    client.enable_plugins(plugins)
+    client.enable_plugins(['cumulus', 'pvwproxy', 'mesh', 'task'])
 
     # Now restart the server to enable the plugins
     client.restart_girder()
 
-    if not config.test:
-        client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
+    client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
@@ -525,24 +515,23 @@ def setup(config):
         f = f.replace('.', '-')
         meta_config[f] =  id
 
-    if not config.test:
-        # Create proxy json file
-        item = client.get_item('defaultProxies')
-        if len(item) == 0:
-            item_id = client.create_item(core_folder, 'defaultProxies')
+    # Create proxy json file
+    item = client.get_item('defaultProxies')
+    if len(item) == 0:
+        item_id = client.create_item(core_folder, 'defaultProxies')
+    else:
+        item_id = item[0]['_id']
+
+    files = client.get_files(item_id)
+
+    proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
+    with open(proxy_json, 'r') as fp:
+        if len(files) == 0:
+            client.create_file(item_id, fp, 'defaultProxies.json')
         else:
-            item_id = item[0]['_id']
+            client.update_file(files[0]['_id'], fp)
 
-        files = client.get_files(item_id)
-
-        proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
-        with open(proxy_json, 'r') as fp:
-            if len(files) == 0:
-                client.create_file(item_id, fp, 'defaultProxies.json')
-            else:
-                client.update_file(files[0]['_id'], fp)
-
-        meta_config['defaultProxies'] = item_id
+    meta_config['defaultProxies'] = item_id
 
     # Upload config data
     client.set_folder_metadata(cumulus_folder, meta_config)
@@ -602,8 +591,7 @@ def setup(config):
         spec = template(spec, 'defaults.pvw.script.id', meta_config['pvw-sh'])
         spec = template(spec, 'defaults.hydra.script.id', meta_config['hydra-sh'])
         spec = template(spec, 'defaults.pvserver.script.id', meta_config['pvserver-sh'])
-        if not config.test:
-            spec = template(spec, 'defaults.pvw.proxyItem', meta_config['defaultProxies'])
+        spec = template(spec, 'defaults.pvw.proxyItem', meta_config['defaultProxies'])
 
         fp = StringIO(spec)
 
@@ -620,7 +608,6 @@ if __name__ ==  '__main__':
     parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
     parser.add_argument('--cumulus_password', help='The password to use for cumulus', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
-    parser.add_argument('--test', help='Setup test environment',  action='store_true')
     parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default='/opt/websim/cumulus/scripts')
     parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default='/opt/websim/cumulus/tasks')
     parser.add_argument('--assetstore_dir', help='Directory to use for asset store', default='/opt/websim/assetstore')
