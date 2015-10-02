@@ -4,7 +4,7 @@
   sudo: yes
 
 - name: Get ubuntu user authorized_keys
-  command: cat /home/ubuntu/.ssh/authorized_keys
+  command: cat /home/{{ default_user }}/.ssh/authorized_keys
   register: ubuntu_public_key
 
 - name: Copy ubuntu user authorized_keys

@@ -22,19 +22,27 @@
   command: git config core.filemode false chdir=/opt/websim/cumulus
   tags: cumulus
 
-- name: Get AMIs from EC2
-  local_action: command python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
-  register: get_amis
-  tags:
-    - cumulus
-    - update_ips
+# - name: Get AMIs from EC2
+#   local_action: command python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
+#   register: get_amis
+#   tags:
+#     - cumulus
+#     - update_ips
+#
+# - name: Get EC2 instances private IP
+#   local_action: command python roles/cumulus/files/ec2_private_ip.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2 {{ groups['girder'][0] }}
+#   register: get_private_ip
+#   tags:
+#     - cumulus
+#     - update_ips
 
-- name: Get EC2 instances private IP
-  local_action: command python roles/cumulus/files/ec2_private_ip.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2 {{ groups['girder'][0] }}
+- name: Get AMIs
+  shell: echo ""
+  register: get_amis
+
+- name: Get Local IP Address
+  shell: echo "127.0.0.1"
   register: get_private_ip
-  tags:
-    - cumulus
-    - update_ips
 
 - name: Create keys directory
   file: dest={{ keys_directory }} mode=700 owner=celery group=celery state=directory
@@ -47,4 +55,3 @@
     - cumulus
     - update_ips
   sudo: yes
-

@@ -137,8 +137,7 @@
     - fixtures
 
 - name: Copy starcluster configuration files
-  synchronize: mode=pull src={{ item }} dest={{create_tmp_config_dir.stdout}}/{{item|basename}}
-  delegate_to: "{{inventory_hostname}}"
+  shell: "cp {{ item }} {{create_tmp_config_dir.stdout}}/{{item|basename}}"
   with_items:
     "{{ starcluster_config_files.stdout_lines }}"
   tags:
