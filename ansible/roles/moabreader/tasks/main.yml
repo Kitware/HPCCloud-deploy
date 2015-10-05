@@ -4,7 +4,7 @@
   tags: moabreader
 
 - name: Get moabreader from github
-  git: repo=https://github.com/robertmaynard/MoabReader.git version=master dest=/opt/websim/moabreader/src
+  git: repo=https://github.com/robertmaynard/MoabReader.git version=master dest=/opt/websim/moabreader/src accept_hostkey=yes
   tags: moabreader
 
 - name: Create moabreader build directory

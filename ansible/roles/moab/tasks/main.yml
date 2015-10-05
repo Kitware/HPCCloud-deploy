@@ -15,7 +15,7 @@
   tags: moab
 
 - name: Get moab from github
-  git: repo=https://github.com/judajake/moab.git version=624c4e95ad1e935a7937a1b10bf252632d4496d1 dest=/opt/websim/moab/src
+  git: repo=https://github.com/judajake/moab.git version=624c4e95ad1e935a7937a1b10bf252632d4496d1 dest=/opt/websim/moab/src accept_hostkey=yes
   tags: moab
 
 - name: Create moab build directory

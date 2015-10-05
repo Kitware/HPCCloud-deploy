@@ -39,7 +39,8 @@ Vagrant.configure(2) do |config|
       "all" => ["cumulus"],
       "cumulus" => ["cumulus"],
       "girder" => ["cumulus"],
-      "hpccloud" => ["cumulus"]
+      "hpccloud" => ["cumulus"],
+      "paraview" => ["cumulus"]
     }
     ansible.verbose = "vv"
     ansible.extra_vars = {

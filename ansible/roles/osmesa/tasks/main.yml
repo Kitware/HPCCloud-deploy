@@ -23,7 +23,7 @@
   tags: osmesa
 
 - name: Get Mesa from repo
-  git: repo=git://anongit.freedesktop.org/git/mesa/mesa version=mesa-10.2.5 dest=/opt/websim/osmesa/src
+  git: repo=git://anongit.freedesktop.org/git/mesa/mesa version=mesa-10.2.5 dest=/opt/websim/osmesa/src accept_hostkey=yes
   tags: osmesa
 
 - name: Create script to build Mesa
@@ -38,5 +38,3 @@
   command: make install chdir=/opt/websim/osmesa/src
   sudo: yes
   tags: osmesa
-
-

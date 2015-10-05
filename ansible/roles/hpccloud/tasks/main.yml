@@ -1,5 +1,5 @@
 - name: Get hpccloud from github
-  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/websim/hpccloud force=yes
+  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/websim/hpccloud force=yes accept_hostkey=yes
   sudo: yes
   tags: hpccloud
 

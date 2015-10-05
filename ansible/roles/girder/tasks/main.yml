@@ -49,7 +49,7 @@
   tags: girder
 
 - name: Get Girder from github
-  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder force=yes
+  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder force=yes accept_hostkey=yes
   sudo: yes
   tags: girder
 
