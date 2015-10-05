@@ -22,32 +22,31 @@
   command: git config core.filemode false chdir=/opt/websim/cumulus
   tags: cumulus
 
-# - name: Get AMIs from EC2
-#   local_action: command python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
-#   register: get_amis
-#   tags:
-#     - cumulus
-#     - update_ips
-#
-# - name: Get EC2 instances private IP
-#   local_action: command python roles/cumulus/files/ec2_private_ip.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2 {{ groups['girder'][0] }}
-#   register: get_private_ip
-#   tags:
-#     - cumulus
-#     - update_ips
-
-- name: Get AMIs
-  shell: echo ""
+- name: Get AMIs from EC2
+  command: python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
+  when: aws_access_key_id != "" and aws_secret_access_key != ""
   register: get_amis
+  delegate_to: 127.0.0.1
+  tags:
+    - cumulus
+    - update_ips
 
-- name: Get Local IP Address
-  shell: echo "127.0.0.1"
+
+- name: Get EC2 instances private IP
+  local_action: command python roles/cumulus/files/ec2_private_ip.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2 {{ groups['girder'][0] }}
+  when: aws_access_key_id != "" and aws_secret_access_key != ""
   register: get_private_ip
+  tags:
+    - cumulus
+    - update_ips
 
 - name: Create keys directory
   file: dest={{ keys_directory }} mode=700 owner=celery group=celery state=directory
   sudo: yes
   tags: cumulus
+
+- name: Foo
+  debug: msg="{{ get_private_ip }}"
 
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
