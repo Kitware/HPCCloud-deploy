@@ -1,6 +1,6 @@
 # For ParaView
-export PYTHONPATH=/opt/websim/paraview/install/lib/paraview-4.2/site-packages:/opt/websim/paraview/install/lib/paraview-4.2/site-packages/vtk
-export LD_LIBRARY_PATH=/opt/websim/paraview/install/lib/paraview-4.2
+export PYTHONPATH=/opt/websim/paraview/install/lib/paraview-4.4/site-packages:/opt/websim/paraview/install/lib/paraview-4.4/site-packages/vtk
+export LD_LIBRARY_PATH=/opt/websim/paraview/install/lib/paraview-4.4
 
 # Names of nodes to start
 #   most will only start one node:
