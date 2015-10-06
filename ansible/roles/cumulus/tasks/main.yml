@@ -45,9 +45,6 @@
   sudo: yes
   tags: cumulus
 
-- name: Foo
-  debug: msg="{{ get_private_ip }}"
-
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
   tags:
