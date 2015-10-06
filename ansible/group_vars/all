@@ -1,6 +1,5 @@
 default_user: ubuntu
 websimdev_password: letmein
-cumulus_password: letmein
 girder_version: master
 cumulus_version: master
 hpccloud_version: master
