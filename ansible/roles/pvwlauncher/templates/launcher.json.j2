@@ -19,25 +19,25 @@
       "properties" : {
         "python_exec" : "/opt/websim/paraview/install/bin/pvpython",
         "girder": "http://{{ groups['girder'][0] }}:8080/api/v1",
-        "meshViewer" : "/opt/websim/hpccloud/scripts/hydra-th/pv_mesh_viewer2.py",
-	"resultViewer" : "/opt/websim/hpccloud/scripts/hydra-th/pv_result_viewer.py"
+        "meshViewer" : "/opt/websim/hpccloud/scripts/hydra-th/pv_mesh_viewer.py",
+        "resultViewer" : "/opt/websim/hpccloud/scripts/hydra-th/pv_result_viewer.py"
       },
 
 
       "apps" : {
-        "mesh-viewer": {
+        "meshtagger": {
           "cmd" : [
             "${python_exec}", "${meshViewer}", "--port", "${port}", "-f", "--token", "${token}", "--url", "${girder}", "--file", "${file}"
               ],
           "ready_line" : "Starting factory"
         },
-	"result-viewer" : {
+  "result-viewer" : {
           "cmd" : [
-          	"${python_exec}", "${resultViewer}", "-f",
-            	"--port", "${port}",
-            	"--url", "${girder}",
-            	"--token", "${token}",
-            	"--itemId", "${itemId}"
+            "${python_exec}", "${resultViewer}", "-f",
+              "--port", "${port}",
+              "--url", "${girder}",
+              "--token", "${token}",
+              "--itemId", "${itemId}"
           ],
           "ready_line" : "Starting factory"
         }
