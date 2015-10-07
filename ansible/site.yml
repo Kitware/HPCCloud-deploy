@@ -29,13 +29,6 @@
     - osmesa
     - paraview
 
-- name: Set up moab reader
-  hosts: paraview
-  user: websimdev
-  roles:
-    - moab
-    - moabreader
-
 - name: Setup Girder
   hosts: girder
   user: websimdev
