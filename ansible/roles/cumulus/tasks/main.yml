@@ -1,5 +1,5 @@
 - name: Get cumulus from github
-  git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus force=yes
+  git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus force=yes accept_hostkey=yes
   sudo: yes
   tags: cumulus
 
@@ -23,14 +23,18 @@
   tags: cumulus
 
 - name: Get AMIs from EC2
-  local_action: command python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
+  command: python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
+  when: aws_access_key_id != "" and aws_secret_access_key != ""
   register: get_amis
+  delegate_to: 127.0.0.1
   tags:
     - cumulus
     - update_ips
 
+
 - name: Get EC2 instances private IP
   local_action: command python roles/cumulus/files/ec2_private_ip.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2 {{ groups['girder'][0] }}
+  when: aws_access_key_id != "" and aws_secret_access_key != ""
   register: get_private_ip
   tags:
     - cumulus
@@ -47,4 +51,3 @@
     - cumulus
     - update_ips
   sudo: yes
-

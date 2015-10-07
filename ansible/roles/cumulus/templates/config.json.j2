@@ -1,17 +1,23 @@
 {
     "girder": {
+        {% if get_private_ip.stdout is defined %}
         "baseUrl": "http://{{ get_private_ip.stdout }}:8080/api/v1",
+        {% else %}
+        "baseUrl": "http://127.0.0.1:8080/api/v1",
+        {% endif %}
         "user": "cumulus",
         "group": "cumulus"
     },
     "moabReader": {
-        "pluginPath": "/opt/websim/moabreader/build/libvtkCmbMoabReaderPlugin.so"
+            "pluginPath": "/opt/websim/moabreader/build/libvtkCmbMoabReaderPlugin.so"
     },
         "ssh": {
         "keyStore": "{{ keys_directory }}"
     },
 
     "amis": {
+        {% if get_amis.stdout is defined %}
         {{ get_amis.stdout }}
+        {% endif %}
     }
 }

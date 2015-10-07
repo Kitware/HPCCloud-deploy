@@ -1,10 +1,11 @@
-websimdev_password:
-cumulus_password:
+default_user: ubuntu
+websimdev_password: letmein
+cumulus_password: letmein
 girder_version: master
 cumulus_version: master
 hpccloud_version: master
-aws_access_key_id:
-aws_secret_access_key:
+aws_access_key_id: ""
+aws_secret_access_key: ""
 keys_directory: /opt/websim/keys
 starcluster_config_glob: /opt/websim/cumulus/config/*.conf
 script_glob: /opt/websim/cumulus/scripts/*.sh
