@@ -592,6 +592,7 @@ def setup(config):
         spec = template(spec, 'defaults.hydra.script.id', meta_config['hydra-sh'])
         spec = template(spec, 'defaults.pvserver.script.id', meta_config['pvserver-sh'])
         spec = template(spec, 'defaults.pvw.proxyItem', meta_config['defaultProxies'])
+        spec = template(spec, 'defaults.meshtagger.script.id', meta_config['meshtagger-sh'])
 
         fp = StringIO(spec)
 
