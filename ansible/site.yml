@@ -48,7 +48,7 @@
     - hpccloud
 
 - name: Set up ParaViewWeb launcher
-  hosts: hpccloud
+  hosts: pvwlauncher
   user: websimdev
   roles:
     - pvwlauncher

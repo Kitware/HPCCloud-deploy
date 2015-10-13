@@ -45,6 +45,13 @@
   sudo: yes
   tags: cumulus
 
+- name: Get local host name, used in Vagrant deployment
+  local_action: command hostname
+  register: local_hostname
+  tags:
+    - cumulus
+    - update_ips
+
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
   tags:

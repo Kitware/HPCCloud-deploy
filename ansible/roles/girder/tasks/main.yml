@@ -139,7 +139,7 @@
 - name: Copy starcluster configuration files
   shell: "cp {{ item }} {{create_tmp_config_dir.stdout}}/{{item|basename}}"
   with_items:
-    "{{ starcluster_config_files.stdout_lines }}"
+    starcluster_config_files.stdout_lines
   tags:
     - girder
     - fixtures
@@ -149,7 +149,7 @@
 - name: Clean up starclusterconfigs
   command: mongo girder --eval "db.starclusterconfigs.remove({name":" \"{{item|basename}}\" })"
   with_items:
-    "{{ starcluster_config_files.stdout_lines }}"
+    starcluster_config_files.stdout_lines
   tags:
     - girder
     - fixtures
@@ -165,13 +165,13 @@
 - name: Clean up scripts
   command: mongo girder --eval "db.scripts.remove({name":" \"{{item|basename}}\" })"
   with_items:
-    - "{{script_files.stdout_lines}}"
+    - script_files.stdout_lines
   tags:
     - girder
     - fixtures
 
 - name: Create Girder fixtures
-  shell: PYTHONPATH=/opt/websim/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --config_dir={{ create_tmp_config_dir.stdout }}
+  shell: PYTHONPATH=/opt/websim/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --config_dir={{ create_tmp_config_dir.stdout }} --dummy_hydra
   tags:
     - girder
     - fixtures

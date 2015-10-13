@@ -30,8 +30,31 @@ Vagrant.configure(2) do |config|
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = 4096
+  # Dynamically allocate memory and cpus,
+  # see https://stefanwrobel.com/how-to-make-vagrant-performance-not-suck
+  config.vm.provider "virtualbox" do |v|
+    host = RbConfig::CONFIG['host_os']
+
+    # Give VM 1/4 system memory & access to 1/2 of the cpu cores on the host
+    if host =~ /darwin/
+      cpus = `sysctl -n hw.ncpu`.to_i
+      cpus = cups / 2
+      # sysctl returns Bytes and we need to convert to MB
+      mem = `sysctl -n hw.memsize`.to_i / 1024 / 1024 / 4
+    elsif host =~ /linux/
+      cpus = `nproc`.to_i
+      cpus = cpus / 2
+      # meminfo shows KB and we need to convert to MB
+      mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024 / 4
+    else # Guess!
+      cpus = 2
+      mem = 4096
+    end
+
+    v.customize ["modifyvm", :id, "--memory", mem]
+    v.customize ["modifyvm", :id, "--cpus", cpus]
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
   config.vm.provision "ansible" do |ansible|
@@ -39,8 +62,7 @@ Vagrant.configure(2) do |config|
       "all" => ["cumulus"],
       "cumulus" => ["cumulus"],
       "girder" => ["cumulus"],
-      "hpccloud" => ["cumulus"],
-      "paraview" => ["cumulus"]
+      "hpccloud" => ["cumulus"]
     }
     ansible.verbose = "vv"
     ansible.extra_vars = {

@@ -593,7 +593,12 @@ def setup(config):
 
         spec = template(spec, 'defaults.config.id', meta_config['starcluster-default-conf'])
         spec = template(spec, 'defaults.pvw.script.id', meta_config['pvw-sh'])
-        spec = template(spec, 'defaults.hydra.script.id', meta_config['hydra-sh'])
+
+        hydra_script_id = meta_config['hydra-sh']
+        if config.dummy_hydra:
+            hydra_script_id = meta_config['dummy-sh']
+
+        spec = template(spec, 'defaults.hydra.script.id', hydra_script_id)
         spec = template(spec, 'defaults.pvserver.script.id', meta_config['pvserver-sh'])
         spec = template(spec, 'defaults.pvw.proxyItem', meta_config['defaultProxies'])
         spec = template(spec, 'defaults.meshtagger.script.id', meta_config['meshtagger-sh'])
@@ -615,6 +620,7 @@ if __name__ ==  '__main__':
     parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default='/opt/websim/cumulus/scripts')
     parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default='/opt/websim/cumulus/tasks')
     parser.add_argument('--assetstore_dir', help='Directory to use for asset store', default='/opt/websim/assetstore')
+    parser.add_argument('--dummy_hydra', help='Use dummy hydra script', action='store_true')
 
     config = parser.parse_args()
 
