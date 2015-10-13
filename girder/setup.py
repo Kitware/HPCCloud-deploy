@@ -8,6 +8,8 @@ import time
 import re
 from StringIO import StringIO
 from cumulus.task.spec import validate
+import random
+import string
 
 class GirderClient(object):
     def __init__(self, base_url):
@@ -328,7 +330,6 @@ def setup(config):
 
     url = config.url
     websimdev_password = config.websimdev_password
-    cumulus_password = config.cumulus_password
     config_dir = config.config_dir
     script_dir = config.scripts_dir
 
@@ -343,6 +344,9 @@ def setup(config):
     client.authenticate('websimdev', websimdev_password)
 
     # Create cumulus user
+    cumulus_password = ''.join(random.SystemRandom()
+                            .choice(string.ascii_uppercase +
+                                    string.digits) for _ in range(64))
     try:
         client.create_user('cumulus', cumulus_password, 'cumulus@kitware.com', 'cumulus',
                         'cumulus')
@@ -607,7 +611,6 @@ if __name__ ==  '__main__':
 
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
     parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
-    parser.add_argument('--cumulus_password', help='The password to use for cumulus', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
     parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default='/opt/websim/cumulus/scripts')
     parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default='/opt/websim/cumulus/tasks')

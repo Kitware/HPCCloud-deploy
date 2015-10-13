@@ -15,7 +15,7 @@
   tags: paraview
 
 - name: Get ParaView from github
-  git: repo=https://github.com/Kitware/ParaView.git version=v4.2.0 dest=/opt/websim/paraview/src accept_hostkey=yes
+  git: repo=https://github.com/Kitware/ParaView.git version={{paraview_version}} dest=/opt/websim/paraview/src accept_hostkey=yes
   tags: paraview
 
 - name: Create ParaView build directory
