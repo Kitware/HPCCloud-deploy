@@ -139,7 +139,7 @@
 - name: Copy starcluster configuration files
   shell: "cp {{ item }} {{create_tmp_config_dir.stdout}}/{{item|basename}}"
   with_items:
-    "{{ starcluster_config_files.stdout_lines }}"
+    starcluster_config_files.stdout_lines
   tags:
     - girder
     - fixtures
@@ -149,7 +149,7 @@
 - name: Clean up starclusterconfigs
   command: mongo girder --eval "db.starclusterconfigs.remove({name":" \"{{item|basename}}\" })"
   with_items:
-    "{{ starcluster_config_files.stdout_lines }}"
+    starcluster_config_files.stdout_lines
   tags:
     - girder
     - fixtures
@@ -165,7 +165,7 @@
 - name: Clean up scripts
   command: mongo girder --eval "db.scripts.remove({name":" \"{{item|basename}}\" })"
   with_items:
-    - "{{script_files.stdout_lines}}"
+    - script_files.stdout_lines
   tags:
     - girder
     - fixtures
