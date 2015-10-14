@@ -374,7 +374,7 @@ def setup(config):
     # Now restart the server to enable the plugins
     client.restart_girder()
 
-    client.set_system_property('pvwproxy.proxy_file_path', '/opt/websim/proxy')
+    client.set_system_property('pvwproxy.proxy_file_path', '/opt/hpccloud/proxy')
 
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
@@ -611,7 +611,7 @@ def setup(config):
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
 
-    prefix = '/opt/websim'
+    prefix = '/opt/hpccloud'
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
     parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)

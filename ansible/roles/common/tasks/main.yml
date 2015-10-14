@@ -1,6 +1,6 @@
 - name: Create application base directory
   sudo: yes
-  file: dest=/opt/websim mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud mode=755 owner=websimdev group=websimdev state=directory
   tags:
        - common
 

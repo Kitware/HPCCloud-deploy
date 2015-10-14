@@ -1,5 +1,5 @@
 - name: Get hpccloud from github
-  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/websim/hpccloud force=yes accept_hostkey=yes
+  git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/hpccloud/hpccloud force=yes accept_hostkey=yes
   sudo: yes
   tags: hpccloud
 
@@ -29,24 +29,24 @@
   sudo: yes
 
 - name: Change owner of hpccloud directory
-  file: dest=/opt/websim/hpccloud mode=755 owner=websimdev group=websimdev state=directory recurse=true
+  file: dest=/opt/hpccloud/hpccloud mode=755 owner=websimdev group=websimdev state=directory recurse=true
   sudo: yes
   tags: hpccloud
 
 - name: Tell git to ignore permission changes
-  command: git config core.filemode false chdir=/opt/websim/hpccloud
+  command: git config core.filemode false chdir=/opt/hpccloud/hpccloud
   tags: hpccloud
 
 - name: Run npm install
-  npm: path=/opt/websim/hpccloud
+  npm: path=/opt/hpccloud/hpccloud
   tags: hpccloud
 
 - name: Run bower
-  command: bower install chdir=/opt/websim/hpccloud
+  command: bower install chdir=/opt/hpccloud/hpccloud
   tags: hpccloud
 
 - name: Run gulp
-  command: gulp chdir=/opt/websim/hpccloud
+  command: gulp chdir=/opt/hpccloud/hpccloud
   tags: hpccloud
 
 - name: Install apache
@@ -90,14 +90,14 @@
 
 - name: Create proxy mapping file
   sudo: yes
-  file: dest=/opt/websim/proxy.db mode=640 owner=websimdev group=www-data state=touch
+  file: dest=/opt/hpccloud/proxy.db mode=640 owner=websimdev group=www-data state=touch
   tags:
     - apache
     - hpccloud
 
 - name: Create local proxy mapping file
   sudo: yes
-  file: dest=/opt/websim/proxy.txt mode=640 owner=websimdev group=www-data state=touch
+  file: dest=/opt/hpccloud/proxy.txt mode=640 owner=websimdev group=www-data state=touch
   tags:
     - apache
 
@@ -129,7 +129,7 @@
   replace:
     dest: /etc/apache2/apache2.conf
     regexp: '^<Directory /var/www/>$'
-    replace: '<Directory /opt/websim/hpccloud/dist/>'
+    replace: '<Directory /opt/hpccloud/hpccloud/dist/>'
   tags:
     - apache
     - hpccloud

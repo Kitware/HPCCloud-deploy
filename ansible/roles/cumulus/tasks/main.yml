@@ -1,10 +1,10 @@
 - name: Get cumulus from github
-  git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/websim/cumulus force=yes accept_hostkey=yes
+  git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/hpccloud/cumulus force=yes accept_hostkey=yes
   sudo: yes
   tags: cumulus
 
 - name: Install specified python requirements.
-  pip: requirements=/opt/websim/cumulus/requirements.txt
+  pip: requirements=/opt/hpccloud/cumulus/requirements.txt
   sudo: yes
   tags: cumulus
 
@@ -14,12 +14,12 @@
   tags: celery
 
 - name: Change owner of cumulus directory
-  file: dest=/opt/websim/cumulus mode=775 owner=websimdev group=celery state=directory recurse=true
+  file: dest=/opt/hpccloud/cumulus mode=775 owner=websimdev group=celery state=directory recurse=true
   sudo: yes
   tags: cumulus
 
 - name: Tell git to ignore permission changes
-  command: git config core.filemode false chdir=/opt/websim/cumulus
+  command: git config core.filemode false chdir=/opt/hpccloud/cumulus
   tags: cumulus
 
 - name: Get AMIs from EC2
@@ -53,7 +53,7 @@
     - update_ips
 
 - name: Create config.json
-  action: template src=config.json.j2 dest=/opt/websim/cumulus/config.json mode=640 owner=websimdev group=celery
+  action: template src=config.json.j2 dest=/opt/hpccloud/cumulus/config.json mode=640 owner=websimdev group=celery
   tags:
     - cumulus
     - update_ips

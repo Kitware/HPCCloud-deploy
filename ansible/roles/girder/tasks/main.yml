@@ -49,17 +49,17 @@
   tags: girder
 
 - name: Get Girder from github
-  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/websim/girder force=yes accept_hostkey=yes
+  git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/hpccloud/girder force=yes accept_hostkey=yes
   sudo: yes
   tags: girder
 
 - name: Change owner of girder directory
   sudo: yes
-  file: dest=/opt/websim/girder mode=755 owner=websimdev group=websimdev state=directory recurse=true
+  file: dest=/opt/hpccloud/girder mode=755 owner=websimdev group=websimdev state=directory recurse=true
   tags: girder
 
 - name: Install specified python requirements.
-  pip: requirements=/opt/websim/girder/requirements.txt
+  pip: requirements=/opt/hpccloud/girder/requirements.txt
   sudo: yes
   tags: girder
 
@@ -69,7 +69,7 @@
   tags: girder
 
 - name: Install girder for development
-  command: python setup.py develop chdir=/opt/websim/girder
+  command: python setup.py develop chdir=/opt/hpccloud/girder
   sudo: yes
   tags: girder
 
@@ -79,15 +79,15 @@
   tags: girder
 
 - name: Run npm install
-  npm: path=/opt/websim/girder
+  npm: path=/opt/hpccloud/girder
   tags: girder
 
 - name: Run grunt init
-  command: grunt init chdir=/opt/websim/girder
+  command: grunt init chdir=/opt/hpccloud/girder
   tags: girder
 
 - name: Run grunt
-  command: grunt chdir=/opt/websim/girder
+  command: grunt chdir=/opt/hpccloud/girder
   tags: girder
 
 - name: Install Girder as service
@@ -96,17 +96,17 @@
   tags: girder
 
 - name: Create symlink for cumulus Girder plugin
-  file: src=/opt/websim/cumulus/girder/cumulus dest=/opt/websim/girder/plugins/cumulus owner=websimdev group=websimdev state=link
+  file: src=/opt/hpccloud/cumulus/girder/cumulus dest=/opt/hpccloud/girder/plugins/cumulus owner=websimdev group=websimdev state=link
   sudo: yes
   tags: girder
 
 - name: Create symlink for pvproxy Girder plugin
-  file: src=/opt/websim/cumulus/girder/pvwproxy dest=/opt/websim/girder/plugins/pvwproxy owner=websimdev group=websimdev state=link
+  file: src=/opt/hpccloud/cumulus/girder/pvwproxy dest=/opt/hpccloud/girder/plugins/pvwproxy owner=websimdev group=websimdev state=link
   sudo: yes
   tags: girder
 
 - name: Create symlink for task Girder plugin
-  file: src=/opt/websim/cumulus/girder/task dest=/opt/websim/girder/plugins/task owner=websimdev group=websimdev state=link
+  file: src=/opt/hpccloud/cumulus/girder/task dest=/opt/hpccloud/girder/plugins/task owner=websimdev group=websimdev state=link
   sudo: yes
   tags: girder
 
@@ -171,7 +171,7 @@
     - fixtures
 
 - name: Create Girder fixtures
-  shell: PYTHONPATH=/opt/websim/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --config_dir={{ create_tmp_config_dir.stdout }} --dummy_hydra
+  shell: PYTHONPATH=/opt/hpccloud/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --websimdev_password {{ websimdev_password }} --config_dir={{ create_tmp_config_dir.stdout }} --dummy_hydra
   tags:
     - girder
     - fixtures
