@@ -1,26 +1,26 @@
 - name: Create moabreader directory
   sudo: yes
-  file: dest=/opt/websim/moabreader mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/moabreader mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moabreader
 
 - name: Get moabreader from github
-  git: repo=https://github.com/robertmaynard/MoabReader.git version=master dest=/opt/websim/moabreader/src accept_hostkey=yes
+  git: repo=https://github.com/robertmaynard/MoabReader.git version=master dest=/opt/hpccloud/moabreader/src accept_hostkey=yes
   tags: moabreader
 
 - name: Create moabreader build directory
   sudo: yes
-  file: dest=/opt/websim/moabreader/build mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/moabreader/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moabreader
 
 - name: Create moabreader install directory
   sudo: yes
-  file: dest=/opt/websim/moabreader/install mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/moabreader/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moabreader
 
 - name: Create script to build moabreader
-  action: template src=build.sh.j2 dest=/opt/websim/moabreader/build/build.sh mode=700 owner=websimdev
+  action: template src=build.sh.j2 dest=/opt/hpccloud/moabreader/build/build.sh mode=700 owner=hpccloud
   tags: moabreader
 
 - name: Build moabreader
-  shell: /opt/websim/moabreader/build/build.sh chdir=/opt/websim/moabreader/build
+  shell: /opt/hpccloud/moabreader/build/build.sh chdir=/opt/hpccloud/moabreader/build
   tags: moabreader

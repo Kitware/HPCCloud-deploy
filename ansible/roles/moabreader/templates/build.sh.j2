@@ -1,10 +1,10 @@
 cd ../build
 cmake -D CMAKE_BUILD_TYPE:STRING=Release \
-      -D CMAKE_INSTALL_PREFIX:PATH=/opt/websim/moabreader/install \
-      -D MOAB_INCLUDE_DIR:PATH=/opt/websim/moab/install/include \
-      -D MOAB_LIBRARY:PATH=/opt/websim/moab/install/lib/libMOAB.a \
+      -D CMAKE_INSTALL_PREFIX:PATH=/opt/hpccloud/moabreader/install \
+      -D MOAB_INCLUDE_DIR:PATH=/opt/hpccloud/moab/install/include \
+      -D MOAB_LIBRARY:PATH=/opt/hpccloud/moab/install/lib/libMOAB.a \
       -D USE_CMB:BOO=OFF \
-      -D ParaView_DIR:PATH=/opt/websim/paraview/build \
+      -D ParaView_DIR:PATH=/opt/hpccloud/paraview/build \
       -D NetCDF_DIR:PATH=/usr/lib \
       -D MOAB_HAS_CGM:BOOL=OFF \
       ../src

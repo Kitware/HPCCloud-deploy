@@ -1,5 +1,5 @@
-- name: Create websimdev user
-  user: name=websimdev shell=/bin/bash
+- name: Create hpccloud user
+  user: name=hpccloud shell=/bin/bash
   tags: users
   sudo: yes
 
@@ -8,19 +8,19 @@
   register: ubuntu_public_key
 
 - name: Copy ubuntu user authorized_keys
-  authorized_key: user=websimdev
+  authorized_key: user=hpccloud
                   key="{{ ubuntu_public_key.stdout }}"
   sudo: yes
 
 
-- name: Give websimdev passwordless sudo
-  lineinfile: "dest=/etc/sudoers state=present regexp='^websimdev' line='websimdev ALL=(ALL) NOPASSWD: ALL'"
+- name: Give hpccloud passwordless sudo
+  lineinfile: "dest=/etc/sudoers state=present regexp='^hpccloud' line='hpccloud ALL=(ALL) NOPASSWD: ALL'"
   tags: users
   sudo: yes
 
-- name: Add authorized keys for websimdev
+- name: Add authorized keys for hpccloud
   sudo: yes
-  authorized_key: user=websimdev
+  authorized_key: user=hpccloud
                   key="{{ lookup('file', item)}}"
   with_fileglob:
     - ../public_keys/*

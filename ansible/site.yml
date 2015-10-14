@@ -6,49 +6,49 @@
 
 - name: Common configuration
   hosts: all
-  user: websimdev
+  user: hpccloud
   roles:
     - common
 
 - name: Set up rabbitmq
   hosts: cumulus
-  user: websimdev
+  user: hpccloud
   roles:
     - rabbitmq
 
 - name: Setup cumulus
   hosts: cumulus
-  user: websimdev
+  user: hpccloud
   roles:
     - cumulus
 
 - name: Set up ParaView
   hosts: paraview
-  user: websimdev
+  user: hpccloud
   roles:
     - osmesa
     - paraview
 
+- name: Set up hpccloud
+  hosts: hpccloud
+  user: hpccloud
+  roles:
+    - hpccloud
+
 - name: Setup Girder
   hosts: girder
-  user: websimdev
+  user: hpccloud
   roles:
     - girder
 
 - name: Set up celery
   hosts: cumulus
-  user: websimdev
+  user: hpccloud
   roles:
     - celery
 
-- name: Set up hpccloud
-  hosts: hpccloud
-  user: websimdev
-  roles:
-    - hpccloud
-
 - name: Set up ParaViewWeb launcher
   hosts: pvwlauncher
-  user: websimdev
+  user: hpccloud
   roles:
     - pvwlauncher

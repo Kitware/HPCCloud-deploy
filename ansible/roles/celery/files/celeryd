@@ -1,6 +1,6 @@
 # For ParaView
-export PYTHONPATH=/opt/websim/paraview/install/lib/paraview-4.4/site-packages:/opt/websim/paraview/install/lib/paraview-4.4/site-packages/vtk
-export LD_LIBRARY_PATH=/opt/websim/paraview/install/lib/paraview-4.4
+export PYTHONPATH=/opt/hpccloud/paraview/install/lib/paraview-4.4/site-packages:/opt/hpccloud/paraview/install/lib/paraview-4.4/site-packages/vtk
+export LD_LIBRARY_PATH=/opt/hpccloud/paraview/install/lib/paraview-4.4
 
 # Names of nodes to start
 #   most will only start one node:
@@ -16,7 +16,7 @@ CELERY_APP="cumulus"
 #CELERY_APP="proj.tasks:app"
 
 # Where to chdir at start.
-CELERYD_CHDIR="/opt/websim/cumulus"
+CELERYD_CHDIR="/opt/hpccloud/cumulus"
 
 # Extra command-line arguments to the worker
 CELERYD_OPTS="-Q:monitor monitor --config:monitor=cumulus.celery.monitorconfig --config:command=cumulus.celery.commandconfig --concurrency:monitor=2 --concurrency:command=6"

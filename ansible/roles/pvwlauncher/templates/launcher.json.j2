@@ -4,7 +4,7 @@
         "host" : "localhost",
         "port" : 9000,
         "endpoint": "paraview",
-        "proxy_file" : "/opt/websim/proxy.txt",
+        "proxy_file" : "/opt/hpccloud/proxy.txt",
         "sessionURL" : "ws://{{ groups['hpccloud'][0] }}/pvwlocal?sessionId=${id}",
         "timeout" : 10,
         "log_dir" : "/tmp",
@@ -17,10 +17,10 @@
       "resources" : [ { "host" : "localhost", "port_range" : [9001, 9999] } ],
 
       "properties" : {
-        "python_exec" : "/opt/websim/paraview/install/bin/pvpython",
+        "python_exec" : "/opt/hpccloud/paraview/install/bin/pvpython",
         "girder": "http://{{ groups['girder'][0] }}:8080/api/v1",
-        "meshViewer" : "/opt/websim/hpccloud/scripts/hydra-th/pv_mesh_viewer.py",
-        "resultViewer" : "/opt/websim/hpccloud/scripts/hydra-th/pv_result_viewer.py"
+        "meshViewer" : "/opt/hpccloud/hpccloud/scripts/hydra-th/pv_mesh_viewer.py",
+        "resultViewer" : "/opt/hpccloud/hpccloud/scripts/hydra-th/pv_result_viewer.py"
       },
 
 
