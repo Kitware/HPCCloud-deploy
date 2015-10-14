@@ -528,7 +528,7 @@ def setup(config):
 
     files = client.get_files(item_id)
 
-    proxy_json = '/opt/websim/cumulus/config/defaultProxies.json'
+    proxy_json = os.path.join(config.cumulus_repo, 'config/defaultProxies.json')
     with open(proxy_json, 'r') as fp:
         if len(files) == 0:
             client.create_file(item_id, fp, 'defaultProxies.json')
@@ -537,30 +537,26 @@ def setup(config):
 
     meta_config['defaultProxies'] = item_id
 
+    # Create mesh tagger file
+    item = client.get_item('meshTagger')
+    if len(item) == 0:
+        item_id = client.create_item(core_folder, 'meshTagger')
+    else:
+        item_id = item[0]['_id']
+
+    files = client.get_files(item_id)
+
+    proxy_json = os.path.join(config.hpccloud_repo, 'scripts/hydra-th/pv_mesh_viewer.py')
+    with open(proxy_json, 'r') as fp:
+        if len(files) == 0:
+            client.create_file(item_id, fp, 'pv_mesh_viewer.py')
+        else:
+            client.update_file(files[0]['_id'], fp)
+
+    meta_config['meshTagger'] = item_id
+
     # Upload config data
     client.set_folder_metadata(cumulus_folder, meta_config)
-
-    # Add sample mesh
-    try:
-        client.create_folder('foobar', user001_folder, 'folder')
-    except requests.exceptions.HTTPError:
-        pass
-
-    foobar_id = client.get_folder_id('foobar', user001_folder, 'folder')
-
-    mesh_item = client.get_item('mesh')
-    if len(mesh_item) == 0:
-        mesh_item_id = client.create_item(foobar_id, 'mesh')
-    else:
-        mesh_item_id = mesh_item[0]['_id']
-
-    files = client.get_files(mesh_item_id)
-
-    fp = StringIO(os.urandom(2048))
-    if len(files) == 0:
-        client.create_file(mesh_item_id, fp, 'test.mesh')
-    else:
-        client.update_file(files[0]['_id'], fp)
 
     # Upload the task specs
     spec_item = client.get_item("Specifications")
@@ -602,6 +598,7 @@ def setup(config):
         spec = template(spec, 'defaults.pvserver.script.id', meta_config['pvserver-sh'])
         spec = template(spec, 'defaults.pvw.proxyItem', meta_config['defaultProxies'])
         spec = template(spec, 'defaults.meshtagger.script.id', meta_config['meshtagger-sh'])
+        spec = template(spec, 'defaults.meshtagger', meta_config['meshTagger'])
 
         fp = StringIO(spec)
 
@@ -614,12 +611,15 @@ def setup(config):
 if __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description='Command to setup Girder fixtures')
 
+    prefix = '/opt/websim'
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
     parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
-    parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default='/opt/websim/cumulus/scripts')
-    parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default='/opt/websim/cumulus/tasks')
-    parser.add_argument('--assetstore_dir', help='Directory to use for asset store', default='/opt/websim/assetstore')
+    parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default=os.path.join(prefix, 'cumulus/scripts'))
+    parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default=os.path.join(prefix, 'cumulus/tasks'))
+    parser.add_argument('--assetstore_dir', help='Directory to use for asset store', default=os.path.join(prefix, 'assetstore'))
+    parser.add_argument('--hpccloud_repo', help='Path the HPCCloud repo', default=os.path.join(prefix, 'hpccloud'))
+    parser.add_argument('--cumulus_repo', help='Path the HPCCloud repo', default=os.path.join(prefix, 'cumulus'))
     parser.add_argument('--dummy_hydra', help='Use dummy hydra script', action='store_true')
 
     config = parser.parse_args()

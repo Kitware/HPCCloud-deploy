@@ -29,6 +29,12 @@
     - osmesa
     - paraview
 
+- name: Set up hpccloud
+  hosts: hpccloud
+  user: websimdev
+  roles:
+    - hpccloud
+
 - name: Setup Girder
   hosts: girder
   user: websimdev
@@ -40,12 +46,6 @@
   user: websimdev
   roles:
     - celery
-
-- name: Set up hpccloud
-  hosts: hpccloud
-  user: websimdev
-  roles:
-    - hpccloud
 
 - name: Set up ParaViewWeb launcher
   hosts: pvwlauncher

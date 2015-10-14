@@ -4,16 +4,21 @@
   tags:
        - common
 
+- name: Add nodejs ppa
+  apt_repository: repo='ppa:chris-lea/node.js' update_cache=no
+  sudo: yes
+
 - name: Update apt cache
   apt: update_cache=yes
   sudo: yes
 
-- name: Install Python and git
+- name: Install Python, git and nodejs
   apt: name={{ item }} state=present
   sudo: yes
   with_items:
     - python-dev
     - git
+    - nodejs
 
 - name: Download pip setup
   sudo: yes
