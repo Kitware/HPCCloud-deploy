@@ -376,6 +376,9 @@ def setup(config):
 
     client.set_system_property('pvwproxy.proxy_file_path', '/opt/hpccloud/proxy')
 
+    # Now restart the server to enable this setting
+    client.restart_girder()
+
     # Now setup dev fixtures for client
     # For development purpose 3 users should be created:
     #     - User 001:
