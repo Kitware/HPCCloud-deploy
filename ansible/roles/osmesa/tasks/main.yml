@@ -19,7 +19,7 @@
 
 - name: Create OSMesa directory
   sudo: yes
-  file: dest=/opt/hpccloud/osmesa mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/osmesa mode=755 owner=hpccloud group=hpccloud state=directory
   tags: osmesa
 
 - name: Get Mesa from repo
@@ -27,7 +27,7 @@
   tags: osmesa
 
 - name: Create script to build Mesa
-  action: template src=build.sh.j2 dest=/opt/hpccloud/osmesa/src/build.sh mode=700 owner=websimdev
+  action: template src=build.sh.j2 dest=/opt/hpccloud/osmesa/src/build.sh mode=700 owner=hpccloud
   tags: osmesa
 
 - name: Build Mesa

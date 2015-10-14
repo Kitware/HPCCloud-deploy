@@ -1,6 +1,6 @@
 - name: Create moab directory
   sudo: yes
-  file: dest=/opt/hpccloud/moab mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/moab mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 
 - name: Install moab build prerequisities
@@ -20,16 +20,16 @@
 
 - name: Create moab build directory
   sudo: yes
-  file: dest=/opt/hpccloud/moab/build mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/moab/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 
 - name: Create moab install directory
   sudo: yes
-  file: dest=/opt/hpccloud/moab/install mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/moab/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 
 - name: Create script to build moab
-  action: template src=build.sh.j2 dest=/opt/hpccloud/moab/build/build.sh mode=700 owner=websimdev
+  action: template src=build.sh.j2 dest=/opt/hpccloud/moab/build/build.sh mode=700 owner=hpccloud
   tags: moab
 
 - name: Build moab

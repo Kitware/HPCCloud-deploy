@@ -329,19 +329,19 @@ class GirderClient(object):
 def setup(config):
 
     url = config.url
-    websimdev_password = config.websimdev_password
+    hpccloud_password = config.hpccloud_password
     config_dir = config.config_dir
     script_dir = config.scripts_dir
 
     client = GirderClient(url)
 
     try:
-        client.create_user('websimdev', websimdev_password, 'websimdev@kitware.com', 'websimdev',
-                        'websimdev')
+        client.create_user('hpccloud', hpccloud_password, 'hpccloud@kitware.com', 'hpccloud',
+                        'hpccloud')
     except requests.exceptions.HTTPError:
         pass
 
-    client.authenticate('websimdev', websimdev_password)
+    client.authenticate('hpccloud', hpccloud_password)
 
     # Create cumulus user
     cumulus_password = ''.join(random.SystemRandom()
@@ -613,7 +613,7 @@ if __name__ ==  '__main__':
 
     prefix = '/opt/hpccloud'
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
-    parser.add_argument('--websimdev_password', help='The password to use for websimdev', required=True)
+    parser.add_argument('--hpccloud_password', help='The password to use for hpccloud', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
     parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default=os.path.join(prefix, 'cumulus/scripts'))
     parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default=os.path.join(prefix, 'cumulus/tasks'))

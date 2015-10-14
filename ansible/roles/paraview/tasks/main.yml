@@ -1,6 +1,6 @@
 - name: Create ParaView directory
   sudo: yes
-  file: dest=/opt/hpccloud/paraview mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/paraview mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Install ParaView build prerequisities
@@ -20,16 +20,16 @@
 
 - name: Create ParaView build directory
   sudo: yes
-  file: dest=/opt/hpccloud/paraview/build mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/paraview/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Create ParaView install directory
   sudo: yes
-  file: dest=/opt/hpccloud/paraview/install mode=755 owner=websimdev group=websimdev state=directory
+  file: dest=/opt/hpccloud/paraview/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Create script to build ParaView
-  action: template src=build.sh.j2 dest=/opt/hpccloud/paraview/build/build.sh mode=700 owner=websimdev
+  action: template src=build.sh.j2 dest=/opt/hpccloud/paraview/build/build.sh mode=700 owner=hpccloud
   tags: paraview
 
 - name: Build ParaView
