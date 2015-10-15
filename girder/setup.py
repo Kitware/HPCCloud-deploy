@@ -156,6 +156,18 @@ class GirderClient(object):
         r = requests.put(url, params={'access': json.dumps(access)}, headers=self._headers)
         self._check_response(r)
 
+    def grant_folder_group_access(self, folder_id, group_ids, level=2):
+        groups = []
+
+        for i in group_ids:
+            groups.append({ 'id': i, 'level': level })
+
+        access = {'groups': groups}
+
+        url = '%s/folder/%s/access' % (self._base_url, folder_id)
+        r = requests.put(url, params={'access': json.dumps(access)}, headers=self._headers)
+        self._check_response(r)
+
     def create_assetstore(self, name, path):
         url = '%s/assetstore' % self._base_url
         params = {
@@ -456,19 +468,11 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    try:
-        client.create_folder('Multi-scale simulation team', hydra_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-
     tasks_folder = client.get_folder_id('tasks', hydra_collection)
     core_folder = client.get_folder_id('Core simulation team', hydra_collection)
-    multi_folder = client.get_folder_id('Multi-scale simulation team', hydra_collection)
 
-    client.grant_folder_user_access(core_folder, [user_001, user_002])
-    client.grant_folder_user_access(tasks_folder, [user_001, user_002], level=0)
-    client.grant_folder_user_access(multi_folder, [user_001])
+    client.grant_folder_group_access(core_folder, [hydra])
+    client.grant_folder_group_access(tasks_folder, [hydra], level=0)
 
     # Set up collection perms
     owner = 2
