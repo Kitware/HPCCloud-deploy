@@ -447,16 +447,6 @@ def setup(config):
     hydra_collection = client.get_collection_id('hydra-th')
 
     try:
-        client.create_folder('user001', hydra_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    try:
-        client.create_folder('user002', hydra_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    try:
         client.create_folder('tasks', hydra_collection)
     except requests.exceptions.HTTPError:
         pass
@@ -472,19 +462,13 @@ def setup(config):
         pass
 
 
-    user001_folder = client.get_folder_id('user001', hydra_collection)
-    user002_folder = client.get_folder_id('user002', hydra_collection)
     tasks_folder = client.get_folder_id('tasks', hydra_collection)
     core_folder = client.get_folder_id('Core simulation team', hydra_collection)
     multi_folder = client.get_folder_id('Multi-scale simulation team', hydra_collection)
 
-    client.grant_folder_user_access(user001_folder, [user_001])
-    client.grant_folder_user_access(user002_folder, [user_002])
     client.grant_folder_user_access(core_folder, [user_001, user_002])
     client.grant_folder_user_access(tasks_folder, [user_001, user_002], level=0)
     client.grant_folder_user_access(multi_folder, [user_001])
-
-    client.grant_folder_user_access(user001_folder, [user_001])
 
     # Set up collection perms
     owner = 2
