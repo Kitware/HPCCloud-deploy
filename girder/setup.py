@@ -381,7 +381,7 @@ def setup(config):
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
 
-    client.enable_plugins(['cumulus', 'pvwproxy', 'mesh', 'task'])
+    client.enable_plugins(['cumulus', 'pvwproxy', 'task', 'register'])
 
     # Now restart the server to enable the plugins
     client.restart_girder()
