@@ -73,6 +73,11 @@
   sudo: yes
   tags: girder
 
+- name: Set up local configuration file
+  template:
+    src: girder.local.cfg.j2
+    dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
+
 - name: Upgrade version of requests ( girder using 2.3.0, but we need 2.4.3 )
   pip: name=requests version=2.4.3 state=present
   sudo: yes
@@ -92,21 +97,6 @@
 
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
-  sudo: yes
-  tags: girder
-
-- name: Create symlink for cumulus Girder plugin
-  file: src=/opt/hpccloud/cumulus/girder/cumulus dest=/opt/hpccloud/girder/plugins/cumulus owner=hpccloud group=hpccloud state=link
-  sudo: yes
-  tags: girder
-
-- name: Create symlink for pvproxy Girder plugin
-  file: src=/opt/hpccloud/cumulus/girder/pvwproxy dest=/opt/hpccloud/girder/plugins/pvwproxy owner=hpccloud group=hpccloud state=link
-  sudo: yes
-  tags: girder
-
-- name: Create symlink for task Girder plugin
-  file: src=/opt/hpccloud/cumulus/girder/task dest=/opt/hpccloud/girder/plugins/task owner=hpccloud group=hpccloud state=link
   sudo: yes
   tags: girder
 
