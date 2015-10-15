@@ -24,7 +24,7 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 
-  config.vm.define "cumulus" do |node|
+  config.vm.define "hpccloud" do |node|
   end
 
   # Provider-specific configuration so you can fine-tune various
@@ -61,10 +61,10 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.groups = {
-      "all" => ["cumulus"],
-      "cumulus" => ["cumulus"],
-      "girder" => ["cumulus"],
-      "hpccloud" => ["cumulus"]
+      "all" => ["hpccloud"],
+      "cumulus" => ["hpccloud"],
+      "girder" => ["hpccloud"],
+      "hpccloud" => ["hpccloud"]
     }
     ansible.verbose = "vv"
     ansible.extra_vars = {
