@@ -156,6 +156,18 @@ class GirderClient(object):
         r = requests.put(url, params={'access': json.dumps(access)}, headers=self._headers)
         self._check_response(r)
 
+    def grant_folder_group_access(self, folder_id, group_ids, level=2):
+        groups = []
+
+        for i in group_ids:
+            groups.append({ 'id': i, 'level': level })
+
+        access = {'groups': groups}
+
+        url = '%s/folder/%s/access' % (self._base_url, folder_id)
+        r = requests.put(url, params={'access': json.dumps(access)}, headers=self._headers)
+        self._check_response(r)
+
     def create_assetstore(self, name, path):
         url = '%s/assetstore' % self._base_url
         params = {
@@ -369,7 +381,7 @@ def setup(config):
     # Close of instance
     client.set_system_property('core.registration_policy', 'closed')
 
-    client.enable_plugins(['cumulus', 'pvwproxy', 'mesh', 'task'])
+    client.enable_plugins(['cumulus', 'pvwproxy', 'task', 'register'])
 
     # Now restart the server to enable the plugins
     client.restart_girder()
@@ -447,16 +459,6 @@ def setup(config):
     hydra_collection = client.get_collection_id('hydra-th')
 
     try:
-        client.create_folder('user001', hydra_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    try:
-        client.create_folder('user002', hydra_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-    try:
         client.create_folder('tasks', hydra_collection)
     except requests.exceptions.HTTPError:
         pass
@@ -466,25 +468,11 @@ def setup(config):
     except requests.exceptions.HTTPError:
         pass
 
-    try:
-        client.create_folder('Multi-scale simulation team', hydra_collection)
-    except requests.exceptions.HTTPError:
-        pass
-
-
-    user001_folder = client.get_folder_id('user001', hydra_collection)
-    user002_folder = client.get_folder_id('user002', hydra_collection)
     tasks_folder = client.get_folder_id('tasks', hydra_collection)
     core_folder = client.get_folder_id('Core simulation team', hydra_collection)
-    multi_folder = client.get_folder_id('Multi-scale simulation team', hydra_collection)
 
-    client.grant_folder_user_access(user001_folder, [user_001])
-    client.grant_folder_user_access(user002_folder, [user_002])
-    client.grant_folder_user_access(core_folder, [user_001, user_002])
-    client.grant_folder_user_access(tasks_folder, [user_001, user_002], level=0)
-    client.grant_folder_user_access(multi_folder, [user_001])
-
-    client.grant_folder_user_access(user001_folder, [user_001])
+    client.grant_folder_group_access(core_folder, [hydra])
+    client.grant_folder_group_access(tasks_folder, [hydra], level=0)
 
     # Set up collection perms
     owner = 2
