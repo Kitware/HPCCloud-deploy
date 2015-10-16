@@ -90,23 +90,19 @@
   command: grunt chdir=/opt/hpccloud/girder
   tags: girder
 
+- name: Set plugin path
+  replace:
+    dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - { regexp: '^# \[plugins\]',  replace: '[plugins]' }
+    - { regexp: '^# plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
+  sudo: yes
+  tags: girder
+
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
-  sudo: yes
-  tags: girder
-
-- name: Create symlink for cumulus Girder plugin
-  file: src=/opt/hpccloud/cumulus/girder/cumulus dest=/opt/hpccloud/girder/plugins/cumulus owner=hpccloud group=hpccloud state=link
-  sudo: yes
-  tags: girder
-
-- name: Create symlink for pvproxy Girder plugin
-  file: src=/opt/hpccloud/cumulus/girder/pvwproxy dest=/opt/hpccloud/girder/plugins/pvwproxy owner=hpccloud group=hpccloud state=link
-  sudo: yes
-  tags: girder
-
-- name: Create symlink for task Girder plugin
-  file: src=/opt/hpccloud/cumulus/girder/task dest=/opt/hpccloud/girder/plugins/task owner=hpccloud group=hpccloud state=link
   sudo: yes
   tags: girder
 
