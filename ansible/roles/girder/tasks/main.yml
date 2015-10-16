@@ -73,11 +73,6 @@
   sudo: yes
   tags: girder
 
-- name: Set up local configuration file
-  template:
-    src: girder.local.cfg.j2
-    dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
-
 - name: Upgrade version of requests ( girder using 2.3.0, but we need 2.4.3 )
   pip: name=requests version=2.4.3 state=present
   sudo: yes
@@ -93,6 +88,17 @@
 
 - name: Run grunt
   command: grunt chdir=/opt/hpccloud/girder
+  tags: girder
+
+- name: Set plugin path
+  replace:
+    dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - { regexp: '^# \[plugins\]',  replace: '[plugins]' }
+    - { regexp: '^# plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
+  sudo: yes
   tags: girder
 
 - name: Install Girder as service
