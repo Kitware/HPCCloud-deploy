@@ -3,7 +3,7 @@
         {% if get_private_ip.stdout is defined %}
         "baseUrl": "http://{{ get_private_ip.stdout }}:8080/api/v1",
         {% else %}
-        "baseUrl": "http://{{local_hostname.stdout if inventory_hostname == 'cumulus' else 'localhost'}}:8080/api/v1",
+        "baseUrl": "http://{{local_hostname.stdout if inventory_hostname == 'hpccloud' else 'localhost'}}:8080/api/v1",
         {% endif %}
         "user": "cumulus",
         "group": "cumulus"
