@@ -378,8 +378,9 @@ def setup(config):
     # Add user to cumulus group
     client.add_user_to_group(cumulus, cumulus_group)
 
-    # Close of instance
-    client.set_system_property('core.registration_policy', 'closed')
+    if not config.open_reg:
+        # Close of instance
+        client.set_system_property('core.registration_policy', 'closed')
 
     client.enable_plugins(['cumulus', 'pvwproxy', 'task', 'register'])
 
@@ -612,6 +613,7 @@ if __name__ ==  '__main__':
     parser.add_argument('--hpccloud_repo', help='Path the HPCCloud repo', default=os.path.join(prefix, 'hpccloud'))
     parser.add_argument('--cumulus_repo', help='Path the HPCCloud repo', default=os.path.join(prefix, 'cumulus'))
     parser.add_argument('--dummy_hydra', help='Use dummy hydra script', action='store_true')
+    parser.add_argument('--open_reg', help='Can users register for an account', action='store_true')
 
     config = parser.parse_args()
 
