@@ -73,4 +73,4 @@ In order to use a cluster with HPCCloud the following requirements need to be av
          ./pvpython_setup.sh <full path to pvpython executable>
 - The curl command line utility is also  required. On an ubuntu distro this can be installed using the following command:
 
-         sudo apt-get install 
+         sudo apt-get install curl
