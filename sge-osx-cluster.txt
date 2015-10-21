@@ -138,7 +138,6 @@ Comment: It should complain for qtcsh, qmon as you did not build them.
 
     ...
 
-
 Add submit host?
   $ qconf -ah
 
@@ -146,3 +145,37 @@ Add submit host?
 
 $SGE_ROOT/default/common/sgemaster
 $SGE_ROOT/default/common/sgeexecd
+
+## Configuring python
+
+    $ cd /tmp
+    $ git clone https://github.com/Kitware/HPCCloud-deploy.git
+    $ cd HPCCloud-deploy
+    $ sudo pip install -r requirements-cluster.txt
+
+Note: May not work on El Capitan. Need to try on it.
+
+## Registering your OSX cluster
+
+1) Go to: http://localhost:8888
+2) Login or Register user
+3) Click on your user (Upper right corner)
+4) Click on the + for "Clusters"
+5) Set a name for that configuration
+6) Click on that name in the list of Clusters
+
+    You should fill:
+       hostname                     : melmac
+       Username                     : seb
+       Simulation output directory  : /Users/seb/hpc-cloud-jobs
+       Hydra executable path        : /Applications/hydra.app
+       ParaView install directory   : /Applications/paraview.app
+
+    => Save
+
+7) Copy the "echo ..." command line and Paste it into a terminal.
+8) Click on the "Test" button
+9) If success, then you can start using that cluster to run jobs.
+
+
+
