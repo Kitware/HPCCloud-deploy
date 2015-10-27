@@ -1,7 +1,9 @@
 # Installation of SGE on OSX
 
 This guide will go through several steps that are needed in order to install
-Sun Grid Engine on an OS X system.
+Sun Grid Engine on OSX.
+
+`emacs` is used below as the editor but you can use any one you want.
 
 ## Prerequisites
 
@@ -49,16 +51,12 @@ Configure your ssh environment
 
 Configuring your network
 
-    $ hostname
-        >>> your host name
-
-    $ ifconfig
-        >>> Find your ip
-
+    $ hostname # => your host name
+    $ ifconfig # => Find your IP, you can also do this from the Network panel in System Preferences
     $ sudo emacs /etc/hosts
 
-        # Add your hostname with your IP so they are not bound to localhost
-        10.160.1.127    melmac Melmac.local
+        # Add your hostname with your IP so they are not bound to localhost, e.g:
+        201.10.5.1    hal hal.local
 
 ## Download and build Grid Engine
 
@@ -78,7 +76,7 @@ Configuring your network
     $ cd /tmp/GE2011.11p1/source
     $ ./scripts/distinst -local -all -noexit
 
-Comment: It should complain for qtcsh, qmon as you did not build them.
+Note: It should complain for `qtcsh`, `qmon` as you did not build them.
 
 ## Configure SGE
 
@@ -86,7 +84,9 @@ Comment: It should complain for qtcsh, qmon as you did not build them.
     $ cat inst_sge | grep -v PreInstallCheck > inst_sge_no_check
     $ chmod +x inst_sge_no_check
 
-    # You may want to run them as root (I did not)
+    # You may want to run them as root (authors did not)
+    # You can stop and restart this setup as many times as you need.
+    # It's mostly pressing enter with a few exceptions noted below:
     $ ./inst_sge_no_check -m
 
     ...
@@ -138,13 +138,15 @@ Comment: It should complain for qtcsh, qmon as you did not build them.
 
     ...
 
-Add submit host?
-  $ qconf -ah
+If you've restarted or rerun the setup checks above you may want
+to also restart the SGE processes. You can kill the processes
+from Activity Monitor or `ps`. Start up the processes again with the
+commands in the next section.
 
-## Running SGE after a reboot
+## Running SGE after a reboot or a `kill -9`
 
-$SGE_ROOT/default/common/sgemaster
-$SGE_ROOT/default/common/sgeexecd
+    $SGE_ROOT/default/common/sgemaster
+    $SGE_ROOT/default/common/sgeexecd
 
 ## Configuring python
 
@@ -153,29 +155,29 @@ $SGE_ROOT/default/common/sgeexecd
     $ cd HPCCloud-deploy
     $ sudo pip install -r requirements-cluster.txt
 
-Note: May not work on El Capitan. Need to try on it.
+Note: Not tested on OSX 10.11 (El Capitan).
 
 ## Registering your OSX cluster
 
-1) Go to: http://localhost:8888
-2) Login or Register user
-3) Click on your user (Upper right corner)
-4) Click on the + for "Clusters"
-5) Set a name for that configuration
-6) Click on that name in the list of Clusters
-
+1. Go to: http://localhost:8888
+2. Login or Register
+    - Use a default user:
+    user: `user001`
+    pass: `user001001`
+3. Click on your user (Upper right corner)
+4. Click on the + for "Clusters"
+5. Set a name for that configuration
+6. Click on that name in the list of Clusters
     You should fill:
-       hostname                     : melmac
-       Username                     : seb
-       Simulation output directory  : /Users/seb/hpc-cloud-jobs
-       Hydra executable path        : /Applications/hydra.app
-       ParaView install directory   : /Applications/paraview.app
+
+        hostname                     : [the hostname of your machine]
+        username                     : [your username]
+        Simulation output directory  : [anywhere, absolute path]
+        Hydra executable path        : [Hydra executable path, absolute path]
+        ParaView install directory   : [Paraview execytable, probably: /Applications/paraview.app]
 
     => Save
 
-7) Copy the "echo ..." command line and Paste it into a terminal.
-8) Click on the "Test" button
-9) If success, then you can start using that cluster to run jobs.
-
-
-
+7. Copy the "echo ..." command line and paste it into a terminal.
+8. Click on the "Test" button
+9. If success, then you can start using that cluster to run jobs.
