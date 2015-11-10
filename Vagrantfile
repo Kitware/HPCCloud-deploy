@@ -7,6 +7,7 @@
 # you're doing.
 Vagrant.configure(2) do |config|
 
+  dev = if ENV['DEVELOPMENT'] then true else  false end;
 
   config.vm.box = "ubuntu/trusty64"
 
@@ -23,6 +24,14 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
+  if dev
+    for f in ["cumulus", "hpccloud", "girder"]
+      if File.directory?("../" + f)
+        config.vm.synced_folder "../#{f}", "/opt/hpccloud/#{f}"
+      end
+    end
+  end
+
 
   config.vm.define "hpccloud" do |node|
   end
@@ -68,8 +77,10 @@ Vagrant.configure(2) do |config|
     }
     ansible.verbose = "vv"
     ansible.extra_vars = {
-      default_user: "vagrant"
+      default_user: "vagrant",
+      development: dev
     }
+
     ansible.playbook = "ansible/site.yml"
 
   end

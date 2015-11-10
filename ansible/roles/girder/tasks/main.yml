@@ -48,9 +48,14 @@
   sudo: yes
   tags: girder
 
+- name: probe hpccloud folder
+  stat: path=/opt/hpccloud/girder
+  register: path
+
 - name: Get Girder from github
   git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/hpccloud/girder force=yes accept_hostkey=yes
   sudo: yes
+  when: path.stat.exists == False
   tags: girder
 
 - name: Change owner of girder directory

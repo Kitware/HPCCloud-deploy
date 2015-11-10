@@ -1,6 +1,11 @@
+- name: probe cumulus folder
+  stat: path=/opt/hpccloud/cumulus
+  register: path
+
 - name: Get cumulus from github
   git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/hpccloud/cumulus force=yes accept_hostkey=yes
   sudo: yes
+  when: path.stat.exists == False
   tags: cumulus
 
 - name: Install specified python requirements.

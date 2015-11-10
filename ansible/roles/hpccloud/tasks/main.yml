@@ -1,7 +1,13 @@
+- name: probe hpccloud folder
+  stat: path=/opt/hpccloud/hpccloud
+  register: path
+
 - name: Get hpccloud from github
   git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/hpccloud/hpccloud force=yes accept_hostkey=yes
   sudo: yes
+  when: path.stat.exists == False
   tags: hpccloud
+
 
 - name: Make sure we have the right version of npm
   npm: name=npm version=2.1.5 global=yes
