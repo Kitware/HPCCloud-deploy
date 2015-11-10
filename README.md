@@ -77,13 +77,13 @@ In order to use a cluster with HPCCloud the following requirements need to be av
 
 
 ### Local Development Installation
-if [HPCCloud](https://github.com/Kitware/HPCCloud), [girder](https://github.com/girder/girder), or [cumulus](https://github.com/Kitware/cumulus) are available in the folder above the cumulus-deploy checkout and the environment variable ```DEVELOPMENT``` is set to 1,  then these folders will be linked through the VM rather than checked out from github.  E.g.  with the directory structure:
+if [HPCCloud](https://github.com/Kitware/HPCCloud), [girder](https://github.com/girder/girder), or [cumulus](https://github.com/Kitware/cumulus) are available in the folder above the HPCCloud-deploy checkout and the environment variable ```DEVELOPMENT``` is set to 1,  then these folders will be linked through the VM rather than checked out from github.  E.g.  with the directory structure:
 
 ```
-./cumulus-deploy/
-                 Vagrantfile
-                 ansible/
-                 ...
+./HPCCloud-deploy/
+                  Vagrantfile
+                  ansible/
+                  ...
 ./cumulus/
           ...
 ./hpccloud/
@@ -92,4 +92,4 @@ if [HPCCloud](https://github.com/Kitware/HPCCloud), [girder](https://github.com/
          ...
 ```
 
-running ```DEVELOPMENT=1 vagrant up``` from within the ```cumulus-deploy/``` folder will link cumulus, hpccloud and girder folders.  This should allow those folders to be changed locally,  and for those changes to be picked up on restart from within the VM. Note:  if a folder is not available it will be checkout from github.  the HPCCloud folder must be lowercase!
+running ```DEVELOPMENT=1 vagrant up``` from within the ```HPCCloud-deploy/``` folder will link cumulus, hpccloud and girder folders.  This should allow those folders to be changed locally,  and for those changes to be picked up on restart from within the VM. Note:  if a folder is not available it will be checkout from github.  the HPCCloud folder must be lowercase!
