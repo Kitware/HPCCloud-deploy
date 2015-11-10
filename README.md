@@ -74,3 +74,22 @@ In order to use a cluster with HPCCloud the following requirements need to be av
  The `requirements-cluster.txt` can be found at the [root of this repository](https://github.com/Kitware/HPCCloud-deploy/blob/master/requirements-cluster.txt). These python package need to be available in the pvpython environment. If you have built ParaView against system python then the previous command will have ensured this. If you are using a prebuilt release then this [script](https://github.com/Kitware/HPCCloud-deploy/blob/master/pvpython_setup.sh) will install the required packages in the pvpython environment.
 
          ./pvpython_setup.sh <full path to pvpython executable>
+
+
+### Local Development Installation
+if [HPCCloud](https://github.com/Kitware/HPCCloud), [girder](https://github.com/girder/girder), or [cumulus](https://github.com/Kitware/cumulus) are available in the folder above the cumulus-deploy checkout and the environment variable ```DEVELOPMENT``` is set to 1,  then these folders will be linked through the VM rather than checked out from github.  E.g.  with the directory structure:
+
+```
+./cumulus-deploy/
+                 Vagrantfile
+                 ansible/
+                 ...
+./cumulus/
+          ...
+./hpccloud/
+           ...
+./girder/
+         ...
+```
+
+running ```DEVELOPMENT=1 vagrant up``` from within the ```cumulus-deploy/``` folder will link cumulus, hpccloud and girder folders.  This should allow those folders to be changed locally,  and for those changes to be picked up on restart from within the VM. Note:  if a folder is not available it will be checkout from github.  the HPCCloud folder must be lowercase!
