@@ -24,7 +24,7 @@
   tags: cumulus
 
 - name: Tell git to ignore permission changes
-  command: git config core.filemode false chdir=/opt/hpccloud/cumulus
+  command: git config --replace-all core.filemode false chdir=/opt/hpccloud/cumulus
   tags: cumulus
 
 - name: Get AMIs from EC2
