@@ -32,7 +32,7 @@ Vagrant.configure(2) do |config|
   if dev
     for f in ["cumulus", "hpccloud", "girder"]
       if File.directory?("../" + f)
-        config.vm.synced_folder "../#{f}", "/opt/hpccloud/#{f}",
+        config.vm.synced_folder "../#{f}", "/opt/hpccloud/" + f.downcase,
                                 owner: 1002, group: 1003
       end
     end
