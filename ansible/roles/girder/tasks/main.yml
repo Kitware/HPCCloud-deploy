@@ -96,13 +96,13 @@
   tags: girder
 
 - name: Set plugin path
-  replace:
+  lineinfile:
     dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
     regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
+    line: "{{ item.replace }}"
   with_items:
-    - { regexp: '^# \[plugins\]',  replace: '[plugins]' }
-    - { regexp: '^# plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
+    - { regexp: '^\[plugins\]',  replace: '[plugins]' }
+    - { regexp: '^plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
   sudo: yes
   tags: girder
 
