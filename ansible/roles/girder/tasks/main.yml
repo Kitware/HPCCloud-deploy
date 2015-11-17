@@ -96,13 +96,13 @@
   tags: girder
 
 - name: Set plugin path
-  replace:
+  lineinfile:
     dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
     regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
+    line: "{{ item.replace }}"
   with_items:
-    - { regexp: '^# \[plugins\]',  replace: '[plugins]' }
-    - { regexp: '^# plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
+    - { regexp: '^\[plugins\]',  replace: '[plugins]' }
+    - { regexp: '^plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
   sudo: yes
   tags: girder
 
@@ -172,7 +172,7 @@
     - fixtures
 
 - name: Create Girder fixtures
-  shell: PYTHONPATH=/opt/hpccloud/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --hpccloud_password {{ hpccloud_password }} --config_dir={{ create_tmp_config_dir.stdout }} --dummy_hydra {{ '--open_reg' if aws_access_key_id == '' and aws_secret_access_key == '' }}
+  shell: PYTHONPATH=/opt/hpccloud/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --hpccloud_password {{ hpccloud_password }} --config_dir={{ create_tmp_config_dir.stdout }} --dummy_hydra {{ '--open_reg' if aws_access_key_id == '' and aws_secret_access_key == '' else '' }}
   tags:
     - girder
     - fixtures
