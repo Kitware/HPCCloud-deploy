@@ -1,5 +1,5 @@
 - name: Create hpccloud user
-  user: name=hpccloud shell=/bin/bash
+  user: name=hpccloud shell=/bin/bash uid=1002
   tags: users
   sudo: yes
 
