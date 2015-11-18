@@ -48,14 +48,9 @@
   sudo: yes
   tags: girder
 
-- name: probe hpccloud folder
-  stat: path=/opt/hpccloud/girder
-  register: path
-
 - name: Get Girder from github
   git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/hpccloud/girder force=yes accept_hostkey=yes
   sudo: yes
-  when: path.stat.exists == False
   tags: girder
 
 - name: Change owner of girder directory
@@ -63,48 +58,23 @@
   file: dest=/opt/hpccloud/girder mode=755 owner=hpccloud group=hpccloud state=directory recurse=true
   tags: girder
 
-- name: Install specified python requirements.
-  pip: requirements=/opt/hpccloud/girder/requirements.txt
+- name: Install editable girder
+  pip:
+    chdir: /opt/hpccloud/girder
+    extra_args: "-e"
+    name: .
   sudo: yes
-  tags: girder
 
-- name: Compile bcrypt (see https://github.com/pyca/bcrypt/issues/15)
-  command: python -c "import bcrypt"
-  sudo: yes
-  tags: girder
+- name: Generate frontend web assets
+  command: "girder-install web"
 
-- name: Install girder for development
-  command: python setup.py develop chdir=/opt/hpccloud/girder
-  sudo: yes
-  tags: girder
 
-- name: Upgrade version of requests ( girder using 2.3.0, but we need 2.4.3 )
-  pip: name=requests version=2.4.3 state=present
-  sudo: yes
-  tags: girder
-
-- name: Run npm install
-  npm: path=/opt/hpccloud/girder
-  tags: girder
-
-- name: Run grunt init
-  command: grunt init chdir=/opt/hpccloud/girder
-  tags: girder
-
-- name: Run grunt
-  command: grunt chdir=/opt/hpccloud/girder
-  tags: girder
-
-- name: Set plugin path
-  lineinfile:
-    dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.replace }}"
-  with_items:
-    - { regexp: '^\[plugins\]',  replace: '[plugins]' }
-    - { regexp: '^plugin_directory=.*$', replace: 'plugin_directory="/opt/hpccloud/girder/plugins:/opt/hpccloud/cumulus/girder"'}
-  sudo: yes
-  tags: girder
+- name: Install cumulus plugins
+  shell: "ls | xargs girder-install plugin -s --dev "
+  args:
+    chdir: /opt/hpccloud/cumulus/girder/
+    creates: /opt/hpccloud/girder/plugins/cumulus
+  tags: test
 
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root

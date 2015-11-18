@@ -30,7 +30,7 @@ Vagrant.configure(2) do |config|
   # This means we need to set user and owner to UID/GUID which get created
   # later (when we make the hpccloud and celery users)
   if dev
-    for f in ["cumulus", "hpccloud", "girder"]
+    for f in ["cumulus", "hpccloud"]
       if File.directory?("../" + f)
         config.vm.synced_folder "../#{f}", "/opt/hpccloud/" + f.downcase,
                                 owner: 1002, group: 1003
