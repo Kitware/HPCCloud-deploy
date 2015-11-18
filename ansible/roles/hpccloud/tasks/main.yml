@@ -1,6 +1,7 @@
 - name: probe hpccloud folder
   stat: path=/opt/hpccloud/hpccloud
   register: path
+  tags: hpccloud
 
 - name: Get hpccloud from github
   git: repo=https://github.com/Kitware/HPCCloud.git version={{ hpccloud_version }} dest=/opt/hpccloud/hpccloud force=yes accept_hostkey=yes
