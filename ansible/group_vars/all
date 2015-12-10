@@ -8,4 +8,4 @@ aws_access_key_id: ""
 aws_secret_access_key: ""
 keys_directory: /opt/hpccloud/keys
 starcluster_config_glob: /opt/hpccloud/cumulus/config/*.conf
-script_glob: /opt/hpccloud/cumulus/scripts/*.sh
+script_glob: /opt/hpccloud/cumulus/scripts/codes/*.sh
