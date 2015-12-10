@@ -607,7 +607,7 @@ if __name__ ==  '__main__':
     parser.add_argument('--url', help='Base URL for Girder ops', required=True)
     parser.add_argument('--hpccloud_password', help='The password to use for hpccloud', required=True)
     parser.add_argument('--config_dir', help='The directory containing configs to upload', required=True)
-    parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default=os.path.join(prefix, 'cumulus/scripts'))
+    parser.add_argument('--scripts_dir', help='Directory containing scripts to deploy', default=os.path.join(prefix, 'cumulus/scripts/codes'))
     parser.add_argument('--tasks_dir', help='Directory containing tasks to deploy', default=os.path.join(prefix, 'cumulus/tasks'))
     parser.add_argument('--assetstore_dir', help='Directory to use for asset store', default=os.path.join(prefix, 'assetstore'))
     parser.add_argument('--hpccloud_repo', help='Path the HPCCloud repo', default=os.path.join(prefix, 'hpccloud'))
