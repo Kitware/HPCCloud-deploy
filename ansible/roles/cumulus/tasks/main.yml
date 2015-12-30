@@ -1,6 +1,7 @@
 - name: probe cumulus folder
   stat: path=/opt/hpccloud/cumulus
   register: path
+  tags: cumulus
 
 - name: Get cumulus from github
   git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/hpccloud/cumulus force=yes accept_hostkey=yes
@@ -8,7 +9,7 @@
   when: path.stat.exists == False
   tags: cumulus
 
-- name: Install specified python requirements.
+- name: Install cumulus dependencies
   pip: requirements=/opt/hpccloud/cumulus/requirements.txt
   sudo: yes
   tags: cumulus
@@ -58,8 +59,26 @@
     - update_ips
 
 - name: Create config.json
-  action: template src=config.json.j2 dest=/opt/hpccloud/cumulus/config.json mode=640 owner=hpccloud group=celery
+  action: template src=config.json.j2 dest=/opt/hpccloud/cumulus/cumulus/conf/config.json mode=640 owner=hpccloud group=celery
   tags:
     - cumulus
     - update_ips
   sudo: yes
+
+- name: Install cumulus
+  pip:
+    chdir: /opt/hpccloud/cumulus
+    name: .
+    extra_args: "--user"
+  become_user: hpccloud
+  when: development == False
+  tags: cumulus
+
+- name: Install cumulus (Development)
+  pip:
+    chdir: /opt/hpccloud/cumulus
+    name: .
+    extra_args: "-e"
+  sudo: true
+  when: development == True
+  tags: cumulus
