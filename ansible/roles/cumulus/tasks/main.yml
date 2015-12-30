@@ -80,5 +80,5 @@
     name: .
     extra_args: "-e"
   sudo: true
-  when: development == True
+  when: development
   tags: cumulus
