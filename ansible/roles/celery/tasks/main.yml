@@ -3,6 +3,11 @@
   sudo: yes
   tags: celery
 
+- name: Add hpccloud user to celery group
+  user: name=hpccloud groups=celery append=yes
+  sudo: yes
+  tags: celery
+
 - name: Download celeryd script
   sudo: yes
   copy: src=../files/init.d/celeryd dest=/etc/init.d/celeryd mode=755 owner=root
