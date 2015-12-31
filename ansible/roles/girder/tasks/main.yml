@@ -65,6 +65,13 @@
     name: .
   sudo: yes
 
+- name: Install editable girder_client
+  pip:
+    chdir: /opt/hpccloud/girder/clients/python
+    extra_args: "-e"
+    name: .
+  sudo: yes
+
 - name: Generate frontend web assets
   command: "girder-install web"
 

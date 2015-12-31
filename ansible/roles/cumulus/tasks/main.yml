@@ -47,7 +47,7 @@
     - update_ips
 
 - name: Create keys directory
-  file: dest={{ keys_directory }} mode=700 owner=celery group=celery state=directory
+  file: dest={{ keys_directory }} mode=750 owner=celery group=celery state=directory
   sudo: yes
   tags: cumulus
 
