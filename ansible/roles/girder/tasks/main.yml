@@ -81,7 +81,15 @@
   args:
     chdir: /opt/hpccloud/cumulus/girder/
     creates: /opt/hpccloud/girder/plugins/cumulus
-  tags: test
+  tags: grider
+
+- name: Install HPCCloud plugins
+  shell: "ls | xargs girder-install plugin -s --dev "
+  args:
+    chdir: /opt/hpccloud/hpccloud/server/
+    creates: /opt/hpccloud/girder/plugins/hpccloud
+  when: hpccloud_version == 'dev-v2'
+  tags: girder
 
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root

@@ -382,10 +382,19 @@ def setup(config):
         # Close of instance
         client.set_system_property('core.registration_policy', 'closed')
 
-    client.enable_plugins(['cumulus', 'pvwproxy', 'task', 'register', 'sftp', 'newt'])
+    plugins = ['cumulus', 'pvwproxy', 'task', 'register', 'sftp', 'newt']
+
+    hpccloud_client_plugin_path = os.path.join(config.hpccloud_repo, 'server')
+    if os.path.exists(hpccloud_client_plugin_path):
+        plugins.append('hpccloud')
+
+    client.enable_plugins(plugins)
 
     # Now restart the server to enable the plugins
     client.restart_girder()
+
+    if 'hpccloud' in plugins:
+        return
 
     client.set_system_property('pvwproxy.proxy_file_path', '/opt/hpccloud/proxy')
 

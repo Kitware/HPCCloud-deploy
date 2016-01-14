@@ -50,10 +50,12 @@
 
 - name: Run bower
   command: bower install chdir=/opt/hpccloud/hpccloud
+  when: hpccloud_version != 'dev-v2'
   tags: hpccloud
 
 - name: Run gulp
   command: gulp chdir=/opt/hpccloud/hpccloud
+  when: hpccloud_version != 'dev-v2'
   tags: hpccloud
 
 - name: Install apache
