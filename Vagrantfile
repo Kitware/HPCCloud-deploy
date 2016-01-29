@@ -38,7 +38,7 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  config.vm.define "hpccloud" do |node|
+  config.vm.define "hpccloud-vm" do |node|
   end
 
   # Provider-specific configuration so you can fine-tune various
@@ -75,11 +75,15 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.groups = {
-      "all" => ["hpccloud"],
-      "cumulus" => ["hpccloud"],
-      "girder" => ["hpccloud"],
-      "hpccloud" => ["hpccloud"]
+      "all" => ["hpccloud-vm"],
+      "cumulus" => ["hpccloud-vm"],
+      "girder" => ["hpccloud-vm"]
     }
+
+    if !ENV['CUMULUS']
+      ansible.groups["hpccloud"] = ["hpccloud-vm"]
+    end
+
     ansible.verbose = "vv"
     ansible.extra_vars = {
       default_user: "vagrant",
