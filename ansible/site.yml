@@ -1,54 +1,62 @@
 - name: Create users
   hosts: all
-  user: "{{ default_user }}"
+  become: yes
   roles:
     - users
 
 - name: Common configuration
   hosts: all
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - common
 
 - name: Set up rabbitmq
   hosts: cumulus
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - rabbitmq
 
 - name: Setup cumulus
   hosts: cumulus
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - cumulus
 
 - name: Set up ParaView
   hosts: paraview
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - osmesa
     - paraview
 
 - name: Set up hpccloud
   hosts: hpccloud
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - hpccloud
 
 - name: Setup Girder
   hosts: girder
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - girder
 
 - name: Set up celery
   hosts: cumulus
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - celery
 
 - name: Set up ParaViewWeb launcher
   hosts: pvwlauncher
-  user: hpccloud
+  become: yes
+  become_user: hpccloud
   roles:
     - pvwlauncher
