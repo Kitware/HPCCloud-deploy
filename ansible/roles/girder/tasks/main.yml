@@ -1,21 +1,21 @@
 - name: Add nodejs ppa
   apt_repository: repo='ppa:chris-lea/node.js' update_cache=no
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Add MongoDB repo key
   command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Add MongoDB repo
   apt_repository: repo='deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' update_cache=yes
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Install package dependencies
   apt: name={{ item }} state=present
-  sudo: yes
+  become_user: root
   tags: girder
   with_items:
     - curl
@@ -27,7 +27,7 @@
 
 - name: Install MongoDb
   apt: name={{ item }} state=present
-  sudo: yes
+  become_user: root
   tags: girder
   with_items:
     - mongodb-org-server
@@ -35,7 +35,7 @@
 
 - name: Enable mongo full-text search
   lineinfile: dest=/etc/mongod.conf regexp=^setParameter= line=setParameter=textSearchEnabled=true
-  sudo: yes
+  become_user: root
   tags: girder
   notify:
     - restart mongod
@@ -45,16 +45,16 @@
   with_items:
     - grunt
     - grunt-cli
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Get Girder from github
   git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/hpccloud/girder force=yes accept_hostkey=yes
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Change owner of girder directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/girder mode=755 owner=hpccloud group=hpccloud state=directory recurse=true
   tags: girder
 
@@ -63,14 +63,14 @@
     chdir: /opt/hpccloud/girder
     extra_args: "-e"
     name: .
-  sudo: yes
+  become_user: root
 
 - name: Install editable girder_client
   pip:
     chdir: /opt/hpccloud/girder/clients/python
     extra_args: "-e"
     name: .
-  sudo: yes
+  become_user: root
 
 - name: Generate frontend web assets
   command: "girder-install web"
@@ -85,16 +85,16 @@
 
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Start Girder as service
   service: name=girder state=restarted enabled=yes
-  sudo: yes
+  become_user: root
   tags: girder
 
 - name: Copy fixture script
-  sudo: yes
+  become_user: root
   copy: src=../../../../girder/setup.py dest=/tmp/setup.py
   tags:
     - girder

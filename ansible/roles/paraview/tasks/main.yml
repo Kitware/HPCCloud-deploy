@@ -1,12 +1,12 @@
 - name: Create ParaView directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/paraview mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Install ParaView build prerequisities
-  sudo: yes
+  become_user: root
   apt: name={{ item }} state=present
-  sudo: yes
+  become_user: root
   with_items:
     - cmake
     - cmake-curses-gui
@@ -19,12 +19,12 @@
   tags: paraview
 
 - name: Create ParaView build directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/paraview/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Create ParaView install directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/paraview/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 

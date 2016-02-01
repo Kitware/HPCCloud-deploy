@@ -1,29 +1,29 @@
 - name: Create application base directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud mode=755 owner=hpccloud group=hpccloud state=directory
   tags:
        - common
 
 - name: Add nodejs ppa
   apt_repository: repo='ppa:chris-lea/node.js' update_cache=no
-  sudo: yes
+  become_user: root
 
 - name: Update apt cache
   apt: update_cache=yes
-  sudo: yes
+  become_user: root
 
 - name: Install Python, git and nodejs
   apt: name={{ item }} state=present
-  sudo: yes
+  become_user: root
   with_items:
     - python-dev
     - git
     - nodejs
 
 - name: Download pip setup
-  sudo: yes
+  become_user: root
   get_url: url=https://bootstrap.pypa.io/get-pip.py dest=.
 
 - name: Install pip
-  sudo: yes
+  become_user: root
   command: python get-pip.py
