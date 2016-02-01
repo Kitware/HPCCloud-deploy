@@ -92,6 +92,9 @@
   become_user: root
   tags: girder
 
+- name: Wait for Girder to start
+  wait_for: port=8080 delay=1
+
 - name: Create Girder hpccloud user
   girder:
     port: 8080
