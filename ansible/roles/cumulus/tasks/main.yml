@@ -42,6 +42,7 @@
   local_action: command python roles/cumulus/files/ec2_private_ip.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2 {{ groups['girder'][0] }}
   when: aws_access_key_id != "" and aws_secret_access_key != ""
   register: get_private_ip
+  become: no
   tags:
     - cumulus
     - update_ips
@@ -53,6 +54,7 @@
 
 - name: Get local host name, used in Vagrant deployment
   local_action: command hostname
+  become: no
   register: local_hostname
   tags:
     - cumulus
