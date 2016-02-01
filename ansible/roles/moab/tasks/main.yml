@@ -1,12 +1,12 @@
 - name: Create moab directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/moab mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 
 - name: Install moab build prerequisities
-  sudo: yes
+  become_user: root
   apt: name={{ item }} state=present
-  sudo: yes
+  become_user: root
   with_items:
     - cmake
     - cmake-curses-gui
@@ -19,12 +19,12 @@
   tags: moab
 
 - name: Create moab build directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/moab/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 
 - name: Create moab install directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/moab/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 

@@ -1,6 +1,5 @@
-
 - name: Template launcher config
-  sudo: yes
+  become_user: root
   action: template src=launcher.json.j2 dest=/etc/default/pvwlauncher mode=644 owner=root
   tags:
     - pvwlauncher
@@ -8,6 +7,5 @@
 
 - name: Install launcher as service
   copy: src=../files/pvwlauncher.conf dest=/etc/init/pvwlauncher.conf mode=644 owner=root
-  sudo: yes
+  become_user: root
   tags: pvwlauncher
-

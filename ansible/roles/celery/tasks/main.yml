@@ -1,24 +1,24 @@
 - name: Create celery user
   user: name=celery shell=/bin/bash state=present
-  sudo: yes
+  become_user: root
   tags: celery
 
 - name: Add hpccloud user to celery group
   user: name=hpccloud groups=celery append=yes
-  sudo: yes
+  become_user: root
   tags: celery
 
 - name: Download celeryd script
-  sudo: yes
+  become_user: root
   copy: src=../files/init.d/celeryd dest=/etc/init.d/celeryd mode=755 owner=root
   tags: celery
 
 - name: Add celeryd configuration file
-  sudo: yes
+  become_user: root
   copy: src=../files/celeryd dest=/etc/default/celeryd mode=644 owner=root group=root
   tags: celery
 
 - name: Start celery service
-  sudo: yes
+  become_user: root
   service: name=celeryd state=restarted enabled=yes
   tags: celery

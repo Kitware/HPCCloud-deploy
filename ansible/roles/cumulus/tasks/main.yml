@@ -5,23 +5,23 @@
 
 - name: Get cumulus from github
   git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/hpccloud/cumulus force=yes accept_hostkey=yes
-  sudo: yes
+  become_user: root
   when: path.stat.exists == False
   tags: cumulus
 
 - name: Install cumulus dependencies
   pip: requirements=/opt/hpccloud/cumulus/requirements.txt
-  sudo: yes
+  become_user: root
   tags: cumulus
 
 - name: Create celery user (need to create so we can assign read permission to the cumulus config file)
   user: name=celery shell=/bin/bash state=present
-  sudo: yes
+  become_user: root
   tags: celery
 
 - name: Change owner of cumulus directory
   file: dest=/opt/hpccloud/cumulus mode=775 owner=hpccloud group=celery state=directory recurse=true
-  sudo: yes
+  become_user: root
   tags: cumulus
 
 - name: Tell git to ignore permission changes
@@ -48,7 +48,7 @@
 
 - name: Create keys directory
   file: dest={{ keys_directory }} mode=750 owner=celery group=celery state=directory
-  sudo: yes
+  become_user: root
   tags: cumulus
 
 - name: Get local host name, used in Vagrant deployment
@@ -63,7 +63,7 @@
   tags:
     - cumulus
     - update_ips
-  sudo: yes
+  become_user: root
 
 - name: Install cumulus
   pip:

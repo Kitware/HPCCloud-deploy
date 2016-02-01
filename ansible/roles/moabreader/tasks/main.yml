@@ -1,5 +1,5 @@
 - name: Create moabreader directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/moabreader mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moabreader
 
@@ -8,12 +8,12 @@
   tags: moabreader
 
 - name: Create moabreader build directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/moabreader/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moabreader
 
 - name: Create moabreader install directory
-  sudo: yes
+  become_user: root
   file: dest=/opt/hpccloud/moabreader/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moabreader
 
