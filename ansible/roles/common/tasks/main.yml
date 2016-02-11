@@ -12,7 +12,7 @@
   apt: update_cache=yes
   become_user: root
 
-- name: Install Python, git and nodejs
+- name: Install pyfr requirements
   apt: name={{ item }} state=present
   become_user: root
   with_items:

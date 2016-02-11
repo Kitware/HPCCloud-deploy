@@ -78,7 +78,8 @@ Vagrant.configure(2) do |config|
       "all" => ["hpccloud"],
       "cumulus" => ["hpccloud"],
       "girder" => ["hpccloud"],
-      "hpccloud" => ["hpccloud"]
+      "hpccloud" => ["hpccloud"],
+      "pyfr" => ["hpccloud"]
     }
     ansible.verbose = "vv"
     ansible.extra_vars = {
@@ -87,7 +88,6 @@ Vagrant.configure(2) do |config|
     }
 
     ansible.playbook = "ansible/site.yml"
-
 
   end
 end
