@@ -165,6 +165,7 @@
     password: "{{ hpccloud_password }}"
     plugins:
       - hpccloud
+      - pvwproxy
     state: present
   tags: girder
 
