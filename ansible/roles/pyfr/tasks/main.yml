@@ -27,6 +27,6 @@
   tags: pyfr
 
 - name: Install PyFR from GitHub
-  pip: executable=pip3 name="git+https://github.com/vincentlab/PyFR.git@v1.3.0#egg=pyfr" state=present
+  pip: executable=pip3 name="git+https://github.com/vincentlab/PyFR.git@v1.3.0#egg=pyfr" state=present editable=False
   become_user: root
   tags: pyfr
