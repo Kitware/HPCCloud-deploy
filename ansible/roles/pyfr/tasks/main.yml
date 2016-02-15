@@ -15,6 +15,7 @@
     - libhdf5-dev
     - cython3
     - libmpich-dev
+    - libmetis-dev
   tags:
     - pyfr
 
