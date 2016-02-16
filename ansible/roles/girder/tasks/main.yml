@@ -182,6 +182,17 @@
     state: present
   tags: girder_ass
 
+- name: Set pvwproxy filepath
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    put:
+      path: "system/setting"
+      parameters:
+        key: "pvwproxy.proxy_file_path"
+        value: "/opt/hpccloud/proxy"
+
 - name: Restart the Girder server
   girder:
     port: 8080
