@@ -103,6 +103,7 @@
 
 - name: Wait for Girder to start
   wait_for: port=8080 delay=1
+  tags: girder
 
 - name: Create Girder hpccloud user
   girder:
@@ -169,6 +170,19 @@
     state: present
   tags: girder
 
+- name: Restart the Girder server
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    put:
+      path: "system/restart"
+  tags: girder
+
+- name: Wait for Girder to restart
+  wait_for: port=8080 delay=5
+  tags: girder
+
 - name: Create filesystem assetstore
   girder:
     port: 8080
@@ -180,7 +194,7 @@
       root: "/opt/hpccloud/assestore"
       current: true
     state: present
-  tags: girder_ass
+  tags: girder
 
 - name: Set pvwproxy filepath
   girder:
