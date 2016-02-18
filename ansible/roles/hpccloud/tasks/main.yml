@@ -9,6 +9,10 @@
   when: path.stat.exists == False
   tags: hpccloud
 
+- name: Install hpccloud Python dependencies
+  pip: requirements=/opt/hpccloud/hpccloud/requirements.txt
+  become_user: root
+  tags: hpccloud
 
 - name: Make sure we have the right version of npm
   npm: name=npm version=2.1.5 global=yes
