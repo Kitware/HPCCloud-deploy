@@ -39,10 +39,12 @@
   file: dest=/opt/hpccloud/hpccloud mode=755 owner=hpccloud group=hpccloud state=directory recurse=true
   become_user: root
   tags: hpccloud
+  when: not development
 
 - name: Tell git to ignore permission changes
   command: git config core.filemode false chdir=/opt/hpccloud/hpccloud
   tags: hpccloud
+  when: not development
 
 - name: Run npm install
   npm: path=/opt/hpccloud/hpccloud
