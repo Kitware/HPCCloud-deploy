@@ -54,7 +54,7 @@ sudo dpkg --install /tmp/vagrant_1.7.4_x86_64.deb && rm /tmp/vagrant_1.7.4_x86_6
 - Clone this repo
 - Download and install the following in order:
   - [VirtualBox 5.0](http://download.virtualbox.org/virtualbox/5.0.6/VirtualBox-5.0.6-103037-OSX.dmg)
-  - [Vagrant 1.7.4](https://dl.bintray.com/mitchellh/vagrant/vagran	t_1.7.4.dmg)
+  - [Vagrant 1.7.4](https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4.dmg)
   - Ansible - `sudo pip install ansible`
 - Run `vagrant up` in the folder that you cloned this repository too
   - It will err if there's anything already running on the ports it needs (definitely 8888, 8080, probably 27017)
