@@ -1,7 +1,7 @@
 default_user: ubuntu
 hpccloud_password: letmein
-girder_version: master
-cumulus_version: master
+girder_version: v1.4.1
+cumulus_version: eea90feca0977c4c0b
 hpccloud_version: master
 paraview_version: v4.4.0
 aws_access_key_id: ""
