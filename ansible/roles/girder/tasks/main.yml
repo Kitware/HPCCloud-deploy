@@ -88,7 +88,6 @@
   args:
     chdir: /opt/hpccloud/hpccloud/server/
     creates: /opt/hpccloud/girder/plugins/hpccloud
-  when: hpccloud_version == 'dev-v2'
   tags: girder
 
 - name: Install Girder as service
