@@ -81,7 +81,14 @@
   args:
     chdir: /opt/hpccloud/cumulus/girder/
     creates: /opt/hpccloud/girder/plugins/cumulus
-  tags: test
+  tags: grider
+
+- name: Install HPCCloud plugins
+  shell: "ls | xargs girder-install plugin -s --dev "
+  args:
+    chdir: /opt/hpccloud/hpccloud/server/
+    creates: /opt/hpccloud/girder/plugins/hpccloud
+  tags: girder
 
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
@@ -93,69 +100,116 @@
   become_user: root
   tags: girder
 
-- name: Copy fixture script
-  become_user: root
-  copy: src=../../../../girder/setup.py dest=/tmp/setup.py
-  tags:
-    - girder
-    - fixtures
+- name: Wait for Girder to start
+  wait_for: port=8080 delay=1
+  tags: girder
 
-- name: Create temp config dir
-  command: mktemp -d
-  register: create_tmp_config_dir
-  tags:
-    - girder
-    - fixtures
+- name: Create Girder hpccloud user
+  girder:
+    port: 8080
+    user:
+      firstName: "hpccloud"
+      lastName: "hpccloud"
+      login: "hpccloud"
+      password: "{{ hpccloud_password }}"
+      email: "hpccloud@kitware.com"
+      admin: yes
+    state: present
+  tags: girder
 
-- name: Get starcluster configuration files
-  shell: "ls {{ starcluster_config_glob }}"
-  register: starcluster_config_files
-  tags:
-    - girder
-    - fixtures
+- name: Create Girder cumulus user
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    user:
+      firstName: "cumulus"
+      lastName: "cumulus"
+      login: "cumulus"
+      password: "{{ lookup('password', 'credentials/cumuluspassword') }}"
+      email: "cumulus@kitware.com"
+      admin: yes
+    state: present
+  tags: girder
 
-- name: Copy starcluster configuration files
-  shell: "cp {{ item }} {{create_tmp_config_dir.stdout}}/{{item|basename}}"
-  with_items:
-    starcluster_config_files.stdout_lines
-  tags:
-    - girder
-    - fixtures
+- name: Create Girder cumulus group
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    group:
+      name: "cumulus"
+      description: "The cumulus group"
+      users:
+        - login: cumulus
+          type: member
+  tags: girder
 
-# This is a bit of a hack, we don't have API to query config or scripts so for
-# now clean out the collections each time.
-- name: Clean up starclusterconfigs
-  command: mongo girder --eval "db.starclusterconfigs.remove({name":" \"{{item|basename}}\" })"
-  with_items:
-    starcluster_config_files.stdout_lines
-  tags:
-    - girder
-    - fixtures
+- name: Enable cumulus plugins
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    plugins:
+      - cumulus
+      - sftp
+      - newt
+      - taskflow
+    state: present
+  tags: girder
 
-- name: Get script files
-  shell: "ls {{ script_glob }}"
-  register: script_files
-  tags:
-    - girder
-    - fixtures
-    - debug
+- name: Enable HPCCloud plugins
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    plugins:
+      - hpccloud
+      - pvwproxy
+    state: present
+  tags: girder
 
-- name: Clean up scripts
-  command: mongo girder --eval "db.scripts.remove({name":" \"{{item|basename}}\" })"
-  with_items:
-    - script_files.stdout_lines
-  tags:
-    - girder
-    - fixtures
+- name: Restart the Girder server
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    put:
+      path: "system/restart"
+  tags: girder
 
-- name: Create Girder fixtures
-  shell: PYTHONPATH=/opt/hpccloud/cumulus python /tmp/setup.py --url 'http://localhost:8080/api/v1' --hpccloud_password {{ hpccloud_password }} --config_dir={{ create_tmp_config_dir.stdout }} --dummy_hydra {{ '--open_reg' if aws_access_key_id == '' and aws_secret_access_key == '' else '' }}
-  tags:
-    - girder
-    - fixtures
+- name: Wait for Girder to restart
+  wait_for: port=8080 delay=5
+  tags: girder
 
-- name: Clean up temp config directory
-  file: path={{ create_tmp_config_dir.stdout }} state=absent
-  tags:
-    - girder
-    - fixtures
+- name: Create filesystem assetstore
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    assetstore:
+      name: "Filesystem Assetstore"
+      type: "filesystem"
+      root: "/opt/hpccloud/assestore"
+      current: true
+    state: present
+  tags: girder
+
+- name: Set pvwproxy filepath
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    put:
+      path: "system/setting"
+      parameters:
+        key: "pvwproxy.proxy_file_path"
+        value: "/opt/hpccloud/proxy"
+
+- name: Restart the Girder server
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{ hpccloud_password }}"
+    put:
+      path: "system/restart"

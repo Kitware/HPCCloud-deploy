@@ -60,3 +60,10 @@
   become_user: hpccloud
   roles:
     - pvwlauncher
+
+- name: Set up pyfr
+  hosts: pyfr
+  become: yes
+  become_user: hpccloud
+  roles:
+    - pyfr
