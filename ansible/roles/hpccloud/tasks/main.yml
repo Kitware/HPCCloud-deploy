@@ -9,6 +9,10 @@
   when: path.stat.exists == False
   tags: hpccloud
 
+- name: Install hpccloud Python dependencies
+  pip: requirements=/opt/hpccloud/hpccloud/requirements.txt
+  become_user: root
+  tags: hpccloud
 
 - name: Make sure we have the right version of npm
   npm: name=npm version=2.1.5 global=yes
@@ -21,17 +25,7 @@
   become_user: root
 
 - name: Install right version of node
-  command: n 0.12.0
-  tags: hpccloud
-  become_user: root
-
-- name: Install gulp
-  npm:  name=gulp global=yes
-  tags: hpccloud
-  become_user: root
-
-- name: Install bower
-  npm:  name=bower global=yes
+  command: n 0.12.9
   tags: hpccloud
   become_user: root
 
@@ -39,21 +33,15 @@
   file: dest=/opt/hpccloud/hpccloud mode=755 owner=hpccloud group=hpccloud state=directory recurse=true
   become_user: root
   tags: hpccloud
+  when: not development
 
 - name: Tell git to ignore permission changes
   command: git config core.filemode false chdir=/opt/hpccloud/hpccloud
   tags: hpccloud
+  when: not development
 
 - name: Run npm install
   npm: path=/opt/hpccloud/hpccloud
-  tags: hpccloud
-
-- name: Run bower
-  command: bower install chdir=/opt/hpccloud/hpccloud
-  tags: hpccloud
-
-- name: Run gulp
-  command: gulp chdir=/opt/hpccloud/hpccloud
   tags: hpccloud
 
 - name: Install apache

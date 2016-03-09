@@ -23,10 +23,12 @@
   file: dest=/opt/hpccloud/cumulus mode=775 owner=hpccloud group=celery state=directory recurse=true
   become_user: root
   tags: cumulus
+  when: not development
 
 - name: Tell git to ignore permission changes
   command: git config --replace-all core.filemode false chdir=/opt/hpccloud/cumulus
   tags: cumulus
+  when: not development
 
 - name: Get AMIs from EC2
   command: python roles/cumulus/files/amis.py {{ aws_access_key_id }} {{ aws_secret_access_key }} us-west-2
