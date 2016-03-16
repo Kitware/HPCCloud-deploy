@@ -44,6 +44,10 @@
   npm: path=/opt/hpccloud/hpccloud
   tags: hpccloud
 
+- name: Run npm run build
+  command: npm run build:release chdir=/opt/hpccloud/hpccloud
+  tags: hpccloud
+
 - name: Install apache
   apt: name=apache2 state=present
   become_user: root
