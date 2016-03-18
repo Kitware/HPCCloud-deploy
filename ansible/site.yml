@@ -65,6 +65,11 @@
       girder_path: /opt/hpccloud/girder
 
   post_tasks:
+    - name: Allow logins to be three chars
+      lineinfile: 'dest=/opt/hpccloud/girder/girder/conf/girder.local.cfg regexp="^login_regex:" line="login_regex: \"^[a-z][\da-z\-]{2}[\da-z\-]*$\""'
+      become_user: hpccloud
+      tags: girder
+
     - name: Create Girder hpccloud user
       girder:
         port: 8080
