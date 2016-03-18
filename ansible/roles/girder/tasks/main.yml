@@ -82,6 +82,11 @@
     creates: /opt/hpccloud/girder/plugins/cumulus
   tags: girder
 
+- name: Allow logins to be three chars
+  lineinfile: 'dest=/opt/hpccloud/girder/girder/conf/girder.local.cfg regexp="^login_regex:" line="login_regex: \"^[a-z][\da-z\-]{2}[\da-z\-]*$\""'
+  become_user: hpccloud
+  tags: girder
+
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
   become_user: root
