@@ -6,7 +6,7 @@
 - name: Get cumulus from github
   git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/hpccloud/cumulus force=yes accept_hostkey=yes
   become_user: root
-  when: path.stat.exists == False
+  when: path.stat.exists == False or not development
   tags: cumulus
 
 - name: Install cumulus dependencies
@@ -71,7 +71,7 @@
   pip:
     chdir: /opt/hpccloud/cumulus
     name: .
-    extra_args: "--user"
+    extra_args: "--user -I"
   become_user: hpccloud
   when: development == False
   tags: cumulus
