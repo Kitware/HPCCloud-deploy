@@ -13,6 +13,7 @@ Vagrant.configure(2) do |config|
 
   dev = ENV.has_key?('DEVELOPMENT') ? ENV['DEVELOPMENT'] : false
   demo = ENV.has_key?('DEMO') ?  ENV['DEMO'] : false
+  cumulus = ENV.has_key?('CUMULUS') ?  ENV['CUMULUS'] : false
   hpccloud_password = 'letmein'
 
   config.vm.box = "ubuntu/trusty64"
@@ -86,15 +87,16 @@ Vagrant.configure(2) do |config|
   # Setup HPCCloud/cumulus stack
   config.vm.provision "ansible" do |ansible|
     ansible.groups = {
-      "all" => ["hpccloud"],
-      "cumulus" => ["hpccloud"],
-      "girder" => ["hpccloud"],
-      "mongo" => ["hpccloud"]
+      "all" => ["hpccloud-vm"],
+      "cumulus" => ["hpccloud-vm"],
+      "girder" => ["hpccloud-vm"],
+      "mongo" => ["hpccloud-vm"]
     }
 
-    if !ENV['CUMULUS']
-      ansible.groups["hpccloud"] = ["hpccloud"]
-      ansible.groups["pyfr"] = ["hpccloud"]
+    if !cumulus
+      print "not cumulus\n"
+      ansible.groups["hpccloud"] = ["hpccloud-vm"]
+      ansible.groups["pyfr"] = ["hpccloud-vm"]
     end
 
     ansible.verbose = "vv"
@@ -102,7 +104,8 @@ Vagrant.configure(2) do |config|
       default_user: "vagrant",
       development: dev,
       hpccloud_password: hpccloud_password,
-      demo: demo
+      demo: demo,
+      cumulus: cumulus
     }
 
     ansible.galaxy_role_file = "ansible/requirements.yml"
@@ -160,10 +163,10 @@ Vagrant.configure(2) do |config|
       ansible.galaxy_role_file = "demo/requirements.yml"
 
       ansible.groups = {
-        "users" => ["hpccloud"],
-        "paraview" => ["hpccloud"],
-        "fixtures" => ["hpccloud"],
-        "pyfr" => ["hpccloud"]
+        "users" => ["hpccloud-vm"],
+        "paraview" => ["hpccloud-vm"],
+        "fixtures" => ["hpccloud-vm"],
+        "pyfr" => ["hpccloud-vm"]
       }
 
       ansible.verbose = "vv"
