@@ -48,8 +48,13 @@ wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb -O /tmp/v
 sudo dpkg --install /tmp/vagrant_1.7.4_x86_64.deb && rm /tmp/vagrant_1.7.4_x86_64.deb
 ```
 
-##OSX
+##### Creating a HPCCloud VM
 
+- Clone this repo
+- Run `vagrant up` in the folder that you cloned this repository too
+- Point your browser to http://localhost:8888
+
+##OSX
 
 - Clone this repo
 - Download and install the following in order:
