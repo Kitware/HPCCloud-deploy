@@ -68,12 +68,6 @@ In order to use a cluster with HPCCloud the following requirements need to be av
 
          sudo apt-get install curl
 - [ParaView](http://www.paraview.org) is used for running visualization tasks on the cluster so needs to be installed, the latest release can be downloaded [here](http://www.paraview.org/download/). ParaView can also be build from [source](http://www.paraview.org/Wiki/ParaView:Build_And_Install)
-- Several [Python packages](https://github.com/Kitware/HPCCloud-deploy/blob/master/requirements-cluster.txt) are needed on the cluster. These can be install by running the following command on the clusters head node:
-
-         sudo pip install -r requirements-cluster.txt
- The `requirements-cluster.txt` can be found at the [root of this repository](https://github.com/Kitware/HPCCloud-deploy/blob/master/requirements-cluster.txt). These python package need to be available in the pvpython environment. If you have built ParaView against system python then the previous command will have ensured this. If you are using a prebuilt release then this [script](https://github.com/Kitware/HPCCloud-deploy/blob/master/pvpython_setup.sh) will install the required packages in the pvpython environment.
-
-         ./pvpython_setup.sh <full path to pvpython executable>
 
 
 ### Local Development Installation
