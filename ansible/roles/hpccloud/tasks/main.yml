@@ -1,3 +1,9 @@
+- name: Ensure build-essential is installed (g++ is required for node-gyp)
+  apt: name={{ item }} state=present
+  become_user: root
+  with_items:
+    - build-essential
+
 - name: probe hpccloud folder
   stat: path=/opt/hpccloud/hpccloud
   register: path
