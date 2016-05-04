@@ -77,14 +77,14 @@
 
 
 - name: Install cumulus plugins
-  shell: "ls | xargs girder-install plugin -s --dev "
+  shell: "ls | xargs girder-install plugin -s"
   args:
     chdir: /opt/hpccloud/cumulus/girder/
     creates: /opt/hpccloud/girder/plugins/cumulus
   tags: grider
 
 - name: Install HPCCloud plugins
-  shell: "ls | xargs girder-install plugin -s --dev "
+  shell: "ls | xargs girder-install plugin -s"
   args:
     chdir: /opt/hpccloud/hpccloud/server/
     creates: /opt/hpccloud/girder/plugins/hpccloud
