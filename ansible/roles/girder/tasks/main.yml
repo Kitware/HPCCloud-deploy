@@ -81,7 +81,7 @@
   args:
     chdir: /opt/hpccloud/cumulus/girder/
     creates: /opt/hpccloud/girder/plugins/cumulus
-  tags: grider
+  tags: girder
 
 - name: Install HPCCloud plugins
   shell: "ls | xargs girder-install plugin -s"
