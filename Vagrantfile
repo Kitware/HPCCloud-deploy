@@ -5,9 +5,13 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+require 'fileutils'
+
 Vagrant.configure(2) do |config|
 
-  dev = if ENV['DEVELOPMENT'] then true else  false end;
+  dev = ENV.has_key?('DEVELOPMENT') ? ENV['DEVELOPMENT'] : false
+  demo = ENV.has_key?('DEMO') ?  ENV['DEMO'] : false
+  hpccloud_password = 'letmein'
 
   config.vm.box = "ubuntu/trusty64"
 
@@ -73,6 +77,8 @@ Vagrant.configure(2) do |config|
 
   end
 
+
+  # Setup HPCCloud/cumulus stack
   config.vm.provision "ansible" do |ansible|
     ansible.groups = {
       "all" => ["hpccloud"],
@@ -81,13 +87,91 @@ Vagrant.configure(2) do |config|
       "hpccloud" => ["hpccloud"],
       "pyfr" => ["hpccloud"]
     }
+
     ansible.verbose = "vv"
     ansible.extra_vars = {
       default_user: "vagrant",
-      development: dev
+      development: dev,
+      hpccloud_password: hpccloud_password
     }
-
     ansible.playbook = "ansible/site.yml"
+  end
 
+  # Should we also deploy a "cluster" on the VM
+  if demo
+    # Create temp directory
+    dir = Dir.mktmpdir()
+
+    # First download cumulus so we have access to the playbooks
+    config.vm.provision "ansible" do |ansible|
+
+      # If there is a better way to run playbook aganst localhost let
+      # me know!
+      ansible.raw_arguments = ['--limit=localhost',
+        '--inventory-file=demo/inventory/localhost',
+        '--connection=local']
+
+      ansible.verbose = "vv"
+      ansible.extra_vars = {
+        tmpdir: dir
+      }
+      ansible.playbook = "demo/cumulus.yml"
+    end
+
+    # Setup SGE using cumulus playbook
+    config.vm.provision "ansible" do |ansible|
+      ansible.groups = {
+        "master" => ["hpccloud"]
+      }
+
+      ansible.verbose = "vv"
+      ansible.extra_vars = {
+        default_user: "vagrant",
+        tmpdir: dir
+      }
+      ansible.playbook = "#{dir}/cumulus/cumulus/ansible/tasks/playbooks/gridengine/site.yml"
+
+      # We need to ensure this path exists when this file is loaded. It will
+      # be populated with correct content by an ansible role, however,
+      # Vagrant wants it to exist now!
+      dirname = File.dirname(ansible.playbook)
+      unless File.directory?(dirname)
+        FileUtils.mkdir_p(dirname)
+      end
+      FileUtils.touch(ansible.playbook)
+    end
+
+    # Now setup demo configuration
+    config.vm.provision "ansible" do |ansible|
+      # For PyFR role
+      ansible.galaxy_role_file = "demo/requirements.yml"
+
+      ansible.groups = {
+        "users" => ["hpccloud"],
+        "paraview" => ["hpccloud"],
+        "fixtures" => ["hpccloud"],
+        "pyfr" => ["hpccloud"]
+      }
+
+      ansible.verbose = "vv"
+      ansible.extra_vars = {
+        default_user: "vagrant",
+        hpccloud_password: hpccloud_password
+      }
+      ansible.playbook = "demo/site.yml"
+    end
+
+    # Finally clean up temp directory
+    config.vm.provision "ansible" do |ansible|
+      ansible.raw_arguments = ['--limit=localhost',
+        '--inventory-file=demo/inventory/localhost',
+        '--connection=local']
+
+      ansible.verbose = "vv"
+      ansible.extra_vars = {
+        tmpdir: dir
+      }
+      ansible.playbook = "demo/cumulus_cleanup.yml"
+    end
   end
 end

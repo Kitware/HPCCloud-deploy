@@ -1,0 +1,82 @@
+- name: Install ParaView prerequisite packages
+  become: yes
+  become_user: root
+  package:
+    name={{ item }} state=present
+  with_items:
+    - xorg
+    - slim
+    - mesa-common-dev
+    - libxt-dev
+  tags:
+    - paraview
+
+- name: stat ParaView download
+  stat: path="/var/tmp/{{paraview_download_filename}}.tar.gz"
+  register: paraview_download_stat
+  tags:
+    - paraview
+
+- name: Download ParaView
+  get_url:
+    url="{{paraview_download_url}}"
+    dest="/var/tmp"
+  register: paraview_tarball
+  when: not paraview_download_stat.stat.exists
+  tags:
+    - paraview
+
+- name: Install ParaView
+  become: yes
+  become_user: root
+  unarchive:
+    src="/var/tmp/{{paraview_download_filename}}.tar.gz"
+    dest=/opt
+    copy=no
+  when: paraview_tarball|changed
+  tags:
+    - paraview
+
+- name: stat ParaView version specific install directory
+  stat: path="/opt/{{paraview_download_filename}}"
+  register: paraview_stat
+  tags:
+    - paraview
+
+- name: Move install specfic directory name to 'paraview'
+  shell: creates="/opt/paraview" mv "/opt/{{paraview_download_filename}}" /opt/paraview
+  become: yes
+  become_user: root
+  when: paraview_stat.stat.exists
+  tags:
+    - paraview
+
+- name: Step up ParaViewWeb user to auto login to start X
+  become: yes
+  become_user: root
+  lineinfile:
+    line={{item.line}}
+    regexp={{item.regex}}
+    dest=/etc/slim.conf
+  with_items:
+    - {
+        line: "auto_login          yes",
+        regex: "^#auto_login          no$"
+      }
+    - {
+        line: "default_user        demo",
+        regex: "^#default_user        simone$"
+      }
+  tags:
+    - paraview
+
+- name: Start slim ( to start X )
+  become: yes
+  become_user: root
+  service:
+    name=slim
+    state=restarted
+  tags:
+    - paraview
+
+

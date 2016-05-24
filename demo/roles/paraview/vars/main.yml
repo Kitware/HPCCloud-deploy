@@ -1,0 +1,2 @@
+paraview_download_filename: ParaView-5.0.1-Qt4-OpenGL2-MPI-Linux-64bit
+paraview_download_url: http://www.paraview.org/files/v5.0/{{paraview_download_filename}}.tar.gz

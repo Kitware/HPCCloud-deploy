@@ -1,0 +1,6 @@
+- name: Cleanup
+  hosts: localhost
+  tasks:
+  - name: Remove temp directory
+    file: path={{tmpdir}} state=absent
+

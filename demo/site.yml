@@ -1,0 +1,27 @@
+- name: Create demo user
+  hosts: users
+  become: yes
+  become_user: hpccloud
+  roles:
+    - users
+
+- name: Install PyFR
+  hosts: pyfr
+  become: yes
+  become_user: hpccloud
+  roles:
+    - pyfr
+
+- name: Install ParaView
+  hosts: paraview
+  become: yes
+  become_user: hpccloud
+  roles:
+    - paraview
+
+- name: Create HPCCloud demo cluster
+  hosts: fixtures
+  become: yes
+  become_user: hpccloud
+  roles:
+    - fixtures
