@@ -6,7 +6,6 @@
 - name: Install ParaView build prerequisities
   become_user: root
   apt: name={{ item }} state=present
-  become_user: root
   with_items:
     - cmake
     - cmake-curses-gui
