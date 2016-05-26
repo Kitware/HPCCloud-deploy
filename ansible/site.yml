@@ -1,3 +1,11 @@
+- name:
+  hosts: all
+  vars:
+    required_ansible_version: 2.0.2
+  tasks:
+  - fail: msg="Playbook requires ansible >= {{required_ansible_version}}"
+    when: ansible_version.string|version_compare(required_ansible_version, '<')
+
 - name: Create users
   hosts: all
   become: yes
