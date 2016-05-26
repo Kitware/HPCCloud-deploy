@@ -110,7 +110,7 @@ Vagrant.configure(2) do |config|
       # If there is a better way to run playbook aganst localhost let
       # me know!
       ansible.raw_arguments = ['--limit=localhost',
-        '--inventory-file=demo/inventory/localhost',
+        '--inventory-file=localhost,',
         '--connection=local']
 
       ansible.verbose = "vv"
@@ -166,7 +166,7 @@ Vagrant.configure(2) do |config|
     # Finally clean up temp directory
     config.vm.provision "ansible" do |ansible|
       ansible.raw_arguments = ['--limit=localhost',
-        '--inventory-file=demo/inventory/localhost',
+        '--inventory-file=localhost,',
         '--connection=local']
 
       ansible.verbose = "vv"
