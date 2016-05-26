@@ -38,14 +38,14 @@ sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update && sudo apt-get install ansible
 ```
 
-##### Install Vagrant 1.7.4
+##### Install Vagrant 1.8.1
 
 Ubuntu's default version of vagrant (1.4.3) is nearly 2 years old, to use this deployment script you must have a newer version of vagrant installed.  To do this download the following ```.deb``` file and install it. **important:** if you already have vagrant installed,  please do a ```sudo apt-get remove --purge vagrant``` before running the following commands:
 
 ```
-wget https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb -O /tmp/vagrant_1.7.4_x86_64.deb
+wget https://releases.hashicorp.com/vagrant/1.8.1/vagrant_1.8.1_x86_64.deb -O /tmp/vagrant_1.8.1_x86_64.deb
 
-sudo dpkg --install /tmp/vagrant_1.7.4_x86_64.deb && rm /tmp/vagrant_1.7.4_x86_64.deb
+sudo dpkg --install /tmp/vagrant_1.8.1_x86_64.deb && rm /tmp/vagrant_1.8.1_x86_64.deb
 ```
 
 ##### Creating a HPCCloud VM
@@ -59,7 +59,7 @@ sudo dpkg --install /tmp/vagrant_1.7.4_x86_64.deb && rm /tmp/vagrant_1.7.4_x86_6
 - Clone this repo
 - Download and install the following in order:
   - [VirtualBox 5.0](http://download.virtualbox.org/virtualbox/5.0.6/VirtualBox-5.0.6-103037-OSX.dmg)
-  - [Vagrant 1.7.4](https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4.dmg)
+  - [Vagrant 1.8.1](https://releases.hashicorp.com/vagrant/1.8.1/vagrant_1.8.1.dmg)
   - Ansible - `sudo pip install ansible`
 - Run `vagrant up` in the folder that you cloned this repository too
   - It will err if there's anything already running on the ports it needs (definitely 8888, 8080, probably 27017)
