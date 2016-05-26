@@ -11,12 +11,15 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty64"
 
+  girder_host_port = ENV["GIRDER_HOST_PORT"] || 8080
+  hpccloud_host_port = ENV["HPCCLOUD_HOST_PORT"] || 8888
+
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8888" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 80, host: 8888
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 80, host: hpccloud_host_port
+  config.vm.network "forwarded_port", guest: 8080, host: girder_host_port
 
 
   # Share an additional folder to the guest VM. The first argument is
