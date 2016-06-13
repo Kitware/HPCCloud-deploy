@@ -1,0 +1,112 @@
+- name: Authenticate with Girder
+  girder:
+    port: 8080
+    username: "hpccloud"
+    password: "{{hpccloud_password}}"
+    get:
+      path: "user/me"
+  register: me
+
+- name: Get list of current clusters
+  girder:
+    port: 8080
+    token: "{{ me.token }}"
+    get:
+      path: "clusters"
+      json: {
+        "type": "trad"
+      }
+  register: clusters
+
+- name: Create cluster
+  girder:
+    port: 8080
+    token: "{{ me.token }}"
+    post:
+      path: "clusters"
+      json: {
+        "name": "demo_cluster",
+        "type": "trad",
+        "config": {
+          "host": "{{ ansible_hostname }}",
+          "ssh": {
+            "user": "demo"
+          },
+          "paraview": {
+            "installDir": "/opt/paraview"
+          },
+          "pyfr": {
+            "openmp": [{
+              "cblas": "/usr/lib/libblas.so",
+              "name": "demo_profile"
+            }]
+          },
+          "jobOutputDir": "/tmp"
+        }
+      }
+  register: cluster
+  when: clusters.gc_return|length == 0
+
+- name: Set cluster from output
+  set_fact:
+    cluster: "{{ clusters.gc_return[0] }}"
+  when: clusters.gc_return|length == 1
+
+- name: Set cluster from output
+  set_fact:
+    cluster: "{{ cluster.gc_return }}"
+  when: clusters.gc_return|length == 0
+
+- name: Wait for cluster to move into the created state
+  uri:
+    headers:
+      Girder-Token: "{{ me.token }}"
+    body_format: json
+    url: "http://localhost:8080/api/v1/clusters/{{cluster._id}}/status"
+    status_code: 200
+  register: result
+  until: result.json.status == 'created' or result.json.status == 'running'
+  retries: 10
+  delay: 1
+
+- name: Refresh cluster so we have the public key
+  girder:
+    port: 8080
+    token: "{{ me.token }}"
+    get:
+      path: "clusters/{{cluster._id}}"
+      json: {
+        "type": "trad"
+      }
+  register: cluster
+
+- name: Set cluster from output
+  set_fact:
+    cluster: "{{ cluster.gc_return }}"
+
+- name: Add public key to authorize_keys
+  become: yes
+  become_user: demo
+  authorized_key:
+    user: demo
+    key: "{{ cluster.config.ssh.publicKey }}"
+
+- name: Start cluster
+  girder:
+    port: 8080
+    token: "{{ me.token }}"
+    put:
+      path: "clusters/{{cluster['_id']}}/start"
+
+- name: Wait for cluster to move into the running state
+  uri:
+    headers:
+      Girder-Token: "{{ me.token }}"
+    body_format: json
+    url: "http://localhost:8080/api/v1/clusters/{{cluster._id}}/status"
+    status_code: 200
+  register: result
+  until: result.json.status == 'running'
+  retries: 10
+  delay: 1
+

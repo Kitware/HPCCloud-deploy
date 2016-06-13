@@ -1,0 +1,15 @@
+- name: Clone playbook repos
+  hosts: localhost
+  tasks:
+  - name: Remove dummy path
+    file:
+      path={{tmpdir}}/cumulus
+      state=absent
+
+  - name: Clone cumulus
+    git:
+      repo=https://github.com/Kitware/cumulus.git
+      dest={{tmpdir}}/cumulus
+      force=yes
+      version=idempotent
+

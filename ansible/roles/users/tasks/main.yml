@@ -1,25 +1,28 @@
 - name: Create hpccloud user
+  become: yes
+  become_user: root
   user: name=hpccloud shell=/bin/bash uid=1002
   tags: users
-  sudo: yes
 
 - name: Get ubuntu user authorized_keys
+  become: yes
+  become_user: root
   command: cat /home/{{ default_user }}/.ssh/authorized_keys
   register: ubuntu_public_key
 
 - name: Copy ubuntu user authorized_keys
   authorized_key: user=hpccloud
                   key="{{ ubuntu_public_key.stdout }}"
-  sudo: yes
-
 
 - name: Give hpccloud passwordless sudo
+  become: yes
+  become_user: root
   lineinfile: "dest=/etc/sudoers state=present regexp='^hpccloud' line='hpccloud ALL=(ALL) NOPASSWD: ALL'"
   tags: users
-  sudo: yes
 
 - name: Add authorized keys for hpccloud
-  sudo: yes
+  become: yes
+  become_user: root
   authorized_key: user=hpccloud
                   key="{{ lookup('file', item)}}"
   with_fileglob:
