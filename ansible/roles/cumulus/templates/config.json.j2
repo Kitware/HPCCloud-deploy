@@ -1,9 +1,9 @@
 {
     "girder": {
         {% if get_private_ip.stdout is defined %}
-        "baseUrl": "http://{{ get_private_ip.stdout }}:8080/api/v1",
+        "baseUrl": "http://{{ get_private_ip.stdout }}:{{girder_external_port|default(8080)}}/api/v1",
         {% else %}
-        "baseUrl": "http://{{local_hostname.stdout if inventory_hostname == 'hpccloud' else 'localhost'}}:8080/api/v1",
+        "baseUrl": "http://{{local_hostname.stdout if inventory_hostname == 'hpccloud' else 'localhost'}}:{{girder_external_port|default(8080)}}/api/v1",
         {% endif %}
         "user": "cumulus",
         "group": "cumulus"

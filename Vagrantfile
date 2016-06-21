@@ -97,7 +97,8 @@ Vagrant.configure(2) do |config|
     ansible.extra_vars = {
       default_user: "vagrant",
       development: dev,
-      hpccloud_password: hpccloud_password
+      hpccloud_password: hpccloud_password,
+      girder_external_port: girder_host_port
     }
     ansible.playbook = "ansible/site.yml"
   end
