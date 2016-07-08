@@ -57,14 +57,6 @@
   become_user: root
   tags: cumulus
 
-- name: Get local host name, used in Vagrant deployment
-  local_action: command hostname
-  become: no
-  register: local_hostname
-  tags:
-    - cumulus
-    - update_ips
-
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/hpccloud/cumulus/cumulus/conf/config.json mode=640 owner=hpccloud group=hpccloud
   tags:
