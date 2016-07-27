@@ -11,5 +11,5 @@
       repo=https://github.com/Kitware/cumulus.git
       dest={{tmpdir}}/cumulus
       force=yes
-      version=idempotent
+      version=master
 

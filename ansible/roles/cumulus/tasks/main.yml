@@ -57,6 +57,36 @@
   become_user: root
   tags: cumulus
 
+- name: Get local host name, used in Vagrant deployment
+  local_action: command hostname
+  become: no
+  register: local_hostname
+  when: girder_hostname is not defined
+  tags:
+    - cumulus
+    - update_ips
+
+- name: Set girder_hostname
+  set_fact:
+    girder_hostname: "{{ local_hostname.stdout }}"
+  when: girder_hostname is not defined
+  tags:
+    - cumulus
+    - update_ips
+
+- name: Add hostname to /etc/hosts
+  become: yes
+  become_user: root
+  lineinfile:
+    dest=/etc/hosts
+    insertafter="^127.0.0.1 localhost$"
+    state=present
+    line="127.0.0.1 {{ girder_hostname }}"
+  when: demo is defined and demo
+  tags:
+    - cumulus
+    - update_ips
+
 - name: Create config.json
   action: template src=config.json.j2 dest=/opt/hpccloud/cumulus/cumulus/conf/config.json mode=640 owner=hpccloud group=hpccloud
   tags:
