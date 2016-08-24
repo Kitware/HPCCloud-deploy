@@ -1,21 +1,25 @@
 - name: Add nodejs ppa
   apt_repository: repo='ppa:chris-lea/node.js' update_cache=no
   become_user: root
+  become: yes
   tags: girder
 
 - name: Add MongoDB repo key
   command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
   become_user: root
+  become: yes
   tags: girder
 
 - name: Add MongoDB repo
   apt_repository: repo='deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' update_cache=yes
   become_user: root
+  become: yes
   tags: girder
 
 - name: Install package dependencies
   apt: name={{ item }} state=present
   become_user: root
+  become: yes
   tags: girder
   with_items:
     - curl
@@ -28,6 +32,7 @@
 - name: Install MongoDb
   apt: name={{ item }} state=present
   become_user: root
+  become: yes
   tags: girder
   with_items:
     - mongodb-org-server
@@ -36,6 +41,7 @@
 - name: Enable mongo full-text search
   lineinfile: dest=/etc/mongod.conf regexp=^setParameter= line=setParameter=textSearchEnabled=true
   become_user: root
+  become: yes
   tags: girder
   notify:
     - restart mongod
@@ -46,15 +52,18 @@
     - grunt
     - grunt-cli
   become_user: root
+  become: yes
   tags: girder
 
 - name: Get Girder from github
   git: repo=https://github.com/girder/girder.git version={{ girder_version }} dest=/opt/hpccloud/girder force=yes accept_hostkey=yes
   become_user: root
+  become: yes
   tags: girder
 
 - name: Change owner of girder directory
   become_user: root
+  become: yes
   file: dest=/opt/hpccloud/girder mode=755 owner=hpccloud group=hpccloud state=directory recurse=true
   tags: girder
 
@@ -64,6 +73,7 @@
     extra_args: "-e"
     name: .
   become_user: root
+  become: yes
 
 - name: Install editable girder_client
   pip:
@@ -71,10 +81,12 @@
     extra_args: "-e"
     name: .
   become_user: root
+  become: yes
 
 - name: Generate frontend web assets
   command: "girder-install web"
-
+  become_user: root
+  become: yes
 
 - name: Install cumulus plugins
   shell: "ls | xargs girder-install plugin -s -f"
@@ -82,6 +94,8 @@
     chdir: /opt/hpccloud/cumulus/girder/
     creates: /opt/hpccloud/girder/plugins/cumulus
   tags: girder
+  become_user: root
+  become: yes
 
 - name: Install HPCCloud plugins
   shell: "ls | xargs girder-install plugin -s -f"
@@ -89,15 +103,19 @@
     chdir: /opt/hpccloud/hpccloud/server/
     creates: /opt/hpccloud/girder/plugins/hpccloud
   tags: girder
+  become_user: root
+  become: yes
 
 - name: Install Girder as service
   copy: src=../files/girder.conf dest=/etc/init/girder.conf mode=644 owner=root
   become_user: root
+  become: yes
   tags: girder
 
 - name: Start Girder as service
   service: name=girder state=restarted enabled=yes
   become_user: root
+  become: yes
   tags: girder
 
 - name: Wait for Girder to start

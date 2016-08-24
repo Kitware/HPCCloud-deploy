@@ -20,6 +20,7 @@
 
 - name: Install cumulus dependencies
   pip: requirements=/opt/hpccloud/cumulus/requirements.txt
+  become: yes
   become_user: root
   tags: cumulus
 
@@ -56,6 +57,7 @@
 - name: Create keys directory
   file: dest={{ keys_directory }} mode=750 owner=hpccloud group=hpccloud state=directory
   become_user: root
+  become: yes
   tags: cumulus
 
 - name: Get local host name, used in Vagrant deployment
@@ -94,6 +96,7 @@
     - cumulus
     - update_ips
   become_user: root
+  become: yes
 
 - name: Install cumulus
   pip:
@@ -110,5 +113,6 @@
     name: .
     extra_args: "-e"
   become_user: root
+  become: yes
   when: development
   tags: cumulus
