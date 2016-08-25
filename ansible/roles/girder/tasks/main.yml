@@ -85,7 +85,7 @@
 
 - name: Generate frontend web assets
   command: "girder-install web"
-  become_user: root
+  become_user: hpccloud
   become: yes
 
 - name: Install cumulus plugins
@@ -94,7 +94,7 @@
     chdir: /opt/hpccloud/cumulus/girder/
     creates: /opt/hpccloud/girder/plugins/cumulus
   tags: girder
-  become_user: root
+  become_user: hpccloud
   become: yes
 
 - name: Install HPCCloud plugins
@@ -103,7 +103,7 @@
     chdir: /opt/hpccloud/hpccloud/server/
     creates: /opt/hpccloud/girder/plugins/hpccloud
   tags: girder
-  become_user: root
+  become_user: hpccloud
   become: yes
 
 - name: Install Girder as service
