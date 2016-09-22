@@ -48,12 +48,162 @@
   roles:
     - hpccloud
 
+
+- name: Setup Mongo
+  hosts: mongo
+  become: yes
+  become_user: root
+  roles:
+    - role: mongodb
+
 - name: Setup Girder
   hosts: girder
   become: yes
   become_user: hpccloud
   roles:
-    - girder
+    - role: girder
+      girder_path: /opt/hpccloud/girder
+
+  post_tasks:
+    - name: Create Girder hpccloud user
+      girder:
+        port: 8080
+        user:
+          firstName: "hpccloud"
+          lastName: "hpccloud"
+          login: "hpccloud"
+          password: "{{ hpccloud_password }}"
+          email: "hpccloud@kitware.com"
+          admin: yes
+        state: present
+      tags: girder
+
+    - name: Create Girder cumulus user
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        user:
+          firstName: "cumulus"
+          lastName: "cumulus"
+          login: "cumulus"
+          password: "{{ lookup('password', 'credentials/cumuluspassword') }}"
+          email: "cumulus@kitware.com"
+          admin: yes
+        state: present
+      tags: girder
+
+    - name: Create Girder cumulus group
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        group:
+          name: "cumulus"
+          description: "The cumulus group"
+          users:
+            - login: cumulus
+              type: member
+      tags: girder
+
+    - name: Install cumulus plugins
+      shell: "ls | xargs girder-install plugin -s -f"
+      args:
+        chdir: /opt/hpccloud/cumulus/girder/
+        creates: /opt/hpccloud/girder/plugins/cumulus
+      tags: girder
+
+    - name: Install HPCCloud plugins
+      shell: "ls | xargs girder-install plugin -s -f"
+      args:
+        chdir: /opt/hpccloud/hpccloud/server/
+        creates: /opt/hpccloud/girder/plugins/hpccloud
+      tags: girder
+
+    - name: Restart the Girder server
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        put:
+          path: "system/restart"
+      tags: girder
+
+    - name: Wait for Girder to restart
+      wait_for: port=8080 delay=5
+      tags: girder
+
+
+    - name: Enable cumulus plugins
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        plugins:
+          - cumulus
+          - sftp
+          - newt
+          - taskflow
+        state: present
+      tags: girder
+
+    - name: Enable HPCCloud plugins
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        plugins:
+          - hpccloud
+          - pvwproxy
+        state: present
+      tags: girder
+
+    - name: Restart the Girder server
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        put:
+          path: "system/restart"
+      tags: girder
+
+    - name: Wait for Girder to restart
+      wait_for: port=8080 delay=5
+      tags: girder
+
+    - name: Create filesystem assetstore
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        assetstore:
+          name: "Filesystem Assetstore"
+          type: "filesystem"
+          root: "/opt/hpccloud/assestore"
+          current: true
+        state: present
+      tags: girder
+
+    - name: Set pvwproxy filepath
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        put:
+          path: "system/setting"
+          parameters:
+            key: "pvwproxy.proxy_file_path"
+            value: "/opt/hpccloud/proxy"
+
+    - name: Restart the Girder server
+      girder:
+        port: 8080
+        username: "hpccloud"
+        password: "{{ hpccloud_password }}"
+        put:
+          path: "system/restart"
+
+
 
 - name: Set up celery
   hosts: cumulus
