@@ -41,7 +41,7 @@
               "name": "demo_profile"
             }]
           },
-          "jobOutputDir": "/tmp"
+          "jobOutputDir": "/home/demo"
         }
       }
   register: cluster
