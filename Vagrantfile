@@ -89,6 +89,7 @@ Vagrant.configure(2) do |config|
       "all" => ["hpccloud"],
       "cumulus" => ["hpccloud"],
       "girder" => ["hpccloud"],
+      "mongo" => ["hpccloud"],
       "hpccloud" => ["hpccloud"],
       "pyfr" => ["hpccloud"]
     }
@@ -100,6 +101,9 @@ Vagrant.configure(2) do |config|
       hpccloud_password: hpccloud_password,
       demo: demo
     }
+
+    ansible.galaxy_role_file = "ansible/requirements.yml"
+
     ansible.playbook = "ansible/site.yml"
   end
 
