@@ -9,6 +9,15 @@
   when: path.stat.exists == False or not development
   tags: cumulus
 
+- name: Install system dependencies
+  apt: name="{{ item }}" state=present
+  with_items:
+    - libffi-dev
+    - libssl-dev
+    - openssl
+  become: yes
+  become_user: root
+
 - name: Install cumulus dependencies
   pip: requirements=/opt/hpccloud/cumulus/requirements.txt
   become_user: root
