@@ -94,7 +94,6 @@ Vagrant.configure(2) do |config|
     }
 
     if !cumulus
-      print "not cumulus\n"
       ansible.groups["hpccloud"] = ["hpccloud-vm"]
       ansible.groups["pyfr"] = ["hpccloud-vm"]
     end
