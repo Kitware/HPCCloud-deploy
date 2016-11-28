@@ -123,6 +123,7 @@
       args:
         chdir: /opt/hpccloud/hpccloud/server/
         creates: /opt/hpccloud/girder/plugins/hpccloud
+      when: not cumulus
       tags: girder
 
     - name: Restart the Girder server
@@ -161,6 +162,7 @@
           - hpccloud
           - pvwproxy
         state: present
+      when: not cumulus
       tags: girder
 
     - name: Restart the Girder server
@@ -199,6 +201,8 @@
           parameters:
             key: "pvwproxy.proxy_file_path"
             value: "/opt/hpccloud/proxy"
+      when: not cumulus
+      tags: girder
 
     - name: Restart the Girder server
       girder:
@@ -207,7 +211,7 @@
         password: "{{ hpccloud_password }}"
         put:
           path: "system/restart"
-
+      tags: girder
 
 
 - name: Set up celery
