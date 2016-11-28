@@ -4,8 +4,15 @@
   tags:
        - common
 
-- name: Add nodejs ppa
-  apt_repository: repo='ppa:chris-lea/node.js' update_cache=no
+- name: Add node PPA key
+  command: "apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 68576280"
+  become: yes
+  become_user: root
+
+- name: Add node PPA
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_4.x {{ ansible_distribution_release }} main"
+  become: yes
   become_user: root
 
 - name: Update apt cache
@@ -19,6 +26,11 @@
     - python-dev
     - git
     - nodejs
+
+- name: Update npm
+  command: "npm install -g npm@3"
+  become: yes
+  become_user: root
 
 - name: Download pip setup
   become_user: root
