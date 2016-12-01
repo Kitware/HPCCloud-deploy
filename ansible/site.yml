@@ -65,6 +65,15 @@
       girder_path: /opt/hpccloud/girder
 
   post_tasks:
+    - name: Allow logins to be three chars
+      ini_file:
+        dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
+        section: users
+        option: login_regex
+        value: '"^[a-z][\da-z\-]{2}[\da-z\-]*$"'
+      become_user: hpccloud
+      tags: girder
+
     - name: Create Girder hpccloud user
       girder:
         port: 8080
@@ -118,6 +127,7 @@
       args:
         chdir: /opt/hpccloud/hpccloud/server/
         creates: /opt/hpccloud/girder/plugins/hpccloud
+      when: not cumulus
       tags: girder
 
     - name: Restart the Girder server
@@ -156,6 +166,7 @@
           - hpccloud
           - pvwproxy
         state: present
+      when: not cumulus
       tags: girder
 
     - name: Restart the Girder server
@@ -194,6 +205,8 @@
           parameters:
             key: "pvwproxy.proxy_file_path"
             value: "/opt/hpccloud/proxy"
+      when: not cumulus
+      tags: girder
 
     - name: Restart the Girder server
       girder:
@@ -202,7 +215,7 @@
         password: "{{ hpccloud_password }}"
         put:
           path: "system/restart"
-
+      tags: girder
 
 
 - name: Set up celery
