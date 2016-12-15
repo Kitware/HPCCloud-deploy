@@ -1,0 +1,13 @@
+- name: Install docker
+  become_user: root
+  apt: name=docker.io state=present
+  tags: docker
+
+- name: Add hpccloud user to docker group
+  user: name=hpccloud groups=docker append=yes
+  tags: docker
+
+- name: Pull nwchem image from Docker Hub
+  become_user: root
+  shell: "docker pull chetnieter/nwchem-postprocess"
+  tags: docker

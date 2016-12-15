@@ -48,6 +48,12 @@
   roles:
     - hpccloud
 
+- name: Setup docker
+  hosts: hpccloud
+  become: yes
+  become_user: root
+  roles:
+    - docker
 
 - name: Setup Mongo
   hosts: mongo
