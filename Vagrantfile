@@ -96,6 +96,7 @@ Vagrant.configure(2) do |config|
     if !cumulus
       ansible.groups["hpccloud"] = ["hpccloud-vm"]
       ansible.groups["pyfr"] = ["hpccloud-vm"]
+      ansible.groups["docker"] = ["hpccloud-vm"]
     end
 
     ansible.verbose = "vv"
