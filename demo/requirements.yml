@@ -1,2 +1,2 @@
- - src: https://github.com/cjh1/pyfr-ansible-role
-   name: pyfr
+- src: https://github.com/cjh1/pyfr-ansible-role
+  name: pyfr

@@ -1,0 +1,48 @@
+- name: Install docker dependencies
+  become: yes
+  become_user: root
+  apt: update_cache=yes
+  apt: name=apt-transport-https state=present
+  apt: name=ca-certificates state=present
+
+- name: Add docker key
+  become: yes
+  become_user: root
+  apt_key:
+    keyserver=hkp://ha.pool.sks-keyservers.net:80
+    id=58118E89F3A912897C070ADBF76221572C52609D
+
+- name: Add docker repository
+  become: yes
+  become_user: root
+  apt_repository:
+    repo: deb https://apt.dockerproject.org/repo ubuntu-trusty main
+    state: present
+
+- name: Add docker to apt
+  become: yes
+  become_user: root
+  command: echo "deb https://apt.dockerproject.org/repo ubuntu-trusty main" | tee /etc/apt/sources.list.d/docker.list
+
+- name: Install docker
+  become: yes
+  become_user: root
+  apt: update_cache=yes
+  apt: name=docker-engine state=present
+  
+- name: Add demo user to docker group
+  become: yes
+  become_user: root
+  user: name=demo
+        groups=docker
+        append=yes
+
+- name: Start docker service
+  become: yes
+  become_user: root
+  service: name=docker state=started
+
+- name: Install OpenFoam docker image
+  become: yes
+  become_user: demo
+  command: docker run -it -d --name of_v1612_plus --user=1003 -e USER=demo -e QT_X11_NO_MITSHM=1 -e DISPLAY=:0 --workdir="/home/demo" --volume="/home/demo:/home/demo"  --volume="/etc/group:/etc/group:ro"  --volume="/etc/passwd:/etc/passwd:ro"  --volume="/etc/shadow:/etc/shadow:ro"  --volume="/etc/sudoers.d:/etc/sudoers.d:ro" -v=/tmp/.X11-unix:/tmp/.X11-unix  openfoamplus/of_v1612plus_centos66 /bin/bash --rcfile /opt/OpenFOAM/setImage_v1612+

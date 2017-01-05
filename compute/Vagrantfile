@@ -1,0 +1,129 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+require 'fileutils'
+
+# We need the ansible provisioner with galaxy support
+Vagrant.require_version ">= 1.8.1"
+Vagrant.configure(2) do |config|
+
+  # Customizable properties
+  vm_ip = ENV["COMPUTE_NODE_IP"] || "192.168.100.100"
+
+  # Define image
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.network "private_network", ip: vm_ip
+
+  config.vm.define "hpccloud-compute-node-vm" do |node|
+  end
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  # Dynamically allocate memory and cpus,
+  # see https://stefanwrobel.com/how-to-make-vagrant-performance-not-suck
+  config.vm.provider "virtualbox" do |v|
+    host = RbConfig::CONFIG['host_os']
+
+    # Give VM 1/4 system memory & access to 1/2 of the cpu cores on the host
+    if host =~ /darwin/
+      cpus = `sysctl -n hw.ncpu`.to_i
+      cpus = cpus / 2
+      # sysctl returns Bytes and we need to convert to MB
+      mem = `sysctl -n hw.memsize`.to_i / 1024 / 1024 / 4
+    elsif host =~ /linux/
+      cpus = `nproc`.to_i
+      cpus = cpus / 2
+      # meminfo shows KB and we need to convert to MB
+      mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024 / 4
+    else # Guess!
+      cpus = 2
+      mem = 4096
+    end
+
+    v.customize ["modifyvm", :id, "--memory", mem]
+    v.customize ["modifyvm", :id, "--cpus", cpus]
+    v.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+
+  end
+
+  # Create temp directory
+  dir = Dir.mktmpdir()
+
+  # First download cumulus so we have access to the playbooks
+  config.vm.provision "ansible" do |ansible|
+
+    # If there is a better way to run playbook aganst localhost let
+    # me know!
+    ansible.raw_arguments = ['--limit=localhost',
+      '--inventory-file=localhost,',
+      '--connection=local']
+
+    ansible.verbose = "vv"
+    ansible.extra_vars = {
+      tmpdir: dir
+    }
+    ansible.playbook = "../demo/cumulus.yml"
+  end
+
+  # Setup SGE using cumulus playbook
+  config.vm.provision "ansible" do |ansible|
+    ansible.groups = {
+      "master" => ["hpccloud-compute-node-vm"]
+    }
+
+    ansible.verbose = "vv"
+    ansible.extra_vars = {
+      default_user: "vagrant",
+      tmpdir: dir
+    }
+    ansible.playbook = "#{dir}/cumulus/cumulus/ansible/tasks/playbooks/gridengine/site.yml"
+
+    # We need to ensure this path exists when this file is loaded. It will
+    # be populated with correct content by an ansible role, however,
+    # Vagrant wants it to exist now!
+    dirname = File.dirname(ansible.playbook)
+    unless File.directory?(dirname)
+      FileUtils.mkdir_p(dirname)
+    end
+    FileUtils.touch(ansible.playbook)
+  end
+
+  # Now setup compute node
+  config.vm.provision "ansible" do |ansible|
+    # For PyFR role
+    ansible.galaxy_role_file = "../demo/requirements.yml"
+
+    ansible.groups = {
+      "users"    => ["hpccloud-compute-node-vm"],
+      "paraview" => ["hpccloud-compute-node-vm"],
+      "pyfr"     => ["hpccloud-compute-node-vm"],
+      "openfoam" => ["hpccloud-compute-node-vm"]
+    }
+
+    ansible.verbose = "vv"
+    ansible.extra_vars = {
+      default_user: "vagrant"
+    }
+    ansible.playbook = "../demo/compute.yml"
+  end
+
+  # Finally clean up temp directory
+  config.vm.provision "ansible" do |ansible|
+    ansible.raw_arguments = ['--limit=localhost',
+      '--inventory-file=localhost,',
+      '--connection=local']
+
+    ansible.verbose = "vv"
+    ansible.extra_vars = {
+      tmpdir: dir
+    }
+    ansible.playbook = "../demo/cumulus_cleanup.yml"
+  end
+end
