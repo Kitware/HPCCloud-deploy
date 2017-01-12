@@ -1,9 +1,11 @@
 - name: Create ParaView directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/paraview mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Install ParaView build prerequisities
+  become: yes
   become_user: root
   apt: name={{ item }} state=present
   with_items:
@@ -18,11 +20,13 @@
   tags: paraview
 
 - name: Create ParaView build directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/paraview/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview
 
 - name: Create ParaView install directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/paraview/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: paraview

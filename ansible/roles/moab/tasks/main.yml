@@ -1,4 +1,5 @@
 - name: Create moab directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/moab mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
@@ -6,6 +7,7 @@
 - name: Install moab build prerequisities
   become_user: root
   apt: name={{ item }} state=present
+  become: yes
   become_user: root
   with_items:
     - cmake
@@ -19,11 +21,13 @@
   tags: moab
 
 - name: Create moab build directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/moab/build mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab
 
 - name: Create moab install directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/moab/install mode=755 owner=hpccloud group=hpccloud state=directory
   tags: moab

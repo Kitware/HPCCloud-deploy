@@ -136,7 +136,7 @@ Vagrant.configure(2) do |config|
     # Setup SGE using cumulus playbook
     config.vm.provision "ansible" do |ansible|
       ansible.groups = {
-        "master" => ["hpccloud"]
+        "master" => ["hpccloud-vm"]
       }
 
       ansible.verbose = "vv"

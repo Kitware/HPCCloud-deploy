@@ -1,15 +1,18 @@
 - name: Add Xorg ppa
   apt_repository: repo='ppa:xorg-edgers/ppa' update_cache=yes
   tags: osmesa
+  become: yes
   become_user: root
 
 - name: Install Mesa build deps
   command: apt-get -y build-dep mesa
+  become: yes
   become_user: root
   tags: osmesa
 
 - name: Install dependencies
   apt: name={{ item }} state=present
+  become: yes
   become_user: root
   with_items:
     - build-essential
@@ -18,6 +21,7 @@
   tags: osmesa
 
 - name: Create OSMesa directory
+  become: yes
   become_user: root
   file: dest=/opt/hpccloud/osmesa mode=755 owner=hpccloud group=hpccloud state=directory
   tags: osmesa
@@ -36,5 +40,6 @@
 
 - name: Install Mesa
   command: make install chdir=/opt/hpccloud/osmesa/src
+  become: yes
   become_user: root
   tags: osmesa

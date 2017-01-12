@@ -1,0 +1,29 @@
+- name:
+  hosts: all
+  vars:
+    required_ansible_version: 2.0.2
+  tasks:
+  - fail: msg="Playbook requires ansible >= {{required_ansible_version}}"
+    when: ansible_version.string|version_compare(required_ansible_version, '<')
+
+- name: Create demo user
+  hosts: users
+  roles:
+    - users
+
+- name: Install PyFR
+  hosts: pyfr
+  vars:
+    install_pycuda: no
+  roles:
+    - pyfr
+
+- name: Install ParaView
+  hosts: paraview
+  roles:
+    - paraview
+
+- name: Install OpenFoam
+  hosts: openfoam
+  roles:
+    - openfoam

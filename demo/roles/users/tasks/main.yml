@@ -1,6 +1,4 @@
 - name: Create demo user
   become: yes
   become_user: root
-  user:
-    name=demo
-    shell=/bin/bash
+  user: name=demo shell=/bin/bash uid=1003

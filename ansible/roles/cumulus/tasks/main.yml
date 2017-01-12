@@ -5,6 +5,7 @@
 
 - name: Get cumulus from github
   git: repo=https://github.com/Kitware/cumulus.git version={{ cumulus_version }} dest=/opt/hpccloud/cumulus force=yes accept_hostkey=yes
+  become: yes
   become_user: root
   when: path.stat.exists == False or not development
   tags: cumulus
@@ -20,11 +21,13 @@
 
 - name: Install cumulus dependencies
   pip: requirements=/opt/hpccloud/cumulus/requirements.txt
+  become: yes
   become_user: root
   tags: cumulus
 
 - name: Change owner of cumulus directory
   file: dest=/opt/hpccloud/cumulus mode=775 owner=hpccloud group=hpccloud state=directory recurse=true
+  become: yes
   become_user: root
   tags: cumulus
   when: not development
@@ -55,6 +58,7 @@
 
 - name: Create keys directory
   file: dest={{ keys_directory }} mode=750 owner=hpccloud group=hpccloud state=directory
+  become: yes
   become_user: root
   tags: cumulus
 
@@ -93,6 +97,7 @@
   tags:
     - cumulus
     - update_ips
+  become: yes
   become_user: root
 
 - name: Install cumulus
@@ -100,6 +105,7 @@
     chdir: /opt/hpccloud/cumulus
     name: .
     extra_args: "--user -I"
+  become: yes
   become_user: hpccloud
   when: development == False
   tags: cumulus
@@ -109,6 +115,7 @@
     chdir: /opt/hpccloud/cumulus
     name: .
     extra_args: "-e"
+  become: yes
   become_user: root
   when: development
   tags: cumulus
