@@ -2,6 +2,7 @@
 
 - name: Install pip3
   apt: name={{ item }} state=present
+  become: yes
   become_user: root
   with_items:
     - python3-pip
@@ -10,6 +11,7 @@
 
 - name: Install required native libs
   apt: name={{ item }} state=present
+  become: yes
   become_user: root
   with_items:
     - libhdf5-dev
@@ -21,6 +23,7 @@
 
 - name: Install PyFR required packages
   pip: executable=pip3  name={{item.package}} version={{item.version}} state=present
+  become: yes
   become_user: root
   with_items:
     - {package: 'numpy', version: 1.8}
@@ -29,5 +32,6 @@
 
 - name: Install PyFR from GitHub
   pip: executable=pip3 name="git+https://github.com/vincentlab/PyFR.git@v1.3.0#egg=pyfr" state=present editable=False
+  become: yes
   become_user: root
   tags: pyfr

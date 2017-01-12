@@ -1,14 +1,17 @@
 - name: Download celeryd script
+  become: yes
   become_user: root
   copy: src=../files/init.d/celeryd dest=/etc/init.d/celeryd mode=755 owner=root
   tags: celery
 
 - name: Add celeryd configuration file
+  become: yes
   become_user: root
   copy: src=../files/celeryd dest=/etc/default/celeryd mode=644 owner=root group=root
   tags: celery
 
 - name: Start celery service
+  become: yes
   become_user: root
   service: name=celeryd state=restarted enabled=yes
   tags: celery
