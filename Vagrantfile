@@ -50,6 +50,10 @@ Vagrant.configure(2) do |config|
     end
   end
 
+  if cumulus
+    config.vm.synced_folder '.', '/vagrant', disabled: true
+  end
+
   config.vm.define "hpccloud-vm" do |node|
   end
 
