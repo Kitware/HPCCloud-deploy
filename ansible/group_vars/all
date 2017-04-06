@@ -1,4 +1,5 @@
 default_user: ubuntu
+girder_hostname: localhost
 hpccloud_password: letmein
 girder_version: master
 cumulus_version: master
