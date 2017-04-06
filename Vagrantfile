@@ -25,7 +25,9 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8888" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 80, host: hpccloud_host_port
+  if !cumulus
+    config.vm.network "forwarded_port", guest: 80, host: hpccloud_host_port
+  end
   config.vm.network "forwarded_port", guest: 8080, host: girder_host_port
 
 
@@ -46,6 +48,10 @@ Vagrant.configure(2) do |config|
                                 owner: 1002, group: 1003
       end
     end
+  end
+
+  if cumulus
+    config.vm.synced_folder '.', '/vagrant', disabled: true
   end
 
   config.vm.define "hpccloud-vm" do |node|
