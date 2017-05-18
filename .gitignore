@@ -1,4 +1,5 @@
 /ansible/roles/users/public_keys/
 demo/roles/pyfr/
+ansible/roles/pyfr/
 .vagrant
 .DS_Store
