@@ -236,5 +236,7 @@
   hosts: pyfr
   become: yes
   become_user: hpccloud
+  vars:
+    install_pycuda: no
   roles:
     - pyfr

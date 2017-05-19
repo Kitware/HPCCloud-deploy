@@ -3,7 +3,8 @@ hpccloud_password: letmein
 girder_version: master
 cumulus_version: master
 hpccloud_version: master
-paraview_version: v4.4.0
+paraview_version: v5.4.0-RC2
+pyfr_version: v1.6.0
 aws_access_key_id: ""
 aws_secret_access_key: ""
 keys_directory: /opt/hpccloud/keys

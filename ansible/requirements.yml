@@ -3,3 +3,5 @@
   name: mongodb
 - src: girder.girder
   name: girder
+- src: https://github.com/cjh1/pyfr-ansible-role
+  name: pyfr

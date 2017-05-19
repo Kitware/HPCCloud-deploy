@@ -19,6 +19,7 @@
   become_user: hpccloud
   vars:
     install_pycuda: no
+    pyfr_version: v1.6.0
   roles:
     - pyfr
 
