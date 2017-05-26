@@ -48,7 +48,6 @@
   roles:
     - hpccloud
 
-
 - name: Setup Mongo
   hosts: mongo
   become: yes
@@ -56,15 +55,32 @@
   roles:
     - role: mongodb
 
+  post_tasks:
+    - name: Setup mongdb with authorization
+      include: mongodb_auth.yml
+      when: mongo_admin_user is defined
+
 - name: Setup Girder
   hosts: girder
   become: yes
   become_user: hpccloud
+  vars:
+    girder_start: no
+    girder_web_extra_args: --all-plugins
   roles:
     - role: girder
       girder_path: /opt/hpccloud/girder
 
   post_tasks:
+    - name: Update monogdb URI with auth credentials
+      ini_file:
+        dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
+        section: database
+        option: uri
+        value: "\"mongodb://{{mongo_girder_user}}:{{mongo_girder_password}}@localhost:27017/girder\""
+      become_user: hpccloud
+      tags: girder
+
     - name: Allow logins to be three chars
       ini_file:
         dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
@@ -72,6 +88,18 @@
         option: login_regex
         value: '"^[a-z][\da-z\-]{2}[\da-z\-]*$"'
       become_user: hpccloud
+      tags: girder
+
+    - name: Start Girder
+      become: yes
+      become_user: root
+      service:
+        name: girder
+        state: started
+      tags: girder
+
+    - name: Wait for Girder to start
+      wait_for: port=8080 delay=5
       tags: girder
 
     - name: Create Girder hpccloud user

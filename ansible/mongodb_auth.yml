@@ -1,0 +1,47 @@
+- name: debug
+  debug:
+    msg: "|{{ mongo_admin_user }}| |{{ mongo_admin_password }}|"
+
+# We need to make sure we get a modern version of pymongo so that users are
+# created with the right properties (SCRAM-SHA-1)
+- name: Install pymongo
+  pip:
+    name: pymongo
+    state: latest
+
+- name: Create mongo admin account
+  mongodb_user:
+    database: admin
+    name: "{{ mongo_admin_user }}"
+    password: "{{ mongo_admin_password }}"
+    roles:
+      - userAdminAnyDatabase
+    state: present
+
+- name: Enable authentication on mongo
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: /etc/mongod.conf
+    regexp: '^auth = false$'
+    line: 'auth = true'
+
+- name: Restart mongo
+  become: yes
+  become_user: root
+  service:
+    name: mongod
+    state: restarted
+
+- name: Create mongo account for Girder
+  mongodb_user:
+    database: girder
+    login_database: admin
+    login_user: "{{ mongo_admin_user }}"
+    login_password: "{{ mongo_admin_password }}"
+    name: "{{ mongo_girder_user }}"
+    password: "{{ mongo_girder_password }}"
+    roles:
+      - readWrite
+    state: present
+
