@@ -1,6 +1,3 @@
-- name: debug
-  debug:
-    msg: "|{{ mongo_admin_user }}| |{{ mongo_admin_password }}|"
 
 # We need to make sure we get a modern version of pymongo so that users are
 # created with the right properties (SCRAM-SHA-1)
