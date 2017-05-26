@@ -79,6 +79,7 @@
         option: uri
         value: "\"mongodb://{{mongo_girder_user}}:{{mongo_girder_password}}@localhost:27017/girder\""
       become_user: hpccloud
+      when: mongo_admin_user is defined
       tags: girder
 
     - name: Allow logins to be three chars
