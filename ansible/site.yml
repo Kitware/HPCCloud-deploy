@@ -48,7 +48,7 @@
   roles:
     - hpccloud
 
-- name: Setup Mongo
+- name: Setup MongoDB
   hosts: mongo
   become: yes
   become_user: root
@@ -56,9 +56,13 @@
     - role: mongodb
 
   post_tasks:
-    - name: Setup mongdb with authorization
+    - name: Setup MongDB with authorization
       include: mongodb_auth.yml
       when: mongo_admin_user is defined
+
+    - name: Setup MongoDB with TLS/SSL
+      include: mongodb_ssl.yml
+      when: mongodb_ssl_pem_path is defined
 
 - name: Setup Girder
   hosts: girder
@@ -77,9 +81,8 @@
         dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
         section: database
         option: uri
-        value: "\"mongodb://{{mongo_girder_user}}:{{mongo_girder_password}}@localhost:27017/girder\""
+        value: "\"mongodb://{{auth_uri_params | default('')}}localhost:27017/girder{{tls_uri_params | default('')}}\""
       become_user: hpccloud
-      when: mongo_admin_user is defined
       tags: girder
 
     - name: Allow logins to be three chars

@@ -1,0 +1,72 @@
+- name: Ensure ssl directory
+  become: yes
+  become_user: root
+  file:
+    path: /opt/hpccloud/ssl/
+    state: directory
+
+- name: Ensure ssl/mongodb directory
+  become: yes
+  become_user: root
+  file:
+    path: /opt/hpccloud/ssl/mongodb/
+    state: directory
+    owner: mongodb
+    group: mongodb
+    mode: 0700
+
+- name: Copy of PEM file
+  become: yes
+  become_user: root
+  copy:
+    src: "{{ mongodb_ssl_pem_path }}"
+    dest: /opt/hpccloud/ssl/mongodb/mongodb.pem
+    owner: mongodb
+    group: mongodb
+    mode: 0600
+
+- name: Install pymongo with SSL/TLS support
+  become: yes
+  become_user: root
+  pip:
+    name: pymongo[tls]
+    state: latest
+
+- name: Set up SSL/TLS part of connection URI
+  set_fact:
+    tls_uri_params: "?ssl=true"
+  when: mongodb_ssl_self_signed is undefined or not mongodb_ssl_self_signed
+
+- name: Set up SSL/TLS part of connection URI ( self-signed )
+  set_fact:
+    tls_uri_params: "?ssl=true&ssl_cert_reqs=CERT_NONE"
+  when: mongodb_ssl_self_signed is defined and mongodb_ssl_self_signed
+
+- name: Enable SSL/TLS on MongoDB server
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: /etc/mongod.conf
+    line: 'sslMode = requireSSL'
+
+- name: Set PEM file
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: /etc/mongod.conf
+    line: 'sslPEMKeyFile = /opt/hpccloud/ssl/mongodb/mongodb.pem'
+
+- name: Set CA file
+  become: yes
+  become_user: root
+  lineinfile:
+    dest: /etc/mongod.conf
+    line: 'sslCAFile = {{ mongodb_ssl_ca_file }}'
+  when: mongodb_ssl_ca_file is defined
+
+- name: Restart MongoDB for changes to take effect
+  become: yes
+  become_user: root
+  service:
+    name: mongod
+    state: restarted
