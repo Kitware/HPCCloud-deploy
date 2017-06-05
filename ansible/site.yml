@@ -58,7 +58,7 @@
   post_tasks:
     - name: Setup MongDB with authorization
       include: mongodb_auth.yml
-      when: mongo_admin_user is defined
+      when: mongodb_admin_user is defined
 
     - name: Setup MongoDB with TLS/SSL
       include: mongodb_ssl.yml
