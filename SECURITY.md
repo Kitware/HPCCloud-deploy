@@ -12,10 +12,10 @@ These variables can be added to ```ansible/group_vars/all``` it is recommended t
 
 ## Enabling MongoDB SSL/TLS for encrypt communication
 
-The following variable can be used to enable TLS/SSL encryption for connection between Girder and MongoDB.
+The following variables can be used to enable TLS/SSL encryption for connections between Girder and MongoDB.
 
 | parameter                  | required | comments                                                                                                                                                                                                                                                                                                                                           |
 | -------------------------- | -------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 mongodb_ssl_pem_path    | no | The path to the PEM file containing a public key certificate and its associated private key.
 mongodb_ssl_self_signed | no | Used to indicate if this is a self-signed certificate. This disables certificate validation. The communications channel will be encrypted but no validation of the servers identity will be performed.
-mongodb_ssl_ca_file:    | no | The path to the file that contains the root certificate chain from the Certificate Authority.
+mongodb_ssl_ca_file     | no | The path to the file that contains the root certificate chain from the Certificate Authority.
