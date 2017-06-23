@@ -11,6 +11,15 @@
   tags:
     - paraview
 
+- name: Install Python modules to allow SSL cert validation when download ParaView
+  become: yes
+  become_user: root
+  pip: name={{item}} state=present
+  with_items:
+    - ndg-httpsclient
+    - pyasn1
+  tags: paraview
+
 - name: stat ParaView download
   stat: path="/var/tmp/{{paraview_download_filename}}.tar.gz"
   register: paraview_download_stat
