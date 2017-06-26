@@ -9,3 +9,7 @@
   become: yes
   become_user: root
   tags: rabbit
+
+- name: Setup rabbitmq with authorization
+  include: rabbitmq_auth.yml
+  when: rabbitmq_admin_user is defined

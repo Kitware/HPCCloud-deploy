@@ -19,3 +19,14 @@ The following variables can be used to enable TLS/SSL encryption for connections
 mongodb_ssl_pem_path    | no | The path to the PEM file containing a public key certificate and its associated private key.
 mongodb_ssl_self_signed | no | Used to indicate if this is a self-signed certificate. This disables certificate validation. The communications channel will be encrypted but no validation of the servers identity will be performed.
 mongodb_ssl_ca_file     | no | The path to the file that contains the root certificate chain from the Certificate Authority.
+
+## Enabling RabbitMQ authentication and Access Control
+
+A default installation of RabbitMQ uses a default user and password and give access to everything. The following variable can be used to remove this default account, create and admin acccount and account for Celery to connect to RabbitMQ with. The Celery user is give access only to the [vhost](https://www.rabbitmq.com/vhosts.html) /celery
+
+| parameter                  | required | comments                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------- | -------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| rabbitmq_admin_user           | no       | The username that will be used for the RabbitMQ administrator account. This use had full control of the / vhost, however it can only connect via localhost.
+| rabbitmq_admin_user       | no       | The RabbitMQ administrator password.
+| rabbitmq_celery_user          | no       | The username for the user that Celery will use to connect to RabbitMQ. This user has read/write access to the /celery vhost.                                                  |
+| rabbitmq_celery_password      | no       | The Celery user password.
