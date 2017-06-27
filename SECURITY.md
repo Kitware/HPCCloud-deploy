@@ -30,3 +30,13 @@ A default installation of RabbitMQ uses a default user and password and give acc
 | rabbitmq_admin_user       | no       | The RabbitMQ administrator password.
 | rabbitmq_celery_user          | no       | The username for the user that Celery will use to connect to RabbitMQ. This user has read/write access to the /celery vhost.                                                  |
 | rabbitmq_celery_password      | no       | The Celery user password.
+
+## Enabling RabbitMQ server SSL
+
+These parameters allow a deployment to enable SSL on the connection between Celery and RabbitMQ.
+
+| parameter                  | required | comments                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------- | -------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| rabbitmq_ssl_server_ca_cert_pem_path | no       | The path to the PEM file containing the CA's root certificate.
+| rabbitmq_ssl_server_cert_pem_path    | no       | The path to the PEM file containing the server's certificate.
+| rabbitmq_ssl_server_key_pem_path     | no       | The path to the PEM file containing the server's key.

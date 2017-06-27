@@ -1,0 +1,46 @@
+- name: Ensure ssl directory
+  become: yes
+  become_user: root
+  file:
+    path: /opt/hpccloud/ssl/
+    state: directory
+
+- name: Ensure ssl/rabbitmq directory
+  become: yes
+  become_user: root
+  file:
+    path: /opt/hpccloud/ssl/rabbitmq/
+    state: directory
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0700
+
+- name: Copy over CA cert
+  become: yes
+  become_user: root
+  copy:
+    src: "{{ rabbitmq_ssl_server_ca_cert_pem_path }}"
+    dest: /opt/hpccloud/ssl/rabbitmq/server_ca_cert.pem
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0600
+
+- name: Copy over server cert
+  become: yes
+  become_user: root
+  copy:
+    src: "{{ rabbitmq_ssl_server_cert_pem_path }}"
+    dest: /opt/hpccloud/ssl/rabbitmq/server_cert.pem
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0600
+
+- name: Copy over server key
+  become: yes
+  become_user: root
+  copy:
+    src: "{{ rabbitmq_ssl_server_key_pem_path }}"
+    dest: /opt/hpccloud/ssl/rabbitmq/server_key.pem
+    owner: rabbitmq
+    group: rabbitmq
+    mode: 0600

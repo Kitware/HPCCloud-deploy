@@ -1,5 +1,16 @@
 [
   {rabbit, [
-    {loopback_users, [{{ rabbitmq_admin_user }}]}
+{% if rabbitmq_admin_user is defined %}
+    {loopback_users, [{{ rabbitmq_admin_user }}]},
+{% endif %}
+{% if rabbitmq_ssl_server_cert_pem_path is defined %}
+    {ssl_listeners, [5671]},
+    {ssl_options, [{cacertfile, "/opt/hpccloud/ssl/rabbitmq/server_ca_cert.pem"},
+                   {certfile, "/opt/hpccloud/ssl/rabbitmq/server_cert.pem"},
+                   {keyfile,"/opt/hpccloud/ssl/rabbitmq/server_key.pem"},
+                   {verify,verify_peer},
+                   {fail_if_no_peer_cert,false}]}
+  ]}
+{% endif %}
 ].
 

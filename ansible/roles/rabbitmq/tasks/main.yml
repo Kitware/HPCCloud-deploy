@@ -1,4 +1,11 @@
-- name: Install rabbitmq
+- name: Install erlang with SSL support
+  become: yes
+  become_user: root
+  apt: name=erlang-ssl state=present
+  tags: rabbit
+  when: rabbitmq_ssl_server_cert_pem_path is defined
+
+- name: Install RabbitMQ
   become: yes
   become_user: root
   apt: name=rabbitmq-server state=present
@@ -10,6 +17,29 @@
   become_user: root
   tags: rabbit
 
+- name: Create rabbitmq.config
+  become: yes
+  become_user: root
+  template:
+    src: rabbitmq.config.j2
+    dest: /etc/rabbitmq/rabbitmq.config
+    owner: root
+    group: root
+    mode: 0644
+  when: rabbitmq_admin_user is defined or rabbitmq_ssl_server_cert_pem_path is defined
+
 - name: Setup rabbitmq with authorization
   include: rabbitmq_auth.yml
   when: rabbitmq_admin_user is defined
+
+- name: Setup RabbitMQ SSL
+  include: rabbitmq_ssl.yml
+  when: rabbitmq_ssl_server_cert_pem_path is defined
+
+- name: Restart RabbitMQ for changes to take effect
+  become: yes
+  become_user: root
+  service:
+    name: rabbitmq-server
+    state: restarted
+  when: rabbitmq_admin_user is defined or rabbitmq_ssl_server_cert_pem_path is defined

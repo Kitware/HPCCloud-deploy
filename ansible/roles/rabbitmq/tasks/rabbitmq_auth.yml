@@ -18,16 +18,6 @@
         write_priv: .*
     state: present
 
-- name: Create rabbitmq.config
-  become: yes
-  become_user: root
-  template:
-    src: rabbitmq.config.j2
-    dest: /etc/rabbitmq/rabbitmq.config
-    owner: root
-    group: root
-    mode: 0644
-
 - name: Create /celery vhost
   become: yes
   become_user: root
@@ -46,10 +36,3 @@
     read_priv: .*
     write_priv: .*
     state: present
-
-- name: Restart RabbitMQ for changes to take effect
-  become: yes
-  become_user: root
-  service:
-    name: rabbitmq-server
-    state: restarted

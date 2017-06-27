@@ -43,6 +43,15 @@
         line: "broker_url = 'amqp://{{rabbitmq_celery_user}}:{{rabbitmq_celery_password}}@localhost:5672//celery'"
       when: rabbitmq_admin_user is defined
 
+    - name: Update Celery broker SSL setting
+      become: yes
+      become_user: hpccloud
+      lineinfile:
+        dest: /opt/hpccloud/cumulus/cumulus/celery/commonconfig.py
+        regexp: '^broker_use_ssl.*$'
+        line: "broker_use_ssl = { 'ca_certs': '/opt/hpccloud/ssl/rabbitmq/server_ca_cert.pem' }"
+      when: rabbitmq_ssl_server_ca_cert_pem_path is defined
+
     - name: Tighten up permissions on commonconfig.py
       become: yes
       become_user: hpccloud
