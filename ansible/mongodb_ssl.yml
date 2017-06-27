@@ -15,7 +15,7 @@
     group: mongodb
     mode: 0700
 
-- name: Copy of PEM file
+- name: Copy over PEM file
   become: yes
   become_user: root
   copy:
