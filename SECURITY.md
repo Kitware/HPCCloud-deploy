@@ -27,6 +27,6 @@ A default installation of RabbitMQ uses a default user and password and give acc
 | parameter                  | required | comments                                                                                                                                                                                                                                                                                                                                           |
 | -------------------------- | -------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | rabbitmq_admin_user           | no       | The username that will be used for the RabbitMQ administrator account. This use had full control of the / vhost, however it can only connect via localhost.
-| rabbitmq_admin_user       | no       | The RabbitMQ administrator password.
+| rabbitmq_admin_password       | no       | The RabbitMQ administrator password.
 | rabbitmq_celery_user          | no       | The username for the user that Celery will use to connect to RabbitMQ. This user has read/write access to the /celery vhost.                                                  |
 | rabbitmq_celery_password      | no       | The Celery user password.
