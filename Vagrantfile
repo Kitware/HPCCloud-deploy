@@ -14,6 +14,7 @@ Vagrant.configure(2) do |config|
   dev = ENV.has_key?('DEVELOPMENT') ? ENV['DEVELOPMENT'] : false
   demo = ENV.has_key?('DEMO') ?  ENV['DEMO'] : false
   cumulus = ENV.has_key?('CUMULUS') ?  ENV['CUMULUS'] : false
+  vm_name = ENV.has_key?('VM_NAME') ? ENV['VM_NAME'] : "hpccloud-vm"
   hpccloud_password = 'letmein'
 
   config.vm.box = "ubuntu/trusty64"
@@ -54,7 +55,7 @@ Vagrant.configure(2) do |config|
     config.vm.synced_folder '.', '/vagrant', disabled: true
   end
 
-  config.vm.define "hpccloud-vm" do |node|
+  config.vm.define vm_name do |node|
   end
 
   # Provider-specific configuration so you can fine-tune various
@@ -93,15 +94,15 @@ Vagrant.configure(2) do |config|
   # Setup HPCCloud/cumulus stack
   config.vm.provision "ansible" do |ansible|
     ansible.groups = {
-      "all" => ["hpccloud-vm"],
-      "cumulus" => ["hpccloud-vm"],
-      "girder" => ["hpccloud-vm"],
-      "mongo" => ["hpccloud-vm"]
+      "all" => [vm_name],
+      "cumulus" => [vm_name],
+      "girder" => [vm_name],
+      "mongo" => [vm_name]
     }
 
     if !cumulus
-      ansible.groups["hpccloud"] = ["hpccloud-vm"]
-      ansible.groups["pyfr"] = ["hpccloud-vm"]
+      ansible.groups["hpccloud"] = [vm_name]
+      ansible.groups["pyfr"] = [vm_name]
     end
 
     ansible.verbose = "vv"
@@ -142,7 +143,7 @@ Vagrant.configure(2) do |config|
     # Setup SGE using cumulus playbook
     config.vm.provision "ansible" do |ansible|
       ansible.groups = {
-        "master" => ["hpccloud-vm"]
+        "master" => [vm_name]
       }
 
       ansible.verbose = "vv"
@@ -168,10 +169,10 @@ Vagrant.configure(2) do |config|
       ansible.galaxy_role_file = "demo/requirements.yml"
 
       ansible.groups = {
-        "users" => ["hpccloud-vm"],
-        "paraview" => ["hpccloud-vm"],
-        "fixtures" => ["hpccloud-vm"],
-        "pyfr" => ["hpccloud-vm"]
+        "users" => [vm_name],
+        "paraview" => [vm_name],
+        "fixtures" => [vm_name],
+        "pyfr" => [vm_name]
       }
 
       ansible.verbose = "vv"
