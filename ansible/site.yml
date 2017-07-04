@@ -33,6 +33,25 @@
   roles:
     - cumulus
 
+  post_tasks:
+    - name: Update Celery broker URL
+      become: yes
+      become_user: hpccloud
+      lineinfile:
+        dest: /opt/hpccloud/cumulus/cumulus/celery/commonconfig.py
+        regexp: '^broker_url.*$'
+        line: "broker_url = 'amqp://{{rabbitmq_celery_user}}:{{rabbitmq_celery_password}}@localhost:5672//celery'"
+      when: rabbitmq_admin_user is defined
+
+    - name: Tighten up permissions on commonconfig.py
+      become: yes
+      become_user: hpccloud
+      file:
+        path: /opt/hpccloud/cumulus/cumulus/celery/commonconfig.py
+        mode: 0600
+      when: rabbitmq_admin_user is defined
+
+
 - name: Set up ParaView
   hosts: paraview
   become: yes
