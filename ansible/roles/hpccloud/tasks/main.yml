@@ -36,7 +36,7 @@
   become_user: root
 
 - name: Install right version of node
-  command: n 4.4.5
+  command: n 6.11
   tags: hpccloud
   become: yes
   become_user: root
