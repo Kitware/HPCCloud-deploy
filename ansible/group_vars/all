@@ -1,6 +1,6 @@
 default_user: ubuntu
 hpccloud_password: letmein
-girder_version: master
+girder_version: 2.x-maintenance
 cumulus_version: master
 hpccloud_version: master
 paraview_version: v5.4.0
