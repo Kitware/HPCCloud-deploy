@@ -119,6 +119,9 @@ Vagrant.configure(2) do |config|
     ansible.playbook = "ansible/site.yml"
   end
 
+  config.vm.provision "shell", inline: "sudo service celeryd restart", run: "always"
+  config.vm.provision "shell", inline: "sudo service girder restart", run: "always"
+
   # Should we also deploy a "cluster" on the VM
   if demo
     # Create temp directory
