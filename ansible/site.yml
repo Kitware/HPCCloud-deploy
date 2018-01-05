@@ -95,6 +95,14 @@
       girder_path: /opt/hpccloud/girder
 
   post_tasks:
+    - name: Fix Celery version ( this is a temporary fix as Girder is installing version 4, this will be fixed up stream ).
+      pip:
+        name: celery
+        version: 3.1.20
+      become: yes
+      become_user: root
+      tags: girder
+
     - name: Update monogdb URI with auth credentials
       ini_file:
         dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
