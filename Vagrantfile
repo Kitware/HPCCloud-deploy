@@ -46,7 +46,7 @@ Vagrant.configure(2) do |config|
     for f in ["cumulus", "hpccloud"]
       if File.directory?("../" + f)
         config.vm.synced_folder "../#{f}", "/opt/hpccloud/" + f.downcase,
-                                owner: 1002, group: 1003
+                                owner: 1002, group: 1002
       end
     end
   end
