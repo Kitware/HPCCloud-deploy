@@ -15,8 +15,8 @@ Vagrant.configure(2) do |config|
   vm_ip = ENV["COMPUTE_NODE_IP"] || "192.168.100.100"
 
   # Define image
-  config.vm.box = "VirtualBox-OpenFOAM-PyFr-ParaView-v1"
-  config.vm.box_url = "https://data.kitware.com/api/v1/file/587826838d777f05f44b1423/download"
+  config.vm.box = "VirtualBox-OpenFOAM-PyFr-ParaView-v2"
+  config.vm.box_url = "https://data.kitware.com/api/v1/file/592391388d777f16d01e0d77/download"
   config.vm.network "private_network", ip: vm_ip
 
   # Provider-specific configuration so you can fine-tune various

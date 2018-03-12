@@ -15,8 +15,8 @@ Vagrant.configure(2) do |config|
   hpccloud_host_port = ENV["HPCCLOUD_HOST_PORT"] || 8888
 
   # Define image
-  config.vm.box = "HPCCloud-v0.9.0-154-g6b93c15"
-  config.vm.box_url = "https://data.kitware.com/api/v1/file/5877ffab8d777f05f44b140b/download"
+  config.vm.box = "HPCCloud-v0.9.0-263-g74710f7c"
+  config.vm.box_url = "https://data.kitware.com/api/v1/file/592383908d777f16d01e0d75/download"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
