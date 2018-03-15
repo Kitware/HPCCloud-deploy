@@ -121,6 +121,15 @@
       become_user: hpccloud
       tags: girder
 
+    - name: Set the interface Girder should bind to
+      ini_file:
+        dest: /opt/hpccloud/girder/girder/conf/girder.local.cfg
+        section: global
+        option: "server.socket_host"
+        value: "\"{{ girder_bind_interface | default('127.0.0.1') }}\""
+      become_user: hpccloud
+      tags: girder
+
     - name: Start Girder
       become: yes
       become_user: root
