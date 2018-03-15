@@ -111,7 +111,8 @@ Vagrant.configure(2) do |config|
       development: dev,
       hpccloud_password: hpccloud_password,
       demo: demo,
-      cumulus: cumulus
+      cumulus: cumulus,
+      girder_bind_interface: "0.0.0.0"
     }
 
     ansible.galaxy_role_file = "ansible/requirements.yml"
