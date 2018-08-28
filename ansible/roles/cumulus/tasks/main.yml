@@ -19,6 +19,22 @@
   become: yes
   become_user: root
 
+- name: Force install of requests
+  pip:
+    name: requests
+    extra_args: --ignore-installed
+  become: yes
+  become_user: root
+  tags: cumulus
+
+- name: Force install of six
+  pip:
+    name: six
+    extra_args: --ignore-installed
+  become: yes
+  become_user: root
+  tags: cumulus
+
 - name: Install cumulus dependencies
   pip: requirements=/opt/hpccloud/cumulus/requirements.txt
   become: yes
@@ -102,18 +118,15 @@
 
 - name: Install cumulus
   pip:
-    chdir: /opt/hpccloud/cumulus
-    name: .
-    extra_args: "--user -I"
+    name: /opt/hpccloud/cumulus
   become: yes
-  become_user: hpccloud
+  become_user: root
   when: development == False
   tags: cumulus
 
 - name: Install cumulus (Development)
   pip:
-    chdir: /opt/hpccloud/cumulus
-    name: .
+    name: /opt/hpccloud/cumulus
     extra_args: "-e"
   become: yes
   become_user: root

@@ -1,7 +1,7 @@
 ---
 - src: Stouts.mongodb
   name: mongodb
-- src: girder.girder
+- src: https://github.com/girder/ansible-role-girder.git
   name: girder
 - src: https://github.com/cjh1/pyfr-ansible-role
   name: pyfr
