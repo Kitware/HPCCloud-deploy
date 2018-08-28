@@ -118,18 +118,15 @@
 
 - name: Install cumulus
   pip:
-    chdir: /opt/hpccloud/cumulus
-    name: .
-    extra_args: "--user -I"
+    name: /opt/hpccloud/cumulus
   become: yes
-  become_user: hpccloud
+  become_user: root
   when: development == False
   tags: cumulus
 
 - name: Install cumulus (Development)
   pip:
-    chdir: /opt/hpccloud/cumulus
-    name: .
+    name: /opt/hpccloud/cumulus
     extra_args: "-e"
   become: yes
   become_user: root
