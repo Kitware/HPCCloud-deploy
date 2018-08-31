@@ -1,3 +1,5 @@
+# Note: The vagrant deployment will soon be depreciated. We will be moving to a containerized solution.
+
 # HPC Cloud / Cumulus VM Deploy
 ## Linux
 ### Example usage
